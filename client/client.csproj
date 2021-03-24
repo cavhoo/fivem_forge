@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net452</TargetFramework>
+        <AssemblyName>client.net</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="CitizenFX.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\lib\client\CitizenFX.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
