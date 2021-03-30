@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "core\core.csproj", "{8FB194A7-9A81-49A4-A14F-115EFDF89306}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiveMForgeCore", "FiveMForgeCore\FiveMForgeCore.csproj", "{8FB194A7-9A81-49A4-A14F-115EFDF89306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "carspawner", "carspawner\carspawner.csproj", "{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "client", "client\client.csproj", "{06CC1EF2-276A-46A5-AD5F-55589F6BA734}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiveMForgeClient", "FiveMForgeClient\FiveMForgeClient.csproj", "{06CC1EF2-276A-46A5-AD5F-55589F6BA734}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,18 +32,6 @@ Global
 		{8FB194A7-9A81-49A4-A14F-115EFDF89306}.Release|x64.Build.0 = Release|Any CPU
 		{8FB194A7-9A81-49A4-A14F-115EFDF89306}.Release|x86.ActiveCfg = Release|Any CPU
 		{8FB194A7-9A81-49A4-A14F-115EFDF89306}.Release|x86.Build.0 = Release|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Debug|x64.Build.0 = Debug|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Debug|x86.Build.0 = Debug|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Release|x64.ActiveCfg = Release|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Release|x64.Build.0 = Release|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Release|x86.ActiveCfg = Release|Any CPU
-		{2E5D1087-783C-4DBA-82C3-5F413BC0B9BE}.Release|x86.Build.0 = Release|Any CPU
 		{06CC1EF2-276A-46A5-AD5F-55589F6BA734}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{06CC1EF2-276A-46A5-AD5F-55589F6BA734}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06CC1EF2-276A-46A5-AD5F-55589F6BA734}.Debug|x64.ActiveCfg = Debug|Any CPU

@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net452</TargetFramework>
         <AssemblyName>client.net</AssemblyName>
+        <RootNamespace>client</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
