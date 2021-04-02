@@ -1,4 +1,5 @@
 using System;
+using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient
@@ -8,13 +9,13 @@ namespace FiveMForgeClient
         protected override void OnClientResourceStart(string resourceName)
         {
             EventHandlers["playerSpawned"] += new Action(OnPlayerSpawned);
-            EventHandlers["FiveMForge:SpawnAt"] += new Action<float, float, float>(OnUpdateSpawnPosition);
+            EventHandlers[ServerEvents.SpawnAt] += new Action<float, float, float>(OnUpdateSpawnPosition);
         }
 
         private void OnPlayerSpawned()
         {
-            // Get last saved player from server
-            TriggerServerEvent("FiveMForge:GetLastSpawnPosition");
+            // Get last saved player position from server
+            TriggerServerEvent(ServerEvents.GetLastSpawnPosition);
         }
 
         private void OnUpdateSpawnPosition(float x, float y, float z)

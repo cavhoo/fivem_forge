@@ -18,4 +18,7 @@
       <HintPath>..\lib\server\CitizenFX.Core.Server.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <Target Name="CopyCoreDll" AfterTargets="AfterBuild">
+    <Copy SourceFiles="bin/Debug/net452/core.net.dll" DestinationFolder="/home/hendrik/workspace/projects/fivem_server/server-data/resources/\[local]/core" />
+  </Target>
 </Project>

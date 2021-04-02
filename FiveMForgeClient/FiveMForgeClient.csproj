@@ -12,4 +12,10 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Money\Models" />
+    </ItemGroup>
+    <Target Name="CopyBinary" AfterTargets="AfterBuild">
+        <Copy SourceFiles="bin/Debug/net452/client.net.dll" DestinationFolder="/home/hendrik/workspace/projects/fivem_server/server-data/resources/\[local]/client/" />
+    </Target>
 </Project>
