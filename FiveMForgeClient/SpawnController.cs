@@ -1,13 +1,21 @@
 using System;
+using CitizenFX.Core;
 using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient
 {
-    public class SpawnController : BaseClass
+    public class SpawnController : BaseScript
     {
-        protected override void OnClientResourceStart(string resourceName)
+        private bool Instantiated { get; set; }
+        public SpawnController()
         {
+            EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
+        }
+        private void OnClientResourceStart(string resourceName)
+        {
+            if (Instantiated) return;
+            Instantiated = true;
             EventHandlers["playerSpawned"] += new Action(OnPlayerSpawned);
             EventHandlers[ServerEvents.SpawnAt] += new Action<float, float, float>(OnUpdateSpawnPosition);
         }

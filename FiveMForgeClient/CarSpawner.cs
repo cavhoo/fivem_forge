@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using CitizenFX.Core;
+using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient
 {
-    public class CarSpawner : BaseClass
+    public class CarSpawner : BaseScript
     {
-        protected override void OnClientResourceStart(string resourceName)
+        public CarSpawner()
+        {
+            EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
+        }
+        private void OnClientResourceStart(string resourceName)
         {
             if (GetCurrentResourceName() != resourceName) return;
             RegisterCommand("car", new Action<int, List<object>, string>(async (source, args, raw) =>

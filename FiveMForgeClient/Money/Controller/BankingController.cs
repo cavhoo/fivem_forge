@@ -1,43 +1,66 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using fastJSON;
 using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient.ATM.Controller
 {
-    public class BankingController : BaseClass
+    public class BankingController : BaseScript
     {
+        private bool Instantiated { get; set; }
         private const int MinimumDistance = 3;
-        private Vector3[] _bankLocations;
-        protected override void OnClientResourceStart(string resourceName)
+        private bool _spawned = false;
+        private List<BankInformation> _bankLocations = new List<BankInformation>();
+
+        public BankingController()
         {
-            EventHandlers[ServerEvents.BankLocationsLoaded] += new Action<Vector3[]>(OnBankLocationsLoaded);
+            EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
+        }
+
+        private void OnClientResourceStart(string resourceName)
+        {
+            if (Instantiated) return;
+            Instantiated = true;
+            EventHandlers[ServerEvents.BankLocationsLoaded] +=
+                new Action<string>(OnBankLocationsLoaded);
             EventHandlers["playerSpawned"] += new Action(OnPlayerSpawned);
         }
 
         private void OnPlayerSpawned()
         {
+            if (_spawned) return;
+            _spawned = true;
+            if (_bankLocations.Count != 0) return;
             TriggerServerEvent(ServerEvents.LoadBankLocations);
         }
 
-        private void OnBankLocationsLoaded(Vector3[] obj)
+        private void OnBankLocationsLoaded(string banks)
         {
-            _bankLocations = obj;
-            TriggerEvent("chat:addMessage", new
+            var bankInfo = JSON.Parse(banks);
+            if (!(bankInfo is IEnumerable bankArray)) return;
+            foreach (Dictionary<string, object> bank in bankArray)
             {
-                color = new[] {125, 255, 255},
-                args = new[] {$"Received Bank locations: {obj.Length}"}
-            });
-            Tick += RenderAtmBlips;
-            Tick += HandleNearBank;
+                var name = Convert.ToString(bank["Name"]);
+                var spriteID = Convert.ToInt32(bank["SpriteId"]);
+                var x = Convert.ToSingle(bank["X"]);
+                var y = Convert.ToSingle(bank["Y"]);
+                var z = Convert.ToSingle(bank["Z"]);
+                var isActive = Convert.ToBoolean(bank["IsActive"]);
+                var isAdminOnly = Convert.ToBoolean(bank["IsAdminOnly"]);
+                _bankLocations.Add(new (name, spriteID, x, y, z, isActive, isAdminOnly));
+            }
+
+            RenderBankBlips();
         }
 
 
-        private async Task RenderAtmBlips()
+        private void RenderBankBlips()
         {
-            await Delay(250);
             foreach (var bankLocation in _bankLocations)
             {
                 var blip = AddBlipForCoord(bankLocation.X, bankLocation.Y, bankLocation.Z);
@@ -45,7 +68,7 @@ namespace FiveMForgeClient.ATM.Controller
                 SetBlipScale(blip, 0.7f);
                 SetBlipAsShortRange(blip, true);
                 BeginTextCommandSetBlipName("STRING");
-                AddTextComponentString("ATM");
+                AddTextComponentString("Bank");
                 EndTextCommandSetBlipName(blip);
             }
         }
@@ -55,8 +78,8 @@ namespace FiveMForgeClient.ATM.Controller
             await Delay(250);
             if (IsNearBank())
             {
-               // Display Information that near bank.
-               DisplayHelpTextThisFrame($"You are close to a bank. Maybe you want to withdraw/deposit.", true);
+                // Display Information that near bank.
+                DisplayHelpTextThisFrame($"You are close to a bank. Maybe you want to withdraw/deposit.", true);
             }
         }
 
@@ -64,7 +87,8 @@ namespace FiveMForgeClient.ATM.Controller
         {
             var pLocation = GetEntityCoords(PlayerPedId(), true);
             var bankInProximity = _bankLocations.Where(b =>
-                GetDistanceBetweenCoords(b.X, b.Y, b.Z, pLocation.X, pLocation.Y, pLocation.Z, false) <= MinimumDistance);
+                GetDistanceBetweenCoords(b.X, b.Y, b.Z, pLocation.X, pLocation.Y, pLocation.Z, false) <=
+                MinimumDistance);
 
             return bankInProximity.Any();
         }

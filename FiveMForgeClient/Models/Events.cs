@@ -12,6 +12,6 @@ namespace FiveMForgeClient.Models
 
     public static class ClientEvents
     {
-        
+        public const string ScriptStart = "onClientResourceStart";
     }
 }

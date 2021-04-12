@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using CitizenFX.Core;
 using FiveMForge.database;
 using FiveMForgeCore.Models;
@@ -26,7 +27,7 @@ namespace FiveMForgeCore.Money.Controller
             var reader = await bankLocationCommand.ExecuteReaderAsync();
             await reader.ReadAsync();
             if (!reader.HasRows) return;
-            var bankList = new List<BankInformation>();
+            var bankList = new List<dynamic>();
             while (reader.Read())
             {
                 var name = reader.GetString("name");
@@ -34,10 +35,18 @@ namespace FiveMForgeCore.Money.Controller
                 var isAdminOnly = reader.GetBoolean("isAdminOnly");
                 var location = reader.GetString("location");
                 var locationVector = location.Split(':');
-                bankList.Add(new (name, 108, float.Parse(locationVector[0]), float.Parse(locationVector[1]), float.Parse(locationVector[2]), isActive, isAdminOnly));
+
+                var bank = new BankInformation();
+                bank.Name = name;
+                bank.IsActive = isActive;
+                bank.IsAdminOnly = isAdminOnly;
+                bank.X = float.Parse(locationVector[0]);
+                bank.Y = float.Parse(locationVector[1]);
+                bank.Z = float.Parse(locationVector[2]);
+                bankList.Add(bank);
             }
-            
-            TriggerClientEvent(player, ServerEvents.BankLocationsLoaded, bankList.ToArray());
+            Debug.WriteLine($"Sending banking locations to client, counting: {bankList.Count} banks");
+            player.TriggerEvent(ServerEvents.BankLocationsLoaded, JsonConvert.SerializeObject(bankList));
         }
     }
 }

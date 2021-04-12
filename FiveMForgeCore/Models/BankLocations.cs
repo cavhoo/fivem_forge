@@ -1,6 +1,17 @@
+using Newtonsoft.Json;
 
 namespace FiveMForgeCore.Models
 {
+    public interface IBankInformation
+    {
+        int SpriteId { get; set; }
+        string Name { get; set; }
+        float X { get; set; }
+        float Y { get; set; }
+        float Z { get; set; }
+        bool IsActive { get; set; }
+        bool IsAdminOnly { get; set; }
+    }
     public struct BankInformation
     {
         public BankInformation(string name, int spriteId, float x, float y, float z, bool isActive, bool isAdminOnly)

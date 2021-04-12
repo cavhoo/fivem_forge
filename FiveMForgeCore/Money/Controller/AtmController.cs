@@ -5,6 +5,7 @@ using CitizenFX.Core;
 using FiveMForge.database;
 using FiveMForgeCore.Models;
 using MySqlConnector;
+using Newtonsoft.Json;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForgeCore.Money.Controller
@@ -35,7 +36,7 @@ namespace FiveMForgeCore.Money.Controller
                 atmlocations.Add(new Vector3(float.Parse(rowSplit[0]), float.Parse(rowSplit[1]), float.Parse(rowSplit[2])));
             }
             
-            TriggerClientEvent(player, ServerEvents.AtmLocationsLoaded, atmlocations.ToArray());
+            TriggerClientEvent(player, ServerEvents.AtmLocationsLoaded, JsonConvert.SerializeObject(atmlocations));
         }
     }
 }
