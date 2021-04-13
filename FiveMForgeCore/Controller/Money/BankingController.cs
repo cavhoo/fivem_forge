@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using CitizenFX.Core;
-using FiveMForge.database;
-using FiveMForgeCore.Models;
+using FiveMForge.Controller.Base;
+using FiveMForge.Database;
+using FiveMForge.Models;
 using MySqlConnector;
+using Newtonsoft.Json;
 
-namespace FiveMForgeCore.Money.Controller
+namespace FiveMForge.Controller.Money
 {
     public class BankingController : BaseClass
     {
         public BankingController()
         {
-            EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player>(OnBankLocationsRequested);
+            EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player, string>(OnBankLocationsRequested);
         }
 
-        private async void OnBankLocationsRequested([FromSource] Player player)
+        private async void OnBankLocationsRequested([FromSource] Player player, string sessionId)
         {
             Debug.WriteLine("Handling request to load Bank locations...");
             using var db = new DbConnector();

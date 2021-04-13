@@ -2,10 +2,11 @@ using System;
 using System.Globalization;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using FiveMForge.database;
+using FiveMForge.Controller.Base;
+using FiveMForge.Database;
 using MySqlConnector;
 
-namespace FiveMForgeCore
+namespace FiveMForge.Controller.Spawn
 {
     public class SpawnController : BaseClass
     {
@@ -13,7 +14,7 @@ namespace FiveMForgeCore
         {
             EventHandlers["playerConnecting"] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
             EventHandlers["playerDropped"] += new Action<Player, string>(OnPlayerDisconnecting);
-            EventHandlers["FiveMForge:GetLastSpawnPosition"] += new Action<Player>(OnGetLastPlayerPosition);
+            EventHandlers["FiveMForge:GetLastSpawnPosition"] += new Action<Player, string>(OnGetLastPlayerPosition);
         }
 
         private async void OnPlayerConnecting([FromSource] Player player, string playerName, dynamic setKickReason,
@@ -78,7 +79,7 @@ namespace FiveMForgeCore
             await savePlayerPosCommand.ExecuteNonQueryAsync();
         }
 
-        private async void OnGetLastPlayerPosition([FromSource] Player player)
+        private async void OnGetLastPlayerPosition([FromSource] Player player, string sessionId)
         {
             var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
             using (var db = new DbConnector())

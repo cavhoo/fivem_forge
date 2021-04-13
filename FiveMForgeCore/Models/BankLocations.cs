@@ -1,6 +1,4 @@
-using Newtonsoft.Json;
-
-namespace FiveMForgeCore.Models
+namespace FiveMForge.Models
 {
     public interface IBankInformation
     {

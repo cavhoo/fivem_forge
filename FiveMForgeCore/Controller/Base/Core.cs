@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using CitizenFX.Core;
-using FiveMForge.database;
-using MySqlConnector;
-using static CitizenFX.Core.Native.API;
+﻿using CitizenFX.Core;
+using FiveMForge.Database;
 
-namespace FiveMForgeCore
+namespace FiveMForge.Controller.Base
 {
     public class Core : BaseScript
     {

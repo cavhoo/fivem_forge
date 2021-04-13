@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FiveMForgeCore.Models;
+using FiveMForge.Models;
 using MySqlConnector;
 
-namespace FiveMForge.database
+namespace FiveMForge.Database
 {
     public class DbInit
     {
@@ -17,7 +17,7 @@ namespace FiveMForge.database
             var createPlayerTableCmd = new MySqlCommand();
             createPlayerTableCmd.Connection = db.Connection;
             createPlayerTableCmd.CommandText =
-                "CREATE TABLE IF NOT EXISTS players (last_login varchar(254), account_id varchar(255), uuid varchar(255), primary key (uuid))";
+                "CREATE TABLE IF NOT EXISTS players (last_login varchar(254), account_id varchar(255), uuid varchar(255), sessionId varchar(255), primary key (uuid))";
             await createPlayerTableCmd.ExecuteNonQueryAsync();
 
             var createMoneyTable = new MySqlCommand();

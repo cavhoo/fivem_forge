@@ -1,6 +1,4 @@
-using System.Security.Cryptography.X509Certificates;
-
-namespace FiveMForgeCore.Models
+namespace FiveMForge.Models
 {
     public struct AtmLocation
     {

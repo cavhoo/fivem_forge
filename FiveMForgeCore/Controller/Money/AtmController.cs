@@ -1,23 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using CitizenFX.Core;
-using FiveMForge.database;
-using FiveMForgeCore.Models;
+using FiveMForge.Controller.Base;
+using FiveMForge.Database;
+using FiveMForge.Models;
 using MySqlConnector;
 using Newtonsoft.Json;
-using static CitizenFX.Core.Native.API;
 
-namespace FiveMForgeCore.Money.Controller
+namespace FiveMForge.Controller.Money
 {
     public class AtmController : BaseClass
     {
         public AtmController()
         {
-            EventHandlers[ServerEvents.LoadAtmLocations] += new Action<Player>(OnAtmLocationsRequested);
+            EventHandlers[ServerEvents.LoadAtmLocations] += new Action<Player, string>(OnAtmLocationsRequested);
         }
 
-        private async void OnAtmLocationsRequested([FromSource] Player player)
+        private async void OnAtmLocationsRequested([FromSource] Player player, string sessionId)
         {
             Debug.WriteLine("Handling request to load atm locations...");
             using var connector = new DbConnector();

@@ -4,7 +4,7 @@
     <LangVersion>9</LangVersion>
     <AssemblyName>core.net</AssemblyName>
     <TargetFramework>net452</TargetFramework>
-    <RootNamespace>core</RootNamespace>
+    <RootNamespace>FiveMForge</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

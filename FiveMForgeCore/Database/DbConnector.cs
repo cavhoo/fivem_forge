@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using MySqlConnector;
 
-namespace FiveMForge.database
+namespace FiveMForge.Database
 {
     public class DbConnector : IDisposable
     {

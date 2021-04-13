@@ -8,7 +8,7 @@ using fastJSON;
 using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
-namespace FiveMForgeClient.ATM.Controller
+namespace FiveMForgeClient.Controller
 {
     public class AtmController : BaseScript
     {

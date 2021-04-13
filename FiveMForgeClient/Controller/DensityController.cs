@@ -4,7 +4,7 @@ using CitizenFX.Core;
 using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
-namespace FiveMForgeClient
+namespace FiveMForgeClient.Controller
 {
     public class DensityController : BaseScript
     {

@@ -1,6 +1,6 @@
 using CitizenFX.Core;
 
-namespace FiveMForgeCore
+namespace FiveMForge.Controller.Base
 {
     public class BaseClass : BaseScript
     {

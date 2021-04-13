@@ -8,7 +8,7 @@ using fastJSON;
 using FiveMForgeClient.Models;
 using static CitizenFX.Core.Native.API;
 
-namespace FiveMForgeClient.ATM.Controller
+namespace FiveMForgeClient.Controller
 {
     public class BankingController : BaseScript
     {
@@ -54,7 +54,6 @@ namespace FiveMForgeClient.ATM.Controller
                 var isAdminOnly = Convert.ToBoolean(bank["IsAdminOnly"]);
                 _bankLocations.Add(new (name, spriteID, x, y, z, isActive, isAdminOnly));
             }
-
             RenderBankBlips();
         }
 

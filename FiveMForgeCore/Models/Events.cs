@@ -1,4 +1,4 @@
-namespace FiveMForgeCore.Models
+namespace FiveMForge.Models
 {
     public static class ServerEvents
     {
