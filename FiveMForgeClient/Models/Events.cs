@@ -8,6 +8,7 @@ namespace FiveMForgeClient.Models
         public const string LoadBankLocations = "FiveMForge:LoadBankLocations";
         public const string AtmLocationsLoaded = "FiveMForge:AtmLocationsLoaded";
         public const string BankLocationsLoaded = "FiveMForge:BankLocationsLoaded";
+        public const string SavePOIPosition = "FiveMForge:SavePOIPosition";
     }
 
     public static class ClientEvents

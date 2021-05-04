@@ -24,7 +24,7 @@ namespace FiveMForge.Controller.Session
                 var playerDBCommand = new MySqlCommand();
                 playerDBCommand.Connection = playerDBConnection.Connection;
                 var sessionId = Guid.NewGuid();
-                playerDBCommand.CommandText = $"update players set sessionId='{sessionId}' where account_id={playerIdentifier}";
+                playerDBCommand.CommandText = $"update players set sessionId='{sessionId}' where account_id='{playerIdentifier}'";
                 await playerDBCommand.ExecuteNonQueryAsync();
                 player.TriggerEvent("FiveMForge:SessionIdLoaded", sessionId);
             }
@@ -38,7 +38,7 @@ namespace FiveMForge.Controller.Session
                 await playerDBConnection.Connection.OpenAsync();
                 var playerDBCommand = new MySqlCommand();
                 playerDBCommand.Connection = playerDBConnection.Connection;
-                playerDBCommand.CommandText = $"update players set sessionId=null where account_id={playerIdentifier}";
+                playerDBCommand.CommandText = $"update players set sessionId=null where account_id='{playerIdentifier}'";
                 await playerDBCommand.ExecuteNonQueryAsync();
             }
         }

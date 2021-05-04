@@ -1,11 +1,14 @@
+extern alias CFX;
 using System;
 using System.Threading.Tasks;
-using CitizenFX.Core;
 using FiveMForgeClient.Models;
-using static CitizenFX.Core.Native.API;
 
-namespace FiveMForgeClient.Controller
+using CFX::CitizenFX.Core;
+using static CFX::CitizenFX.Core.Native.API;
+
+namespace FiveMForgeClient.Controller.Environment
 {
+
     public class DensityController : BaseScript
     {
         // Density for Vehicles and Pedestrians.
@@ -30,7 +33,7 @@ namespace FiveMForgeClient.Controller
          */
         private async Task RunSetDensityTick()
         {
-            await Delay(500);
+            await Delay(16);
             SetParkedVehicleDensityMultiplierThisFrame(DENSITY_MULTIPLIER);
             SetPedDensityMultiplierThisFrame(DENSITY_MULTIPLIER);
             SetRandomVehicleDensityMultiplierThisFrame(DENSITY_MULTIPLIER);

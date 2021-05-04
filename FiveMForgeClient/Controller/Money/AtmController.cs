@@ -1,12 +1,14 @@
+extern alias CFX;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CitizenFX.Core;
 using fastJSON;
 using FiveMForgeClient.Models;
-using static CitizenFX.Core.Native.API;
+using CFX::CitizenFX.Core;
+using static CFX::CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient.Controller
 {
@@ -35,18 +37,30 @@ namespace FiveMForgeClient.Controller
             if (!(atmObject is IEnumerable atmArray)) return;
             foreach (Dictionary<string, object> atm in atmArray)
             {
-                _atmLocations.Add(new Vector3(Convert.ToSingle(atm["X"]), Convert.ToSingle(atm["Y"]), Convert.ToSingle(atm["Z"])));
+                _atmLocations.Add(new Vector3(Convert.ToSingle(atm["X"]), Convert.ToSingle(atm["Y"]),
+                    Convert.ToSingle(atm["Z"])));
             }
+
             Tick += HandleNearAtm;
+            Tick += DrawAtmMarkers;
         }
 
         private async Task HandleNearAtm()
         {
-            await Delay(250);
+            await Delay(16); // 16ms = 1 Frame @ 60 fps
             if (IsNearAtm())
             {
                 // Display text for interaction.
                 DisplayHelpTextThisFrame($"You are close to an ATM. Maybe you want to withdraw/deposit", true);
+            }
+        }
+
+        private async Task DrawAtmMarkers()
+        {
+            foreach (var atmLocation in _atmLocations)
+            {
+                DrawMarker(1, atmLocation.X, atmLocation.Y, atmLocation.Z - 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                    1.0f, 2.0f, 255, 255, 255, 255, false, false, 2, false, null, null, false);
             }
         }
 

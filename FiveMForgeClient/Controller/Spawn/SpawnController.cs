@@ -1,7 +1,9 @@
+extern alias CFX;
+
 using System;
-using CitizenFX.Core;
+using CFX::CitizenFX.Core;
 using FiveMForgeClient.Models;
-using static CitizenFX.Core.Native.API;
+using static CFX::CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient.Controller
 {

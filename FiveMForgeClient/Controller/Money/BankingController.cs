@@ -1,12 +1,14 @@
+extern alias CFX;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CitizenFX.Core;
 using fastJSON;
 using FiveMForgeClient.Models;
-using static CitizenFX.Core.Native.API;
+using CFX::CitizenFX.Core;
+using static CFX::CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient.Controller
 {
@@ -52,8 +54,9 @@ namespace FiveMForgeClient.Controller
                 var z = Convert.ToSingle(bank["Z"]);
                 var isActive = Convert.ToBoolean(bank["IsActive"]);
                 var isAdminOnly = Convert.ToBoolean(bank["IsAdminOnly"]);
-                _bankLocations.Add(new (name, spriteID, x, y, z, isActive, isAdminOnly));
+                _bankLocations.Add(new(name, spriteID, x, y, z, isActive, isAdminOnly));
             }
+
             RenderBankBlips();
         }
 
@@ -69,6 +72,42 @@ namespace FiveMForgeClient.Controller
                 BeginTextCommandSetBlipName("STRING");
                 AddTextComponentString("Bank");
                 EndTextCommandSetBlipName(blip);
+            }
+
+            Tick += RenderBankMarkers;
+        }
+
+        private async Task RenderBankMarkers()
+        {
+            await Delay(16); // 16ms = 1 frame @ 60 fps
+            foreach (var bankLocation in _bankLocations)
+            {
+                DrawMarker(
+                    1,
+                    bankLocation.X,
+                    bankLocation.Y,
+                    bankLocation.Z,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    4.0f,
+                    4.0f,
+                    4.0f,
+                    255,
+                    255,
+                    255,
+                    255,
+                    false,
+                    false,
+                    2,
+                    false,
+                    null,
+                    null,
+                    false
+                );
             }
         }
 

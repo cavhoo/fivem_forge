@@ -43,6 +43,19 @@ namespace FiveMForge.Database
             createAtmTable.CommandText =
                 "create table if not exists atms (id int auto_increment, location varchar(255), primary key (id))";
             await createAtmTable.ExecuteNonQueryAsync();
+            
+            // var createBankAccountTable = new MySqlCommand();
+            // createBankAccountTable.Connection = db.Connection;
+            // createBankAccountTable.CommandText =
+            //     "create table if not exists  bankAccount (id int auto_increment, holder varchar(255), accountNumber varchar(255), saldo number, primary key (id, accountNumber))";
+            // await createBankAccountTable.ExecuteNonQueryAsync();
+            //
+            // var createTransactionTable = new MySqlCommand();
+            // createTransactionTable.Connection = db.Connection;
+            // createTransactionTable.CommandText =
+            //     "create table if not exists bankTransactions (id int auto_increment, from_account_number varchar(255), to_account_number varchar(255), amount number, message varchar(255), primary key (id, from_account_number, to_account_number), foreign key (from_account_number) references bankAccount(accountNumber), foreign key (to_account_number) references bankAccount(accountNumber))";
+            // await createTransactionTable.ExecuteNonQueryAsync();
+                
             //PopulateTables();
 
             var checkAtmTableCommand = new MySqlCommand();

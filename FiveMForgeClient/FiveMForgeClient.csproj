@@ -5,17 +5,29 @@
         <AssemblyName>client.net</AssemblyName>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>default</LangVersion>
+        <Company>client</Company>
+        <Product>client</Product>
     </PropertyGroup>
 
     <ItemGroup>
       <Reference Include="CitizenFX.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\lib\client\CitizenFX.Core.dll</HintPath>
+        <HintPath>../lib/client/CitizenFX.Core.dll</HintPath>
+        <Aliases>CFX</Aliases>
       </Reference>
       <Reference Include="Microsoft.CSharp" />
-      <Reference Include="System.Runtime.Serialization.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-        <HintPath>..\..\..\..\.nuget\packages\microsoft.netframework.referenceassemblies.net452\1.0.0\build\.NETFramework\v4.5.2\Facades\System.Runtime.Serialization.Json.dll</HintPath>
+      <Reference Include="NativeUI, Version=1.7.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>../lib/client/NativeUI/NativeUI.dll</HintPath>
+      </Reference>
+      <Reference Update="System.Drawing">
+        <Pack>false</Pack>
+        <IsImplicitlyDefined>true</IsImplicitlyDefined>
+        <Aliases>SystemDrawing</Aliases>
       </Reference>
     </ItemGroup>
+<!--    <Target Name="ILMerge" AfterTargets="Build">-->
+<!--        &lt;!&ndash; the ILMergePath property points to the location of ILMerge.exe console application &ndash;&gt;-->
+<!--        <Exec Command="/home/hendrik/.nuget/packages/ilmerge.fody/1.16.0/lib/net45/ILMerge.dll /out:client.net.dll client.dll NativeUI.dll " />-->
+<!--    </Target> -->
     <Target Name="CopyBinary" AfterTargets="AfterBuild">
         <Copy SourceFiles="bin/Debug/net452/client.net.dll" DestinationFolder="/home/hendrik/workspace/projects/fivem_server/server-data/resources/[local]/client/" />
     </Target>
