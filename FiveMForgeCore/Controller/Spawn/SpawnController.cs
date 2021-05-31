@@ -43,10 +43,11 @@ namespace FiveMForge.Controller.Spawn
                     playerCreateCommand.CommandText =
                         $"insert into players (account_id, uuid, last_login) values ('{playerIdentifier}', '{newPlayerUuid}', '{DateTime.Now.ToUniversalTime().ToString(CultureInfo.InvariantCulture)}')";
                     await playerCreateCommand.ExecuteNonQueryAsync();
+                    var characterUuid = Guid.NewGuid();
                     using var characterCreateCommand = new MySqlCommand();
                     characterCreateCommand.Connection = db2.Connection;
                     characterCreateCommand.CommandText =
-                        $"insert into characters (uuid, in_use, last_pos) values ('{newPlayerUuid}', {true}, '')";
+                        $"insert into characters (uuid, in_use, last_pos, characterUuid) values ('{newPlayerUuid}', {true}, '', '{characterUuid}')";
                     await characterCreateCommand.ExecuteNonQueryAsync();
                 }
             }

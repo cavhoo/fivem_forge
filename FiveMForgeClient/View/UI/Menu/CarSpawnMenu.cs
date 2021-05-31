@@ -1,5 +1,6 @@
 extern alias CFX;
 using CFX::CitizenFX.Core;
+using CFX::CitizenFX.Core.UI;
 using NativeUI;
 
 namespace FiveMForgeClient.View.UI.Menu

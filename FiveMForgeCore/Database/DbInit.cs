@@ -29,7 +29,7 @@ namespace FiveMForge.Database
             var createCharacterTable = new MySqlCommand();
             createCharacterTable.Connection = db.Connection;
             createCharacterTable.CommandText =
-                "create table if not exists characters (id int auto_increment, last_pos varchar(254), in_use bool, uuid varchar(255), primary key (id, uuid), foreign key (uuid) references players(uuid))";
+                "create table if not exists characters (id int auto_increment, characterUuid varchar(255) not null, last_pos varchar(254), in_use bool, playerUuid varchar(255), jobId varchar(255), primary key (id, playerUuid, characterUuid), foreign key (playerUuid) references players(uuid), foreign key (jobId) references jobs(uuid))";
             await createCharacterTable.ExecuteNonQueryAsync();
 
             var createBankingTable = new MySqlCommand();
@@ -44,20 +44,36 @@ namespace FiveMForge.Database
                 "create table if not exists atms (id int auto_increment, location varchar(255), primary key (id))";
             await createAtmTable.ExecuteNonQueryAsync();
             
-            // var createBankAccountTable = new MySqlCommand();
-            // createBankAccountTable.Connection = db.Connection;
-            // createBankAccountTable.CommandText =
-            //     "create table if not exists  bankAccount (id int auto_increment, holder varchar(255), accountNumber varchar(255), saldo number, primary key (id, accountNumber))";
-            // await createBankAccountTable.ExecuteNonQueryAsync();
-            //
-            // var createTransactionTable = new MySqlCommand();
-            // createTransactionTable.Connection = db.Connection;
-            // createTransactionTable.CommandText =
-            //     "create table if not exists bankTransactions (id int auto_increment, from_account_number varchar(255), to_account_number varchar(255), amount number, message varchar(255), primary key (id, from_account_number, to_account_number), foreign key (from_account_number) references bankAccount(accountNumber), foreign key (to_account_number) references bankAccount(accountNumber))";
-            // await createTransactionTable.ExecuteNonQueryAsync();
-                
-            //PopulateTables();
+            var createBankAccountTable = new MySqlCommand();
+            createBankAccountTable.Connection = db.Connection;
+            createBankAccountTable.CommandText =
+                "create table if not exists bankAccount (id int auto_increment, holder varchar(255) not null, accountNumber varchar(255) not null unique, saldo int, primary key (id, holder), foreign key (holder) references characters(characterUuid))";
+            await createBankAccountTable.ExecuteNonQueryAsync();
 
+            var createWalletAccountTable = new MySqlCommand();
+            createWalletAccountTable.Connection = db.Connection;
+            createWalletAccountTable.CommandText =
+                "create table if not exists walletAccount (id int auto_increment, holder varchar(255) not null, walletNumber varchar(255), saldo int, primary key (id, holder), foreign key (holder) references characters(characterUuid))";
+            await createWalletAccountTable.ExecuteNonQueryAsync();
+
+            var createPendingTransactionTable = new MySqlCommand();
+            createPendingTransactionTable.Connection = db.Connection;
+            createPendingTransactionTable.CommandText =
+                "create table if not exists pendingBankTransactions (id int, from_account_number varchar(255) not null, to_account_number varchar(255) not null, amount int, message varchar(255), foreign key (from_account_number) references bankAccount(accountNumber), foreign key (to_account_number) references bankAccount(accountNumber))";
+            await createPendingTransactionTable.ExecuteNonQueryAsync();
+            
+            var createTransactionTable = new MySqlCommand();
+            createTransactionTable.Connection = db.Connection;
+            createTransactionTable.CommandText =
+                "create table if not exists bankTransactions (id int, from_account_number varchar(255) not null, to_account_number varchar(255) not null, amount int, message varchar(255), foreign key (from_account_number) references bankAccount(accountNumber), foreign key (to_account_number) references bankAccount(accountNumber))";
+            await createTransactionTable.ExecuteNonQueryAsync();
+
+            var createJobTable = new MySqlCommand();
+            createJobTable.Connection = db.Connection;
+            createJobTable.CommandText =
+                "create table if not exists jobs (id int auto_increment, uuid varchar(255), title varchar(255), salary int, primary key (id, uuid))";
+            await createJobTable.ExecuteNonQueryAsync();
+            
             var checkAtmTableCommand = new MySqlCommand();
             checkAtmTableCommand.CommandText = "select * from atms";
             checkAtmTableCommand.Connection = db.Connection;

@@ -18,6 +18,7 @@ namespace FiveMForge.Controller.Money
             EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player, string>(OnBankLocationsRequested);
             EventHandlers[ServerEvents.LoadBankAccount] += new Action<Player>(OnRequestBankAccount);
             EventHandlers[ServerEvents.LoadWallet] += new Action<Player>(OnRequestWallet);
+            
         }
 
         private async void OnBankLocationsRequested([FromSource] Player player, string sessionId)

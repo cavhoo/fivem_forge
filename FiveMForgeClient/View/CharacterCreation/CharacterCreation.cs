@@ -141,7 +141,7 @@ namespace FiveMForgeClient.View.CharacterCreation
 
             var noseProfile = new UIMenuListItem("Nose Profile", listItems, 1);
             var noseProfilePanel = new UIMenuGridPanel("Crooked", "Short", "Long", "Curved", PointF.Empty);
-            noseProfile.Activated += (sender, item) =>
+            noseProfile.Activated += (_, _) =>
             {
                 SetPedFaceFeature(GetPlayerPed(-1), 2, noseProfilePanel.CirclePosition.X);
                 SetPedFaceFeature(GetPlayerPed(-1), 3, noseProfilePanel.CirclePosition.Y);
