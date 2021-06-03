@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
+using FiveMForge.Database.Contexts;
+using FiveMForge.Database.Models;
 using MySqlConnector;
 using static CitizenFX.Core.Native.API;
 
@@ -23,7 +26,8 @@ namespace FiveMForge.Controller.Money
         private async Task OnTick()
         {
             DateTime currentUtcTime = DateTime.UtcNow;
-            if (currentUtcTime.Hour == 12 && currentUtcTime.Minute == 0 && currentUtcTime.Second == 0)
+
+            if (currentUtcTime.Minute % 10 == 0)
             {
                 // Payout salary from jobs
                 CreateJobPayments();
@@ -35,83 +39,59 @@ namespace FiveMForge.Controller.Money
 
         private async void CreateJobPayments()
         {
-            using (var connector = new DbConnector())
+            using var ctx = new CoreContext();
+            var employedCharacters = ctx.Characters.Where(c => c.Job != null).ToList();
+            
+            
+            
+            foreach (var character in employedCharacters)
             {
-                await connector.Connection.OpenAsync();
-
-                var activeJobsCommand = new MySqlCommand();
-                activeJobsCommand.Connection = connector.Connection;
-                activeJobsCommand.CommandText = "select characterUuid, jobId from characters where jobId is not null";
-
-                var activeJobsList = await activeJobsCommand.ExecuteReaderAsync();
-                await activeJobsList.ReadAsync();
-                if (!activeJobsList.HasRows) return;
-
-                while (activeJobsList.Read())
+                var player = ctx.Players.FirstOrDefault(p => p.Uuid == character.Uuid);
+                if (player == null) return;
+                
+                var bankAccount = ctx.BankAccount.FirstOrDefault(account => account.Holder == character.CharacterUuid);
+                if (bankAccount == null) continue;
+                var job = ctx.Jobs.FirstOrDefault(j => j.Uuid == character.JobUuid);
+                if (job != null)
                 {
-                    var charUuid = activeJobsList.GetString("characterUuid");
-                    // Load bank account for character
-                    var bankAccountCommand = new MySqlCommand();
-                    bankAccountCommand.Connection = connector.Connection;
-                    bankAccountCommand.CommandText = $"select * from bankAccount where holder = `{charUuid}`";
-                    var bankAccountReader = await bankAccountCommand.ExecuteReaderAsync();
-
-                    await bankAccountReader.ReadAsync();
-                    if (!bankAccountReader.HasRows) return;
-
-
-                    var jobDataCommand = new MySqlCommand();
-                    jobDataCommand.Connection = connector.Connection;
-                    jobDataCommand.CommandText = "select title, salary from jobs";
-                    var jobDataReader = await jobDataCommand.ExecuteReaderAsync();
-                    await jobDataReader.ReadAsync();
-
-                    if (!jobDataReader.HasRows) return;
-
-                    var salary = jobDataReader.GetString("salary");
-
-                    var accountNumber = bankAccountReader.GetString("accountNumber");
-
-                    var createPendingTransactionCommand = new MySqlCommand();
-                    createPendingTransactionCommand.Connection = connector.Connection;
-                    createPendingTransactionCommand.CommandText =
-                        $"insert into pendingBankTransactions values ('Job', {accountNumber}, 'Salary', {salary})";
-                    await createPendingTransactionCommand.ExecuteNonQueryAsync();
-
+                    var salary = job.Salary;
+                    var pendingTransaction = new PendingBankTransaction();
+                    pendingTransaction.FromAccountNumber = "";
+                    pendingTransaction.ToAccountNumber = bankAccount.AccountNumber;
+                    pendingTransaction.Amount = salary;
+                    pendingTransaction.Message = $"Job Payment for {job.Title}";
+                    ctx.PendingBankTransactions.Add(pendingTransaction);
                 }
-
             }
+            await ctx.SaveChangesAsync();
         }
 
         private async void ProcessPendingTransactions()
         {
-            using (var connector = new DbConnector())
-            {
-                await connector.Connection.OpenAsync();
+            using var ctx = new CoreContext();
+            var nextTransaction = ctx.PendingBankTransactions.FirstOrDefault();
 
-                var pendingTransactionsCommand = new MySqlCommand();
-                pendingTransactionsCommand.Connection = connector.Connection;
-                pendingTransactionsCommand.CommandText = "select * from pendingBankTransactions";
+            // No transactions found.
+            if (nextTransaction == null) return;
 
-                var result = await pendingTransactionsCommand.ExecuteReaderAsync();
-                await result.ReadAsync();
+            var sourceAccount = ctx.BankAccount.FirstOrDefault(b => b.AccountNumber == nextTransaction.FromAccountNumber);
+            if (sourceAccount == null) return;
+            
+            var targetAccount = ctx.BankAccount.FirstOrDefault(t => t.AccountNumber == nextTransaction.ToAccountNumber);
+            if (targetAccount == null) return;
+            
+            
+            // Deduct transfer amount from source account.
+            sourceAccount.Saldo -= nextTransaction.Amount;
+            targetAccount.Saldo += nextTransaction.Amount;
 
-                // Early abort if no transactions are pending
-                if (!result.HasRows) return;
-
-                while (result.Read())
-                {
-                    var sourceBankAccount = result.GetString("from_account_number");
-                    var targetBankAccount = result.GetString("to_account_number");
-                    var amount = result.GetDecimal("amount");
-                    var transferMessage = result.GetString("message");
-                    
-                    this.DeductFromSourceBankAccount(amount, sourceBankAccount);
-                    
-                    // Add transaction to transactions table
-                    // delete row from pending transactions
-                }
-            }
+            var bankTransaction = new BankTransaction();
+            bankTransaction.FromAccountNumber = nextTransaction.FromAccountNumber;
+            bankTransaction.ToAccountNumber = nextTransaction.ToAccountNumber;
+            bankTransaction.Message = nextTransaction.Message;
+            bankTransaction.Amount = nextTransaction.Amount;
+            ctx.PendingBankTransactions.Remove(nextTransaction);
+            ctx.BankTransactions.Add(bankTransaction);
         }
 
         private async void DeductFromSourceBankAccount(decimal amount, string accountNumber)

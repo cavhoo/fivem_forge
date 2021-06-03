@@ -8,17 +8,15 @@ namespace FiveMForge.Database.Contexts
     {
         public CoreContext() : base(Constants.Database.ConStringEF)
         {
-            
+            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<CoreContext, Configuration>());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            // Disable migration table lookup.
-            System.Data.Entity.Database.SetInitializer<CoreContext>(null);
             // Disable plurality table names.
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             // Postgres uses 'public' as schema.
-            modelBuilder.HasDefaultSchema("public");
+            //modelBuilder.HasDefaultSchema("public");
         }
 
         public DbSet<BankAccount> BankAccount { get; set; }

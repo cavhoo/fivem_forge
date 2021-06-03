@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CitizenFX.Core;
 
 namespace FiveMForge.Database.Models
 {
