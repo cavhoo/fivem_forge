@@ -9,7 +9,7 @@ namespace FiveMForge.Database
         public readonly MySqlConnection Connection;
         public DbConnector()
         {
-            Connection = new MySqlConnection("host=localhost;port=3306;user id=root;password=;database=forge;");
+            Connection = new MySqlConnection(Constants.Database.ConString);
         }
 
         public async void Open()

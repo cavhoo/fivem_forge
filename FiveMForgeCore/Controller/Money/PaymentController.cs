@@ -69,9 +69,9 @@ namespace FiveMForge.Controller.Money
                     if (!jobDataReader.HasRows) return;
 
                     var salary = jobDataReader.GetString("salary");
-                    
+
                     var accountNumber = bankAccountReader.GetString("accountNumber");
-                    
+
                     var createPendingTransactionCommand = new MySqlCommand();
                     createPendingTransactionCommand.Connection = connector.Connection;
                     createPendingTransactionCommand.CommandText =
@@ -101,11 +101,31 @@ namespace FiveMForge.Controller.Money
 
                 while (result.Read())
                 {
-                    // book amount to target bank account
+                    var sourceBankAccount = result.GetString("from_account_number");
+                    var targetBankAccount = result.GetString("to_account_number");
+                    var amount = result.GetDecimal("amount");
+                    var transferMessage = result.GetString("message");
+                    
+                    this.DeductFromSourceBankAccount(amount, sourceBankAccount);
+                    
                     // Add transaction to transactions table
                     // delete row from pending transactions
                 }
             }
+        }
+
+        private async void DeductFromSourceBankAccount(decimal amount, string accountNumber)
+        {
+            using (var db = new DbConnector())
+            {
+                await db.Connection.OpenAsync();
+                var deductFromAccountCommand = new MySqlCommand();
+                deductFromAccountCommand.Connection = db.Connection;
+                deductFromAccountCommand.CommandText = $"update bankAccount set saldo = saldo - {amount} where accountNumber = {accountNumber}";
+
+                await deductFromAccountCommand.ExecuteNonQueryAsync();
+            }
+
         }
     }
 }

@@ -18,6 +18,7 @@ namespace FiveMForgeClient.View.UI.Components
         {
             
         }
+    
         private void OnSimpleMenuStart()
         {
             if (!_initialized)
