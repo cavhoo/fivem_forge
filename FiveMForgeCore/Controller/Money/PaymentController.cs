@@ -41,14 +41,13 @@ namespace FiveMForge.Controller.Money
         {
             using var ctx = new CoreContext();
             var employedCharacters = ctx.Characters.Where(c => c.Job != null).ToList();
-            
-            
-            
+
+
             foreach (var character in employedCharacters)
             {
                 var player = ctx.Players.FirstOrDefault(p => p.Uuid == character.Uuid);
                 if (player == null) return;
-                
+
                 var bankAccount = ctx.BankAccount.FirstOrDefault(account => account.Holder == character.CharacterUuid);
                 if (bankAccount == null) continue;
                 var job = ctx.Jobs.FirstOrDefault(j => j.Uuid == character.JobUuid);
@@ -63,6 +62,7 @@ namespace FiveMForge.Controller.Money
                     ctx.PendingBankTransactions.Add(pendingTransaction);
                 }
             }
+
             await ctx.SaveChangesAsync();
         }
 
@@ -74,38 +74,31 @@ namespace FiveMForge.Controller.Money
             // No transactions found.
             if (nextTransaction == null) return;
 
-            var sourceAccount = ctx.BankAccount.FirstOrDefault(b => b.AccountNumber == nextTransaction.FromAccountNumber);
+            var sourceAccount =
+                ctx.BankAccount.FirstOrDefault(b => b.AccountNumber == nextTransaction.FromAccountNumber);
             if (sourceAccount == null) return;
-            
+
             var targetAccount = ctx.BankAccount.FirstOrDefault(t => t.AccountNumber == nextTransaction.ToAccountNumber);
             if (targetAccount == null) return;
-            
-            
-            // Deduct transfer amount from source account.
-            sourceAccount.Saldo -= nextTransaction.Amount;
-            targetAccount.Saldo += nextTransaction.Amount;
 
-            var bankTransaction = new BankTransaction();
-            bankTransaction.FromAccountNumber = nextTransaction.FromAccountNumber;
-            bankTransaction.ToAccountNumber = nextTransaction.ToAccountNumber;
-            bankTransaction.Message = nextTransaction.Message;
-            bankTransaction.Amount = nextTransaction.Amount;
-            ctx.PendingBankTransactions.Remove(nextTransaction);
-            ctx.BankTransactions.Add(bankTransaction);
-        }
-
-        private async void DeductFromSourceBankAccount(decimal amount, string accountNumber)
-        {
-            using (var db = new DbConnector())
+            if (sourceAccount.Saldo >= nextTransaction.Amount)
             {
-                await db.Connection.OpenAsync();
-                var deductFromAccountCommand = new MySqlCommand();
-                deductFromAccountCommand.Connection = db.Connection;
-                deductFromAccountCommand.CommandText = $"update bankAccount set saldo = saldo - {amount} where accountNumber = {accountNumber}";
-
-                await deductFromAccountCommand.ExecuteNonQueryAsync();
+                // Deduct transfer amount from source account.
+                sourceAccount.Saldo -= nextTransaction.Amount;
+                targetAccount.Saldo += nextTransaction.Amount;
+                var bankTransaction = new BankTransaction();
+                bankTransaction.FromAccountNumber = nextTransaction.FromAccountNumber;
+                bankTransaction.ToAccountNumber = nextTransaction.ToAccountNumber;
+                bankTransaction.Message = nextTransaction.Message;
+                bankTransaction.Amount = nextTransaction.Amount;
+                ctx.PendingBankTransactions.Remove(nextTransaction);
+                ctx.BankTransactions.Add(bankTransaction);
             }
-
+            else
+            {
+                
+            }
+            
         }
     }
 }

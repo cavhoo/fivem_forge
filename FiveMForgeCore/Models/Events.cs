@@ -13,5 +13,6 @@ namespace FiveMForge.Models
         public const string LoadWallet = "FiveMForge:LoadWallet";
         public const string WalletLoaded = "FiveMForge:WalletLoaded";
         public const string SavePOIPosition = "FiveMForge:SavePOIPosition";
+        public const string GetSessionId = "FiveMForge:GetSessionId";
     }
 }

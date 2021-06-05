@@ -1,6 +1,10 @@
+using System;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using FiveMForge.Database.Models;
+using FiveMForge.Utils;
 
 namespace FiveMForge.Database.Contexts
 {
@@ -30,5 +34,15 @@ namespace FiveMForge.Database.Contexts
         public DbSet<Player> Players { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Poi> Poi { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+        public bool PoiExists(Poi point)
+        {
+            return Poi.FirstOrDefault(p => 
+                Float.FloatEquals(p.X, point.X, 0.01f) &&
+                Float.FloatEquals(p.Y, point.Y, 0.01f) &&
+                Float.FloatEquals(p.Z, point.Z, 0.01f)
+                ) != null;
+        }
     }
+    
 }

@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using FiveMForge.Models;
 
 namespace FiveMForge.Database.Models
 {
-    public class PendingBankTransaction
+    public class BankTransaction
     {
         public int Id { get; set; }
         public int Amount { get; set; }
         public string Message { get; set; }
+        public TransactionStatus Status { get; set; }
         
         [InverseProperty("AccountNumber")]
         public string FromAccountNumber { get; set; }
