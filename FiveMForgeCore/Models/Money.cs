@@ -1,6 +1,4 @@
-using System.Data.Common;
-
-namespace FiveMForge.Database.Models
+namespace FiveMForge.Models
 {
     public class Money
     {

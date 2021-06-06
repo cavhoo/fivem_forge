@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CitizenFX.Core;
 
-namespace FiveMForge.Database.Models
+namespace FiveMForge.Models
 {
     [Table("Atms")]
     public class Atm

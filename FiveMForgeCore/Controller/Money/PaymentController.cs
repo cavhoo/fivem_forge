@@ -5,12 +5,18 @@ using CitizenFX.Core;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
 using FiveMForge.Database.Contexts;
-using FiveMForge.Database.Models;
+using FiveMForge.Models;
 using MySqlConnector;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForge.Controller.Money
 {
+    /// <summary>
+    /// Class <c>PaymentController</c>
+    /// Controls the whole payment/transaction system.
+    /// Processing of job payouts, banking transfers and paying at
+    /// shops with your card will be handled here.
+    /// </summary>
     public class PaymentController : BaseClass
     {
         public PaymentController()
@@ -30,55 +36,51 @@ namespace FiveMForge.Controller.Money
             if (currentUtcTime.Minute % 10 == 0)
             {
                 // Payout salary from jobs
-                CreateJobPayments();
+               await CreateJobPayments();
             }
 
             // Process payments in pending table
-            ProcessPendingTransactions();
+            await ProcessPendingTransactions();
         }
 
-        private async void CreateJobPayments()
+        private async Task CreateJobPayments()
         {
             using var ctx = new CoreContext();
             var employedCharacters = ctx.Characters.Where(c => c.Job != null).ToList();
-
 
             foreach (var character in employedCharacters)
             {
                 var player = ctx.Players.FirstOrDefault(p => p.Uuid == character.Uuid);
                 if (player == null) return;
 
-                var bankAccount = ctx.BankAccount.FirstOrDefault(account => account.Holder == character.CharacterUuid);
+                var bankAccount = ctx.BankAccount.FirstOrDefault(account => account.Holder == character.AccountUuid);
                 if (bankAccount == null) continue;
                 var job = ctx.Jobs.FirstOrDefault(j => j.Uuid == character.JobUuid);
-                if (job != null)
-                {
-                    var salary = job.Salary;
-                    var pendingTransaction = new PendingBankTransaction();
-                    pendingTransaction.FromAccountNumber = "";
-                    pendingTransaction.ToAccountNumber = bankAccount.AccountNumber;
-                    pendingTransaction.Amount = salary;
-                    pendingTransaction.Message = $"Job Payment for {job.Title}";
-                    ctx.PendingBankTransactions.Add(pendingTransaction);
-                }
+                if (job == null) continue;
+                var salary = job.Salary;
+                var pendingTransaction = new PendingBankTransaction();
+                pendingTransaction.FromAccountNumber = "";
+                pendingTransaction.ToAccountNumber = bankAccount.AccountNumber;
+                pendingTransaction.Amount = salary;
+                pendingTransaction.Message = $"Job Payment for {job.Title}";
+                ctx.PendingBankTransactions.Add(pendingTransaction);
             }
 
             await ctx.SaveChangesAsync();
         }
 
-        private async void ProcessPendingTransactions()
+        private async Task ProcessPendingTransactions()
         {
-            using var ctx = new CoreContext();
-            var nextTransaction = ctx.PendingBankTransactions.FirstOrDefault();
+            var nextTransaction = Context.PendingBankTransactions.FirstOrDefault();
 
             // No transactions found.
             if (nextTransaction == null) return;
 
             var sourceAccount =
-                ctx.BankAccount.FirstOrDefault(b => b.AccountNumber == nextTransaction.FromAccountNumber);
+                Context.BankAccount.FirstOrDefault(b => b.AccountNumber == nextTransaction.FromAccountNumber);
             if (sourceAccount == null) return;
 
-            var targetAccount = ctx.BankAccount.FirstOrDefault(t => t.AccountNumber == nextTransaction.ToAccountNumber);
+            var targetAccount = Context.BankAccount.FirstOrDefault(t => t.AccountNumber == nextTransaction.ToAccountNumber);
             if (targetAccount == null) return;
 
             if (sourceAccount.Saldo >= nextTransaction.Amount)
@@ -91,14 +93,11 @@ namespace FiveMForge.Controller.Money
                 bankTransaction.ToAccountNumber = nextTransaction.ToAccountNumber;
                 bankTransaction.Message = nextTransaction.Message;
                 bankTransaction.Amount = nextTransaction.Amount;
-                ctx.PendingBankTransactions.Remove(nextTransaction);
-                ctx.BankTransactions.Add(bankTransaction);
+                Context.PendingBankTransactions.Remove(nextTransaction);
+                Context.BankTransactions.Add(bankTransaction);
             }
-            else
-            {
-                
-            }
-            
+
+            await Context.SaveChangesAsync();
         }
     }
 }

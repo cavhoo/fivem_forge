@@ -14,5 +14,13 @@ namespace FiveMForge.Models
         public const string WalletLoaded = "FiveMForge:WalletLoaded";
         public const string SavePOIPosition = "FiveMForge:SavePOIPosition";
         public const string GetSessionId = "FiveMForge:GetSessionId";
+        public const string SessionIdLoaded = "FiveMForge:SessionIdLoaded";
+        public const string Heartbeat = "FiveMForge:Heartbeat";
+        public const string Error = "FiveMForge:Error";
+        public const string UIError = "FiveMForge:UIError";
+        public const string CharacterCreated = "FiveMForge:CharacterCreated";
+        public const string CharacterSaved = "FiveMForge:CharacterSaved";
+        public const string CharactersLoaded = "FiveMForge:CharactersLoaded";
+        public const string LoadCharacters = "FiveMForge:LoadCharacters";
     }
 }

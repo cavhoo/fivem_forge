@@ -3,14 +3,14 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
-using FiveMForge.Database.Models;
+using FiveMForge.Models;
 using FiveMForge.Utils;
 
 namespace FiveMForge.Database.Contexts
 {
     public class CoreContext : DbContext
     {
-        public CoreContext() : base(Constants.Database.ConStringEF)
+        public CoreContext() : base(Config.ConfigController.GetInstance().ConnectionString)
         {
             System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<CoreContext, Configuration>());
         }
@@ -19,8 +19,6 @@ namespace FiveMForge.Database.Contexts
         {
             // Disable plurality table names.
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-            // Postgres uses 'public' as schema.
-            //modelBuilder.HasDefaultSchema("public");
         }
 
         public DbSet<BankAccount> BankAccount { get; set; }
@@ -35,6 +33,7 @@ namespace FiveMForge.Database.Contexts
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Poi> Poi { get; set; }
         public DbSet<Session> Sessions { get; set; }
+        public DbSet<Tiers> Tiers { get; set; }
         public bool PoiExists(Poi point)
         {
             return Poi.FirstOrDefault(p => 

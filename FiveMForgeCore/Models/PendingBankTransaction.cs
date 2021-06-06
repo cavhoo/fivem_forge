@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using FiveMForge.Models;
 
-namespace FiveMForge.Database.Models
+namespace FiveMForge.Models
 {
     public class PendingBankTransaction
     {

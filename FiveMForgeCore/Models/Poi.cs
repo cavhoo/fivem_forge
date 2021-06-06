@@ -1,4 +1,4 @@
-namespace FiveMForge.Database.Models
+namespace FiveMForge.Models
 {
     public class Poi
     {

@@ -9,9 +9,17 @@ using FiveMForge.Models;
 using FiveMForge.Utils;
 using MySqlConnector;
 using Newtonsoft.Json;
+using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Money
 {
+    /// <summary>
+    /// Class <c>AtmController</c>
+    /// Controls the commands available at ATMs, from
+    /// withdrawing money to making deposits. Also send
+    /// the information about each atm location to the
+    /// client.
+    /// </summary>
     public class AtmController : BaseClass
     {
         public AtmController()
@@ -19,10 +27,9 @@ namespace FiveMForge.Controller.Money
             EventHandlers[ServerEvents.LoadAtmLocations] += new Action<Player, string>(OnAtmLocationsRequested);
         }
 
-        private async void OnAtmLocationsRequested([FromSource] Player player, string sessionId)
+        private void OnAtmLocationsRequested([FromSource] Player player, string sessionId)
         {
-            using var ctx = new CoreContext();
-            var atmLocations = ctx.Atms.Select(a => Converter.PositionStringToVector3(a.Location)).ToList();
+            var atmLocations = Context.Atms.Select(a => Converter.PositionStringToVector3(a.Location)).ToList();
             TriggerClientEvent(player, ServerEvents.AtmLocationsLoaded, JsonConvert.SerializeObject(atmLocations));
         }
     }

@@ -10,9 +10,16 @@ using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
 using MySqlConnector;
 using Newtonsoft.Json;
+using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Money
 {
+    /// <summary>
+    /// Class <c>BankingController</c>
+    /// Controls the interactions when accessing Bank related stuff
+    /// inside the client, from the phone or from a teller.
+    /// Also send the location information about the Banks to the client.
+    /// </summary>
     public class BankingController : BaseClass
     {
         public BankingController()
@@ -23,10 +30,9 @@ namespace FiveMForge.Controller.Money
             
         }
 
-        private async void OnBankLocationsRequested([FromSource] Player player, string sessionId)
+        private void OnBankLocationsRequested([FromSource] Player player, string sessionId)
         {
-            using var ctx = new CoreContext();
-            var banks = ctx.Banks.Where(b => b.IsActive).ToList();
+            var banks = Context.Banks.Where(b => b.IsActive).ToList();
 
             var bankListDto = new List<dynamic>();
 
@@ -45,28 +51,31 @@ namespace FiveMForge.Controller.Money
             player.TriggerEvent(ServerEvents.BankLocationsLoaded, JsonConvert.SerializeObject(bankListDto));
         }
 
-        private async void OnRequestBankAccount([FromSource] Player player)
+        private void OnRequestBankAccount([FromSource] Player player)
         {
-            using var ctx = new CoreContext();
             var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
-            var currentPlayer = ctx.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
+            var currentPlayer = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
 
             if (currentPlayer == null) return;
 
-            var bankAccount = ctx.BankAccount.FirstOrDefault(b => b.Holder == currentPlayer.Uuid);
+            var bankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == currentPlayer.Uuid);
             if (bankAccount == null) return;
             player.TriggerEvent(ServerEvents.BankAccountLoaded, bankAccount.Saldo);
         }
 
-        private async void OnRequestWallet([FromSource] Player player)
+        private void OnRequestWallet([FromSource] Player player)
         {
             // TODO: Refactor this to use the character UUID instead. So we have multiple wallets.
-            using var ctx = new CoreContext();
             var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
-            var currentPlater = ctx.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
+            var currentPlayer = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
 
-            if (currentPlater == null) return;
-            var wallet = ctx.Wallets.FirstOrDefault(w => w.Holder == currentPlater.Uuid);
+            if (currentPlayer == null) return;
+            
+            var activeCharacter =
+                Context.Characters.FirstOrDefault(c => c.AccountUuid == currentPlayer.Uuid && c.InUse);
+            
+            if (activeCharacter == null) return;
+            var wallet = Context.Wallets.FirstOrDefault(w => w.Holder == activeCharacter.Uuid);
             
             if (wallet == null) return;
             

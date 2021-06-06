@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FiveMForge.Database.Models
+namespace FiveMForge.Models
 {
     public class Wallet
     {

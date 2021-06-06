@@ -1,4 +1,5 @@
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 
 namespace FiveMForge.Database.Contexts
 {
@@ -7,6 +8,8 @@ namespace FiveMForge.Database.Contexts
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            // TODO: Remove this for production to prevent screwing up the database.
+            AutomaticMigrationDataLossAllowed = true;
             ContextKey = "CoreContext";
         }
 

@@ -5,7 +5,6 @@ using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
 using FiveMForge.Database.Contexts;
-using FiveMForge.Database.Models;
 using FiveMForge.Models;
 using MySqlConnector;
 using Player = CitizenFX.Core.Player;
@@ -24,18 +23,17 @@ namespace FiveMForge.Controller.Tools
             if (type == "Unkown") return;
 
             var currentPosition = player.Character?.Position ?? Vector3.Zero;
-            using var ctx = new CoreContext();
             var pointOfInterest = new Poi();
             pointOfInterest.X = currentPosition.X;
             pointOfInterest.Y = currentPosition.Y;
             pointOfInterest.Z = currentPosition.Z;
             pointOfInterest.Type = type;
 
-            var poiAlreadyExists = ctx.PoiExists(pointOfInterest);
+            var poiAlreadyExists = Context.PoiExists(pointOfInterest);
             if (!poiAlreadyExists)
             {
-                ctx.Poi.Add(pointOfInterest);
-                await ctx.SaveChangesAsync();
+                Context.Poi.Add(pointOfInterest);
+                await Context.SaveChangesAsync();
                 player.TriggerEvent("FiveMForge:POISaved", "Point of Interest saved to Database.");
             }
             else

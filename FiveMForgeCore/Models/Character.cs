@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FiveMForge.Database.Models
+namespace FiveMForge.Models
 {
     public class Character
     {
@@ -9,7 +9,9 @@ namespace FiveMForge.Database.Models
         public string Uuid { get; set; }
         public bool InUse { get; set; }
         
-        public string CharacterUuid { get; set; }
+        [InverseProperty("Uuid")]
+        public string AccountUuid { get; set; }
+        public Player Owner { get; set; }
         
         [InverseProperty("Uuid")]
         public string JobUuid { get; set; }
