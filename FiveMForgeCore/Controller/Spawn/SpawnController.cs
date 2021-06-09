@@ -14,67 +14,16 @@ namespace FiveMForge.Controller.Spawn
 {
     public class SpawnController : BaseClass
     {
+        /// <summary>
+        /// Class <c>SpawnController</c>
+        /// Handles everything relating to spawning a character.
+        /// For example if a character just joined the server he will request the last position,
+        /// that he was at when logged out.
+        /// If a character dies we will respawn him at the closest hospital.
+        /// </summary>
         public SpawnController()
         {
-            EventHandlers["playerConnecting"] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
-            EventHandlers["playerDropped"] += new Action<Player, string>(OnPlayerDisconnecting);
             EventHandlers["FiveMForge:GetLastSpawnPosition"] += new Action<Player, string>(OnGetLastPlayerPosition);
-        }
-
-        private async void OnPlayerConnecting([FromSource] Player player, string playerName, dynamic setKickReason,
-            dynamic deferrals)
-        {
-            var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0); // Get first identifier
-            Debug.WriteLine($"Player Joined: {playerIdentifier}");
-
-            var currentPlayer = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
-            // If we have a player we don't have to continue, we only update the login time.
-            if (currentPlayer != null)
-            {
-                currentPlayer.LastLogin = DateTime.Now.ToUniversalTime().ToString(CultureInfo.CurrentCulture);
-                await Context.SaveChangesAsync();
-                player.TriggerEvent("FiveMForge:ShowCharacterSelection");
-                return;
-            }
-
-            // Create new Player Database Model.
-            var newPlayer = new Models.Player();
-            // Every character has a UUID which is used to reference the account.
-            // This way we can transfer user accounts to other Platforms: Steam <> Epic <> Rockstar
-            newPlayer.Uuid = Guid.NewGuid().ToString();
-            newPlayer.AccountId = playerIdentifier;
-            newPlayer.LastLogin = DateTime.Now.ToUniversalTime().ToString(CultureInfo.CurrentCulture);
-            Context.Players.Add(newPlayer);
-            
-            player.TriggerEvent("FiveMForge:ShowCharacterSelection");
-            
-            await Context.SaveChangesAsync();
-        }
-
-        private async void OnPlayerDisconnecting([FromSource] Player player, string reason)
-        {
-            // Get AccountID from FiveM
-            var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
-            Debug.WriteLine($"Disconnecting: {playerIdentifier}");
-            
-            // Get Matching player in Database.
-            var currentPlayer = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
-            if (currentPlayer == null)
-            {
-                return;
-            }
-
-            // Grab the last character position, if there's none we use 0:0:0
-            var lastPosition = player.Character?.Position ?? Vector3.Zero;
-            var character = Context.Characters.FirstOrDefault(c => c.Uuid == currentPlayer.Uuid);
-            if (character == null)
-            {
-                return;
-            }
-
-            // Convert Position to our string format :)
-            character.LastPos = $"{lastPosition.X}:{lastPosition.Y}:{lastPosition.Z}";
-            await Context.SaveChangesAsync();
         }
 
         private void OnGetLastPlayerPosition([FromSource] Player player, string sessionId)

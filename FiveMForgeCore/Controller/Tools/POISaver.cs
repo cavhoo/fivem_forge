@@ -15,7 +15,7 @@ namespace FiveMForge.Controller.Tools
     {
         public PoiSaver()
         {
-            EventHandlers[ServerEvents.SavePOIPosition] += new Action<Player, string>(OnSavePOIPosition);
+            EventHandlers[ServerEvents.SavePoiPosition] += new Action<Player, string>(OnSavePOIPosition);
         }
 
         private async void OnSavePOIPosition([FromSource] Player player, string type)

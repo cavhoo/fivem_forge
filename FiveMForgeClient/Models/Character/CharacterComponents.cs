@@ -1,5 +1,4 @@
 extern alias CFX;
-
 using System;
 using System.Collections.Generic;
 using CFX::CitizenFX.Core;
@@ -106,7 +105,9 @@ namespace FiveMForgeClient.Models.Character
             new(LanguageController.Translate("beard_type"), "beard_1", 0, 0, 0.4f, 0.65f),
             new(LanguageController.Translate("beard_size"), "beard_2", 0, 0, 0.4f, 0.65f),
             new(LanguageController.Translate("beard_color_1"), "beard_3", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("beard_color_2"), "beard_4", 0, 0, 0.4f, 0.65f)
+            new(LanguageController.Translate("beard_color_2"), "beard_4", 0, 0, 0.4f, 0.65f),
+            new(LanguageController.Translate("inherit_mom"), "mom", 0, 0, 0.6f, 0.65f),
+            new(LanguageController.Translate("inherit_mom"), "dad", 0, 0, 0.6f, 0.65f),
         };
     }
 }
