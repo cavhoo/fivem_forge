@@ -9,10 +9,14 @@ namespace FiveMForgeClient.Models
         public const string AtmLocationsLoaded = "FiveMForge:AtmLocationsLoaded";
         public const string BankLocationsLoaded = "FiveMForge:BankLocationsLoaded";
         public const string SavePOIPosition = "FiveMForge:SavePOIPosition";
+        public const string LoadCharacters = "FiveMForge:LoadCharacters";
+        public const string CharactersLoaded = "FiveMForge:CharactersLoaded";
     }
 
     public static class ClientEvents
     {
         public const string ScriptStart = "onClientResourceStart";
+        public const string SpawnPlayer = "FiveMForge:SpawnPlayer";
+        public const string OpenCharacterSelection = "FiveMForge:OpenCharacterSelection";
     }
 }

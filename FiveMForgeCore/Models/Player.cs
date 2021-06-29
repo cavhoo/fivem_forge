@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FiveMForge.Models.Enums;
 
 namespace FiveMForge.Models
 {
@@ -8,7 +9,7 @@ namespace FiveMForge.Models
         public string LastLogin { get; set; }
         public string AccountId { get; set; }
         [Key]
-        public string Uuid { get; set; }
-        public Tiers Tier { get; set; }
+        public string AccountUuid { get; set; }
+        public PlayerTier Tier { get; set; }
     }
 }

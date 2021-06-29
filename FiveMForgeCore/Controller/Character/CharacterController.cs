@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
 using FiveMForge.Models;
+using FiveMForge.Models.Errors;
 using Newtonsoft.Json;
 using Player = CitizenFX.Core.Player;
 
@@ -27,13 +28,13 @@ namespace FiveMForge.Controller.Character
 
             if (playerAccount == null)
             {
-                player.TriggerEvent(ServerEvents.Error, Errors.CharacterCreationError);
+                player.TriggerEvent(ServerEvents.Error, AccountErrors.NotFound.ToString());
                 return;
             }
             
             var newCharacter = new Models.Character();
-            newCharacter.AccountUuid = playerAccount.Uuid;
-            newCharacter.Uuid = Guid.NewGuid().ToString();
+            newCharacter.AccountUuid = playerAccount.AccountUuid;
+            newCharacter.AccountUuid = Guid.NewGuid().ToString();
             // TODO: Set default spawn point to Airport.
 
             Context.Characters.Add(newCharacter);
@@ -48,12 +49,13 @@ namespace FiveMForge.Controller.Character
         /// <param name="player"></param>
         private void OnLoadCharacters([FromSource] Player player)
         {
+            Debug.WriteLine("Loading characters");
             var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
             var playerAccount = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
 
             if (playerAccount == null) return;
             
-            var characters = Context.Characters.Select(c => c.AccountUuid == playerAccount.Uuid);
+            var characters = Context.Characters.Where(c => c.AccountUuid == playerAccount.AccountUuid).ToList();
             
             player.TriggerEvent(ServerEvents.CharactersLoaded, JsonConvert.SerializeObject(characters));
         }

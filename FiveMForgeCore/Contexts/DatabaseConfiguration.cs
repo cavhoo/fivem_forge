@@ -2,7 +2,6 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations.Sql;
-using MySqlConnector;
 using Npgsql;
 
 namespace FiveMForge.Database

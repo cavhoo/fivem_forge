@@ -7,7 +7,7 @@ namespace FiveMForge.Utils
         public static Vector3 PositionStringToVector3(string position)
         {
             var split = position.Split(':');
-            if (split.Length == 0) return Vector3.Zero;
+            if (split.Length == 0 || split == null) return Vector3.Zero;
 
             return new Vector3(
                 float.Parse(split[0]),

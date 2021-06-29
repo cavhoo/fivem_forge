@@ -10,7 +10,7 @@ using static CFX::CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient.View.CharacterCreation
 {
-    public class CharacterCreation : BaseScript
+    public class CharacterCreation
     {
         private Dictionary<string, decimal> _character;
         private MenuPool _pool;

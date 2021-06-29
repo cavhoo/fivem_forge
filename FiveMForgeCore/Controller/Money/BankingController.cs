@@ -8,7 +8,6 @@ using FiveMForge.Controller.Base;
 using FiveMForge.Database;
 using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
-using MySqlConnector;
 using Newtonsoft.Json;
 using Player = CitizenFX.Core.Player;
 
@@ -24,16 +23,17 @@ namespace FiveMForge.Controller.Money
     {
         public BankingController()
         {
-            EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player, string>(OnBankLocationsRequested);
+            EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player>(OnBankLocationsRequested);
             EventHandlers[ServerEvents.LoadBankAccount] += new Action<Player>(OnRequestBankAccount);
             EventHandlers[ServerEvents.LoadWallet] += new Action<Player>(OnRequestWallet);
-            
+            Debug.WriteLine("Loaded Banking Controller"); 
         }
 
-        private void OnBankLocationsRequested([FromSource] Player player, string sessionId)
+        private void OnBankLocationsRequested([FromSource] Player player)
         {
+            Debug.WriteLine("Bank Locations Requested");
             var banks = Context.Banks.Where(b => b.IsActive).ToList();
-
+            Debug.WriteLine($"Bank Amount: {banks.Count()}");
             var bankListDto = new List<dynamic>();
 
             foreach (var bank in banks)
@@ -47,8 +47,9 @@ namespace FiveMForge.Controller.Money
                 bankInfo.X = float.Parse(locSplit[0]);
                 bankInfo.Y = float.Parse(locSplit[1]);
                 bankInfo.Z = float.Parse(locSplit[2]);
+                bankListDto.Add(bankInfo);
             }
-            player.TriggerEvent(ServerEvents.BankLocationsLoaded, JsonConvert.SerializeObject(bankListDto));
+            player.TriggerEvent(ServerEvents.BankLocationsLoaded, JsonConvert.SerializeObject(bankListDto.ToArray()));
         }
 
         private void OnRequestBankAccount([FromSource] Player player)
@@ -58,7 +59,7 @@ namespace FiveMForge.Controller.Money
 
             if (currentPlayer == null) return;
 
-            var bankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == currentPlayer.Uuid);
+            var bankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == currentPlayer.AccountUuid);
             if (bankAccount == null) return;
             player.TriggerEvent(ServerEvents.BankAccountLoaded, bankAccount.Saldo);
         }
@@ -72,10 +73,10 @@ namespace FiveMForge.Controller.Money
             if (currentPlayer == null) return;
             
             var activeCharacter =
-                Context.Characters.FirstOrDefault(c => c.AccountUuid == currentPlayer.Uuid && c.InUse);
+                Context.Characters.FirstOrDefault(c => c.AccountUuid == currentPlayer.AccountUuid && c.InUse);
             
             if (activeCharacter == null) return;
-            var wallet = Context.Wallets.FirstOrDefault(w => w.Holder == activeCharacter.Uuid);
+            var wallet = Context.Wallets.FirstOrDefault(w => w.Holder == activeCharacter.AccountUuid);
             
             if (wallet == null) return;
             

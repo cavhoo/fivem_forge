@@ -7,7 +7,6 @@ using FiveMForge.Controller.Base;
 using FiveMForge.Database;
 using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
-using MySqlConnector;
 using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Spawn
@@ -34,18 +33,20 @@ namespace FiveMForge.Controller.Spawn
             if (currentPlayer == null) 
             {
                 // TODO: Send error to client to say that there's no account.
+                player.TriggerEvent(ServerEvents.Error, new Error(ErrorTypes.AccountError, 80888));
                 return;
             }
 
-            var character = Context.Characters.FirstOrDefault(c => c.Uuid == currentPlayer.Uuid && c.InUse);
+            var character = Context.Characters.FirstOrDefault(c => c.AccountUuid == currentPlayer.AccountUuid && c.InUse);
             if (character == null)
             {
                 // TODO: Send error message to client if no character has been found.
                 // This should never happen though xD
-                player.TriggerEvent("Five");
+                player.TriggerEvent(ServerEvents.Error, new Error(ErrorTypes.CharacterError, 80889));
                 return;
             }
             var posArray = character?.LastPos.Split(':');
+            Debug.WriteLine($"Sending last spawn to client: ${posArray[0]} ${posArray[1]} ${posArray[2]}");
             player.TriggerEvent("FiveMForge:SpawnAt", float.Parse(posArray[0]), float.Parse(posArray[1]), float.Parse(posArray[2]));
         }
     }

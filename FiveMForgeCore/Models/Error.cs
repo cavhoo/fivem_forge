@@ -33,11 +33,4 @@ namespace FiveMForge.Models
             return JsonConvert.SerializeObject(this);
         }
     }
-
-
-    public class Errors
-    {
-        public static string CharacterCreationError =
-            new Error(ErrorTypes.DatabaseError, 1000).ToString();
-    }
 }

@@ -21,6 +21,7 @@ namespace FiveMForge.Controller.Base
         {
             Debug.WriteLine("FiveM Forge Starting...verifying database...");
             Debug.WriteLine("Checking if all tables exist, if not then we create them :)");
+            Debug.WriteLine("Roflcopter");
             //DbInit.CreateTables();
             using (var ctx = new CoreContext())
             {

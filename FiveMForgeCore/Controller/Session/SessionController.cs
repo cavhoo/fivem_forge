@@ -1,14 +1,16 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.NetworkInformation;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
 using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
+using FiveMForge.Models.Enums;
 using FiveMForge.Utils;
-using MySqlConnector;
+using Remotion.Linq.Parsing.ExpressionVisitors.Transformation.PredefinedTransformations;
 using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Session
@@ -60,13 +62,23 @@ namespace FiveMForge.Controller.Session
             var newPlayer = new Models.Player();
             // Every character has a UUID which is used to reference the account.
             // This way we can transfer user accounts to other Platforms: Steam <> Epic <> Rockstar
-            newPlayer.Uuid = Guid.NewGuid().ToString();
+            newPlayer.AccountUuid = Guid.NewGuid().ToString();
             newPlayer.AccountId = playerIdentifier;
             newPlayer.LastLogin = DateTime.Now.ToUniversalTime().ToString(CultureInfo.CurrentCulture);
+            newPlayer.Tier = PlayerTier.COMMON;
             Context.Players.Add(newPlayer);
-
+            
+            
+            // TODO: Remove this once we have a character creation tool.
+            var newCharacter = new Models.Character();
+            newCharacter.AccountUuid = newPlayer.AccountUuid;
+            newCharacter.CharacterUuid = Guid.NewGuid().ToString();
+            newCharacter.InUse = true;
+            newCharacter.LastPos = "-1046.6901:-2770.3647:4.62854"; // Temp Airport coodinate
+            Context.Characters.Add(newCharacter);
+            
+            
             player.TriggerEvent(ServerEvents.GoToCharacterSelection);
-
             await Context.SaveChangesAsync();
         }
 
@@ -85,9 +97,20 @@ namespace FiveMForge.Controller.Session
 
             // Grab the last character position, if there's none we use 0:0:0
             var lastPosition = player.Character?.Position ?? Vector3.Zero;
-            var character = Context.Characters.FirstOrDefault(c => c.Uuid == currentPlayer.Uuid);
+            Debug.WriteLine($"Saving last position: {lastPosition.ToString()}");
+            var character = Context.Characters.FirstOrDefault(c => c.AccountUuid == currentPlayer.AccountUuid);
             if (character == null)
             {
+                var newCharacter = new Models.Character
+                {
+                    AccountUuid = currentPlayer.AccountUuid,
+                    CharacterUuid = Guid.NewGuid().ToString(),
+                    InUse = true,
+                    LastPos = $"{lastPosition.X}:{lastPosition.Y}:{lastPosition.Z}",
+                    JobUuid = null
+                };
+                Context.Characters.Add(newCharacter);
+                await Context.SaveChangesAsync();
                 return;
             }
 
@@ -110,7 +133,7 @@ namespace FiveMForge.Controller.Session
 
             if (playerAccount == null) return;
 
-            var playerSession = Context.Sessions.FirstOrDefault(s => s.AccountUuid == playerAccount.Uuid);
+            var playerSession = Context.Sessions.FirstOrDefault(s => s.AccountUuid == playerAccount.AccountUuid);
             
             if (playerSession != null)
             {
@@ -120,7 +143,7 @@ namespace FiveMForge.Controller.Session
             }
 
             var newSession = new Models.Session();
-            newSession.AccountUuid = playerAccount.Uuid;
+            newSession.AccountUuid = playerAccount.AccountUuid;
             newSession.SessionToken = Guid.NewGuid().ToString();
             newSession.ExpirationDate =
                 DateTime.Now.AddMinutes(30).ToUniversalTime().ToString(CultureInfo.CurrentCulture);
@@ -138,7 +161,7 @@ namespace FiveMForge.Controller.Session
             var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
             var playerAccount = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
             if (playerAccount == null) return;
-            var sessionToDelete = Context.Sessions.FirstOrDefault(s => s.AccountUuid == playerAccount.Uuid);
+            var sessionToDelete = Context.Sessions.FirstOrDefault(s => s.AccountUuid == playerAccount.AccountUuid);
             if (sessionToDelete != null)
             {
                 Context.Sessions.Remove(sessionToDelete);
@@ -157,7 +180,7 @@ namespace FiveMForge.Controller.Session
         {
             var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
             var account = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
-            var session = Context.Sessions.FirstOrDefault(s => s.AccountUuid == account.Uuid);
+            var session = Context.Sessions.FirstOrDefault(s => s.AccountUuid == account.AccountUuid);
             if (session == null)
             {
                 // TODO: Disconnect player if session is not existing.

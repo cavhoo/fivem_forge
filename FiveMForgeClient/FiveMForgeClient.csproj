@@ -4,7 +4,7 @@
         <TargetFramework>net452</TargetFramework>
         <AssemblyName>client.net</AssemblyName>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>default</LangVersion>
+        <LangVersion>9</LangVersion>
         <Company>client</Company>
         <Product>client</Product>
     </PropertyGroup>

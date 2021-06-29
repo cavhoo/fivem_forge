@@ -6,7 +6,6 @@ using FiveMForge.Controller.Base;
 using FiveMForge.Database;
 using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
-using MySqlConnector;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForge.Controller.Money
@@ -50,7 +49,7 @@ namespace FiveMForge.Controller.Money
 
             foreach (var character in employedCharacters)
             {
-                var player = ctx.Players.FirstOrDefault(p => p.Uuid == character.Uuid);
+                var player = ctx.Players.FirstOrDefault(p => p.AccountUuid == character.AccountUuid);
                 if (player == null) return;
 
                 var bankAccount = ctx.BankAccount.FirstOrDefault(account => account.Holder == character.AccountUuid);
