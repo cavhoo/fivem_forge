@@ -23,6 +23,7 @@ namespace FiveMForge.Controller.Spawn
         public SpawnController()
         {
             EventHandlers["FiveMForge:GetLastSpawnPosition"] += new Action<Player, string>(OnGetLastPlayerPosition);
+            EventHandlers["FiveMForge:SaveLastPosition"] += new Action<Player, string>((Player player, string characterUuid) => Debug.WriteLine("Saving char position"));
         }
 
         private void OnGetLastPlayerPosition([FromSource] Player player, string sessionId)

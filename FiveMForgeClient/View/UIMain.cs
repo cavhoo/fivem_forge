@@ -2,6 +2,8 @@ extern alias CFX;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
 using CFX::CitizenFX.Core.UI;
 using CFX::System.Drawing;
@@ -20,73 +22,61 @@ namespace FiveMForgeClient.View
     WeaponSpawner,
   }
 
+  public enum HudIds
+  {
+    Speedometer,
+    CharacterInformation
+  }
+
 
   public class UIMain : BaseScript
   {
     private bool _initialized = false;
-    private KeyboardController _keyboardController;
     private MenuPool _pool;
     private Dictionary<MenuIds, UIMenu> _menus;
-    private List<Base> _hudElements = new List<Base>();
+    private Dictionary<HudIds, Base> _hudElements;
 
     public UIMain()
     {
       _menus = new Dictionary<MenuIds, UIMenu>();
-      EventHandlers[ClientEvents.ScriptStart] += new Action<string>(CreateUi);
+      //EventHandlers[ClientEvents.ScriptStart] += new Action<string>(CreateUi);
+      EventHandlers[ClientEvents.ShowCharacterInformation] += new Action<bool>(ShowCharacterInformation);
+      EventHandlers[ClientEvents.ShowCharacterCreationMenu] += new Action<bool>(ShowCharacterCreationMenu);
     }
 
     private void CreateUi(string resourceName)
     {
       if (_initialized) return;
-      _keyboardController = KeyboardController.GetInstance();
-      _keyboardController.ControlPressed += OnKeyPressed;
       _initialized = true;
-
-
-      _hudElements.Add(new Speedometer());
-
-
-      _pool = new MenuPool();
-      _pool.Add(CreateSimpleMenu());
-      _pool.RefreshIndex();
-
+      _hudElements.Add(HudIds.Speedometer, new Speedometer());
       _menus.Add(MenuIds.CarSpawner, new CarSpawnMenu("Car Spawner", "Spawn a car"));
+      _pool = new MenuPool();
+
+      foreach (var value in _menus.Values)
+      {
+        _pool.Add(value);
+      }
 
       Tick += async () =>
       {
         _pool.ProcessMenus();
-        _hudElements.ForEach(element => element.Draw());
+        foreach (var hudElementsValue in _hudElements.Values)
+        {
+          hudElementsValue.Draw();
+          hudElementsValue.Update();
+        }
       };
-
-      Tick += async () => { _hudElements.ForEach(element => element.Update()); };
     }
 
-    private UIMenu CreateSimpleMenu()
-    {
-      var menu = new UIMenu("Native UI", "~b~NativeUI Showcase", true);
 
-      return menu;
+    private async void ShowCharacterInformation(bool visible)
+    {
+      _hudElements[HudIds.CharacterInformation].Visible = visible;
     }
 
-    private void OnKeyPressed(object sender, Control control)
+    private async void ShowCharacterCreationMenu(bool visible)
     {
-      switch (control)
-      {
-        case Control.SelectCharacterFranklin:
-          break;
-        case Control.SelectCharacterMichael:
-          _menus[MenuIds.CarSpawner].Visible = !_menus[MenuIds.CarSpawner].Visible;
-          break;
-        case Control.SelectCharacterTrevor:
-          break;
-        default:
-          TriggerEvent("chat:addMessage", new
-          {
-            color = new[] {255, 255, 255},
-            args = new[] {"Unmapped command."}
-          });
-          break;
-      }
+      _hudElements[HudIds.Speedometer].Visible = visible;
     }
   }
 }

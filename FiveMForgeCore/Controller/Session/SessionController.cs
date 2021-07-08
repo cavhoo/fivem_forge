@@ -29,7 +29,7 @@ namespace FiveMForge.Controller.Session
             EventHandlers[FiveMEvents.PlayerConnecting] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
             EventHandlers[ServerEvents.Heartbeat] += new Action<Player>(OnHeartbeat);
             EventHandlers[FiveMEvents.PlayerDisconnecting] += new Action<Player>(ClearSessionId);
-            EventHandlers[FiveMEvents.PlayerDisconnecting] += new Action<Player, string>(OnPlayerDisconnecting);
+            //EventHandlers[FiveMEvents.PlayerDisconnecting] += new Action<Player, string>(OnPlayerDisconnecting);
         }
 
         /// <summary>

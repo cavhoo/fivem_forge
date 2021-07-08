@@ -1,7 +1,11 @@
 extern alias CFX;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
+using fastJSON;
+using FiveMForgeClient.Enums;
 using FiveMForgeClient.Models;
 using static CFX::CitizenFX.Core.Native.API;
 
@@ -16,14 +20,14 @@ namespace FiveMForgeClient.Controller
 
     public SpawnController()
     {
-      //EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
+      EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
     }
 
     private void OnClientResourceStart(string resourceName)
     {
       if (Instantiated) return;
       Instantiated = true;
-      EventHandlers[ServerEvents.SpawnAt] += new Action<float, float, float>(SpawnPlayer);
+      EventHandlers[ClientEvents.SpawnPlayer] += new Action<dynamic, int>(SpawnPlayer);
       Tick += SpawnLoop;
     }
 
@@ -95,18 +99,14 @@ namespace FiveMForgeClient.Controller
       }
     }
 
-    private async void SpawnPlayer(float x, float y, float z)
+    private async void SpawnPlayer(dynamic character, int cameraHandle)
     {
+      var characterToSpawn = character as IDictionary<string, object>;
+      var lastPos = (Vector3) characterToSpawn["LastPos"];
       if (SpawnLock) return;
-
       SpawnLock = true;
-
-      DoScreenFadeOut(500);
-      while (!IsScreenFadedOut())
-      {
-        await Delay(5);
-      }
-
+      var playerPed = GetPlayerPed(PlayerId());
+      StartPlayerSwitch(playerPed, playerPed, 513, 3);
       FreezePlayer(PlayerId(), true);
       var modelHashKey = GetHashKey("a_m_y_hipster_01");
       RequestModel((uint) modelHashKey);
@@ -114,7 +114,6 @@ namespace FiveMForgeClient.Controller
       while (!HasModelLoaded((uint) modelHashKey))
       {
         RequestModel((uint) modelHashKey);
-        Debug.WriteLine("Wating for model to load...");
         await Delay(5);
       }
 
@@ -122,9 +121,9 @@ namespace FiveMForgeClient.Controller
       SetModelAsNoLongerNeeded((uint) modelHashKey);
 
       var ped = PlayerPedId();
-      RequestCollisionAtCoord(x, y, z);
-      SetEntityCoordsNoOffset(ped, x, y, z, true, false, false);
-      NetworkResurrectLocalPlayer(x, y, z, 0, true, false);
+      RequestCollisionAtCoord(lastPos.X, lastPos.Y, lastPos.Z);
+      SetEntityCoordsNoOffset(ped, lastPos.X, lastPos.Y, lastPos.Z, true, false, false);
+      NetworkResurrectLocalPlayer(lastPos.X, lastPos.Y, lastPos.Z, 0, true, false);
       ClearPedTasksImmediately(ped);
       RemoveAllPedWeapons(ped, true);
       ClearPlayerWantedLevel(PlayerId());
@@ -136,8 +135,6 @@ namespace FiveMForgeClient.Controller
         await Delay(0);
       }
 
-      ShutdownLoadingScreen();
-
       if (IsScreenFadedOut())
       {
         DoScreenFadeIn(500);
@@ -147,7 +144,15 @@ namespace FiveMForgeClient.Controller
         }
       }
 
+      SetPlayerControl(ped, true, 1 << 2);
       FreezePlayer(PlayerId(), false);
+      DestroyCam(cameraHandle, false);
+      RenderScriptCams(false, false, 1, true, true);
+      StopPlayerSwitch();
+      DisplayRadar(true);
+      DisplayHud(true);
+      DisplayCash(true);
+      ShowHudELements();
       SpawnLock = false;
     }
 
@@ -155,6 +160,20 @@ namespace FiveMForgeClient.Controller
     {
       // Get last saved player position from server
       TriggerServerEvent(ServerEvents.GetLastSpawnPosition);
+    }
+
+    private void ShowHudELements()
+    {
+      ShowHudComponentThisFrame((int) HudElements.Cash);
+      ShowHudComponentThisFrame((int) HudElements.MpCash);
+      ShowHudComponentThisFrame((int) HudElements.AreaName);
+      ShowHudComponentThisFrame((int) HudElements.Reticle);
+      ShowHudComponentThisFrame((int) HudElements.RadioStations);
+      ShowHudComponentThisFrame((int) HudElements.HelpText);
+      ShowHudComponentThisFrame((int) HudElements.HudComponents);
+      ShowHudComponentThisFrame((int) HudElements.HudWeapons);
+      ShowHudComponentThisFrame((int) HudElements.WantedStars);
+      ShowHudComponentThisFrame((int) HudElements.Cash);
     }
 
     private async void OnShowCharacterCreation(float x, float y, float z)

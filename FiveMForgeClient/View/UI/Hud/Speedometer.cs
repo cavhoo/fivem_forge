@@ -24,7 +24,6 @@ namespace FiveMForgeClient.View.UI.Hud
     public override void Update()
     {
       if (!Game.PlayerPed.IsInVehicle()) return;
-      Debug.WriteLine($"{Game.PlayerPed?.CurrentVehicle?.Speed * 3.6}");
       _speedText.Caption =
         $"{Math.Floor(Game.PlayerPed.CurrentVehicle.Speed * 3.6).ToString(CultureInfo.CurrentCulture)} km/h";
     }

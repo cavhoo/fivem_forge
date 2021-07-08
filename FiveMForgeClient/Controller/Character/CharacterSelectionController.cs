@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
 using fastJSON;
+using FiveMForgeClient.Enums;
 using FiveMForgeClient.Models;
 using static CFX::CitizenFX.Core.Native.API;
 
@@ -13,12 +14,16 @@ namespace FiveMForgeClient.Controller.Character
 {
   public class CharacterSelectionController : BaseScript
   {
-    private bool Instantiated = false;
+    private bool Instantiated;
+    private bool Enabled;
+    private int currentCharacterIndex;
     private int SelectionCameraHandle = -1;
-    private Vector3 SpawnLocation = new Vector3(-74.95219f, -818.7512f, 326.0000f);
-    private int SlotMarkerRadius = 6;
-    private int SlotMarkerAmount = 2;
-    private List<int> createdCharacters = new List<int>();
+    private readonly Vector3 _spawnLocation = new(-74.95219f, -818.7512f, 326.0000f);
+    private const int _slotMarkerRadius = 6;
+    private const int _slotMarkerAmount = 8;
+    private readonly List<int> _createdCharacters = new();
+    private List<Vector3> slotMarkerCoords;
+    private List<Models.Character.Character> _availableCharacters;
 
     public CharacterSelectionController()
     {
@@ -30,22 +35,93 @@ namespace FiveMForgeClient.Controller.Character
       if (Instantiated) return;
       Instantiated = true;
       EventHandlers[ServerEvents.CharactersLoaded] += new Action<string>(OnShowCharacterSelection);
+      slotMarkerCoords = CreateSlotMarkerPositions();
       TriggerServerEvent(ServerEvents.LoadCharacters);
+      Tick += HandleKeyboardInput;
+    }
+
+    private async Task HandleKeyboardInput()
+    {
+      if (Game.IsControlJustPressed(0, Control.FrontendLeft))
+      {
+        Debug.WriteLine($"Left pressed {currentCharacterIndex}");
+        if (currentCharacterIndex == 0)
+        {
+          currentCharacterIndex = slotMarkerCoords.Count() -1;
+        }
+        else
+        {
+          currentCharacterIndex--;
+        }
+
+        UpdateCharacterCamera();
+      }
+
+      if (Game.IsControlJustPressed(0, Control.FrontendRight))
+      {
+        Debug.WriteLine($"Right pressed {currentCharacterIndex}");
+        if (currentCharacterIndex == slotMarkerCoords.Count() - 1)
+        {
+          currentCharacterIndex = 0;
+        }
+        else
+        {
+          currentCharacterIndex++;
+        }
+
+        UpdateCharacterCamera();
+      }
+
+      if (Game.IsControlJustPressed(0, Control.FrontendAccept) || Game.IsControlJustPressed(0, Control.Enter))
+      {
+        Debug.WriteLine("Accepting character selection");
+        if (currentCharacterIndex < _availableCharacters.Count())
+        {
+          Enabled = false;
+          Debug.WriteLine($"Selected character {currentCharacterIndex}");
+          // Remove handler to draw slot marker
+          Tick -= DrawCharacterSlotMarker;
+          // Remove Keyboard handling
+          Tick -= HandleKeyboardInput;
+          
+          // Remove all spawned characters from roof top
+          for (var i = 0; i < _createdCharacters.Count(); i++)
+          {
+            var removablePedId = _createdCharacters[i];
+            DeleteEntity(ref removablePedId);
+          }
+          // Tell SpawnManager to spawn player at last character coords
+          TriggerEvent(ClientEvents.SpawnPlayer, _availableCharacters[currentCharacterIndex], SelectionCameraHandle);
+        }
+      }
+    }
+
+    private void UpdateCharacterCamera()
+    {
+      var selectedCharPos = slotMarkerCoords[currentCharacterIndex];
+      var camPosX = (_slotMarkerRadius + 5) * Math.Cos(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
+      var camPosY = (_slotMarkerRadius + 5) * Math.Sin(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
+
+      SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
+        328.17358f);
+      PointCamAtCoord(SelectionCameraHandle, selectedCharPos.X, selectedCharPos.Y, _spawnLocation.Z);
+      RenderScriptCams(true, true, 200, true, false);
     }
 
     private async void OnShowCharacterSelection(string characters)
     {
+      Enabled = true;
       var availCharacter = JSON.Parse(characters);
       if (!(availCharacter is IEnumerable characterList)) return;
       var playerPed = PlayerPedId();
       SetPlayerControl(playerPed, false, 1 << 2);
       FreezeEntityPosition(playerPed, true);
-      SetEntityCoords(playerPed, SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z, false, false, false, true);
+      SetEntityCoords(playerPed, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, false, false, false, true);
       SetEntityVisible(playerPed, false, false);
       Tick += DrawCharacterSlotMarker; // Draw markers in a circle based on how many characters an account can have.
-      DisplayHud(false);
       DisplayRadar(false);
-      DisableAllControlActions(2);
+      DisplayHud(false);
+      DisableAllControlActions(0);
       DisableFirstPersonCamThisFrame();
       ShutdownLoadingScreen();
       DoScreenFadeOut(500);
@@ -56,14 +132,15 @@ namespace FiveMForgeClient.Controller.Character
 
       if (SelectionCameraHandle < 0)
       {
-        SelectionCameraHandle = CreateCamWithParams(CameraTypes.DEFAULT_SCRIPTED_CAMERA, SpawnLocation.X, SpawnLocation.Y,
-          SpawnLocation.Z + 20, 0, 0, 0,
+        SelectionCameraHandle = CreateCamWithParams(CameraTypes.DEFAULT_SCRIPTED_CAMERA, _spawnLocation.X,
+          _spawnLocation.Y,
+          _spawnLocation.Z + 20, 0, 0, 0,
           GetGameplayCamFov(), false, 1);
       }
 
-      SpawnCharacters(ParseCharacterList(characterList));
+      _availableCharacters = ParseCharacterList(characterList);
+      SpawnCharacters(_availableCharacters);
       SetCamActive(SelectionCameraHandle, true);
-      PointCamAtCoord(SelectionCameraHandle, SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
       RenderScriptCams(true, true, 1000, true, false);
       DoScreenFadeIn(500);
       while (!IsScreenFadedIn())
@@ -81,27 +158,49 @@ namespace FiveMForgeClient.Controller.Character
       {
         await Delay(500);
       }
+
       var charAmount = characters.Count();
       for (var i = 0; i < charAmount; i++)
       {
-        var x = SlotMarkerRadius * Math.Cos(Utils.Math.ToRadians((360 / charAmount) * i));
-        var y = SlotMarkerRadius * Math.Sin(Utils.Math.ToRadians((360 / charAmount) * i));
-        var pedChar = CreatePed(2, (uint) modelHashKey, SpawnLocation.X - (float) x, SpawnLocation.Y - (float) y, 328.17358f, 90.0f, false, true);
-        createdCharacters.Add(pedChar);
+        var x = _slotMarkerRadius * Math.Cos(Utils.Math.ToRadians((360 / charAmount) * i));
+        var y = _slotMarkerRadius * Math.Sin(Utils.Math.ToRadians((360 / charAmount) * i));
+        var pedChar = CreatePed(2, (uint) modelHashKey, _spawnLocation.X - (float) x, _spawnLocation.Y - (float) y,
+          328.17358f, 90.0f, false, true);
+        _createdCharacters.Add(pedChar);
       }
 
-      var firstCharacterPos = GetEntityCoords(createdCharacters[0], true);
-      SetCamCoord(SelectionCameraHandle, firstCharacterPos.X, firstCharacterPos.Y, firstCharacterPos.Z);
+      var firstCharacterPos = GetEntityCoords(_createdCharacters[0], true);
+      var camPosX = (_slotMarkerRadius + 5) * Math.Cos(Utils.Math.ToRadians((360 / charAmount) * 0));
+      var camPosY = (_slotMarkerRadius + 5) * Math.Sin(Utils.Math.ToRadians((360 / charAmount) * 0));
+
+      SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
+        firstCharacterPos.Z);
+      PointCamAtCoord(SelectionCameraHandle, firstCharacterPos.X, firstCharacterPos.Y, _spawnLocation.Z);
+    }
+
+    private List<Vector3> CreateSlotMarkerPositions()
+    {
+      var markerList = new List<Vector3>();
+      for (var i = 0; i < _slotMarkerAmount; i++)
+      {
+        var x = _slotMarkerRadius * Math.Cos(Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
+        var y = _slotMarkerRadius * Math.Sin(Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
+        markerList.Add(new Vector3(_spawnLocation.X - (float) x, _spawnLocation.Y - (float) y,
+          _spawnLocation.Z - 1.0f));
+      }
+
+      return markerList;
     }
 
     private async Task DrawCharacterSlotMarker()
     {
-      for (var i = 0; i < SlotMarkerAmount; i++)
+      if (!Enabled) return;
+      for (var i = 0; i < slotMarkerCoords.Count(); i++)
       {
-        var x = SlotMarkerRadius * Math.Cos(Utils.Math.ToRadians((360 / SlotMarkerAmount) * i));
-        var y = SlotMarkerRadius * Math.Sin(Utils.Math.ToRadians((360 / SlotMarkerAmount) * i)); 
-        DrawMarker(1,SpawnLocation.X - (float)  x, SpawnLocation.Y - (float) y, 327.17358f - 1.8f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-          255, 0, 0,
+        var cords = slotMarkerCoords[i];
+        DrawMarker(1, cords.X, cords.Y, cords.Z, 0.0f, 0.0f, 0.0f,
+          0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+          119, 168, 186,
           255, false, false, 2, false, null, null, false);
       }
     }
@@ -111,16 +210,34 @@ namespace FiveMForgeClient.Controller.Character
       var charList = new List<Models.Character.Character>();
       foreach (Dictionary<string, object> character in characterList)
       {
+        var lastPosString = Convert.ToString(character["LastPos"]).Split(':');
+        var lastPosVector = new Vector3(float.Parse(lastPosString[0]), float.Parse(lastPosString[1]), float.Parse(lastPosString[2]));
+        
         charList.Add(new(
           Convert.ToString(character["Name"]),
           Convert.ToInt32(character["Age"]),
           Convert.ToString(character["AccountUuid"]),
           Convert.ToString(character["JobUuid"]),
-          Convert.ToString(character["CharacterUuid"])
+          Convert.ToString(character["CharacterUuid"]),
+          lastPosVector
         ));
       }
 
       return charList;
     }
- }
+
+    private void HideHudELements()
+    {
+      HideHudComponentThisFrame((int)HudElements.Cash);
+      HideHudComponentThisFrame((int)HudElements.MpCash);
+      HideHudComponentThisFrame((int)HudElements.AreaName);
+      HideHudComponentThisFrame((int)HudElements.Reticle);
+      HideHudComponentThisFrame((int)HudElements.RadioStations);
+      HideHudComponentThisFrame((int)HudElements.HelpText);
+      HideHudComponentThisFrame((int)HudElements.HudComponents);
+      HideHudComponentThisFrame((int)HudElements.HudWeapons);
+      HideHudComponentThisFrame((int)HudElements.WantedStars);
+      HideHudComponentThisFrame((int)HudElements.Cash);
+    }
+  }
 }
