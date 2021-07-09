@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
 using fastJSON;
+using FiveMForgeClient.Controller.Language;
 using FiveMForgeClient.Enums;
 using FiveMForgeClient.Models;
 using static CFX::CitizenFX.Core.Native.API;
@@ -44,7 +45,6 @@ namespace FiveMForgeClient.Controller.Character
     {
       if (Game.IsControlJustPressed(0, Control.FrontendLeft))
       {
-        Debug.WriteLine($"Left pressed {currentCharacterIndex}");
         if (currentCharacterIndex == 0)
         {
           currentCharacterIndex = slotMarkerCoords.Count() -1;
@@ -59,7 +59,6 @@ namespace FiveMForgeClient.Controller.Character
 
       if (Game.IsControlJustPressed(0, Control.FrontendRight))
       {
-        Debug.WriteLine($"Right pressed {currentCharacterIndex}");
         if (currentCharacterIndex == slotMarkerCoords.Count() - 1)
         {
           currentCharacterIndex = 0;
@@ -69,16 +68,21 @@ namespace FiveMForgeClient.Controller.Character
           currentCharacterIndex++;
         }
 
+        if (currentCharacterIndex > _availableCharacters.Count())
+        {
+          BeginTextCommandDisplayHelp("STRING");
+          AddTextComponentSubstringPlayerName(LanguageController.Translate("create_character_here"));
+          EndTextCommandDisplayHelp(0, false, true, -1);
+          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, true);
+        }
         UpdateCharacterCamera();
       }
 
       if (Game.IsControlJustPressed(0, Control.FrontendAccept) || Game.IsControlJustPressed(0, Control.Enter))
       {
-        Debug.WriteLine("Accepting character selection");
         if (currentCharacterIndex < _availableCharacters.Count())
         {
           Enabled = false;
-          Debug.WriteLine($"Selected character {currentCharacterIndex}");
           // Remove handler to draw slot marker
           Tick -= DrawCharacterSlotMarker;
           // Remove Keyboard handling
@@ -105,7 +109,7 @@ namespace FiveMForgeClient.Controller.Character
       SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
         328.17358f);
       PointCamAtCoord(SelectionCameraHandle, selectedCharPos.X, selectedCharPos.Y, _spawnLocation.Z);
-      RenderScriptCams(true, true, 200, true, false);
+      RenderScriptCams(true, true, 500, true, false);
     }
 
     private async void OnShowCharacterSelection(string characters)
@@ -142,6 +146,7 @@ namespace FiveMForgeClient.Controller.Character
       SpawnCharacters(_availableCharacters);
       SetCamActive(SelectionCameraHandle, true);
       RenderScriptCams(true, true, 1000, true, false);
+      TriggerEvent(ClientEvents.ShowCharacterInformation, true);
       DoScreenFadeIn(500);
       while (!IsScreenFadedIn())
       {

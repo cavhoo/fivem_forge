@@ -32,9 +32,7 @@ namespace FiveMForgeClient.Models
         /// </summary>
         public const string OpenCharacterSelection = "FiveMForge:OpenCharacterSelection";
         public const string ShowCharacterInformation = "FiveMForge:ShowCharacterInformation";
-        public const string HideCharacterInformation = "FiveMForge:HideCharacterInformation";
         public const string ShowCharacterCreationMenu = "FiveMForge:ShowCharacterCreationMenu";
-        public const string HideCharacterCreationMenu = "FiveMForge:HideCharacterCreationMenu";
     }
     
     

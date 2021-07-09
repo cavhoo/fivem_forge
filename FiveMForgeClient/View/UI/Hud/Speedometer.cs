@@ -17,8 +17,7 @@ namespace FiveMForgeClient.View.UI.Hud
     {
       int x = 0, y = 0;
       GetActiveScreenResolution(ref x, ref y);
-      Debug.WriteLine($"Current resolution: {x} / {y}");
-      _speedText = new Text("0 km/h", new PointF(x / 2, y - 100), 0.5f);
+      _speedText = new Text("0 km/h", new PointF(300, 200), 0.5f);
     }
 
     public override void Update()

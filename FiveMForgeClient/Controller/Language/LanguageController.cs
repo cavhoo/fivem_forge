@@ -72,7 +72,7 @@ namespace FiveMForgeClient.Controller.Language
         
         public static string Translate(string key)
         {
-            if (_currentLocale.Count == 0)
+            if (_currentLocale == null)
             {
                 var currentLocale = GetCurrentLanguage();
                 LoadTranslation(currentLocale);

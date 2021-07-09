@@ -21,31 +21,28 @@ namespace FiveMForgeClient.View.UI.Hud
 
     private void Initialize()
     {
-      var name = new Text($"Name Hans", PointF.Empty, 1.0f);
+      var name = new Text($"Name Hans", PointF.Empty, .5f);
       Lines.Add(name);
-      var age = new Text("Age 52", PointF.Empty, 1.0f);
+      var age = new Text("Age 52", PointF.Empty, .5f);
       Lines.Add(age);
-      var job = new Text("Job: ", PointF.Empty, 1.0f);
+      var job = new Text("Job: ", PointF.Empty, .5f);
       Lines.Add(job);
-      var walletMoney = new Text("Wallet Amount", PointF.Empty, 1.0f);
+      var walletMoney = new Text("Wallet Amount", PointF.Empty, .5f);
       Lines.Add(walletMoney);
-      var bankMoney = new Text("Bank Amount", PointF.Empty, 1.0f);
+      var bankMoney = new Text("Bank Amount", PointF.Empty, .5f);
       Lines.Add(bankMoney);
     }
 
     public override void Update()
     {
-      throw new System.NotImplementedException();
     }
 
     public override void Draw()
     {
-      if (Visible)
+      if (!Visible) return;
+      for (var i = 0; i < Lines.Count(); i++)
       {
-        for (int i = 0; i < Lines.Count(); i++)
-        {
-          Lines[i].Draw();
-        }
+        Lines[i].Draw();
       }
     }
   }
