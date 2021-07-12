@@ -6,7 +6,7 @@ namespace FiveMForgeClient.Models.Character
   {
     public static NoseTemplate[] NoseTemplates =
     {
-      new(0.1f, 0.1f, 0.1f, 0.1f),
+      new(0.5f, 0.2f, 0.6f, 0.1f),
       new(0.1f, 0.2f, 0.7f, 0.1f),
       new(0.2f, 0.1f, 0.1f, 0.1f),
       new(0.1f, 0.1f, 0.9f, 0.1f),
