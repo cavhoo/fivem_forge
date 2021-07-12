@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
 using fastJSON;
-using FiveMForgeClient.Controller.Language;
+using FiveMForgeClient.Services.Language;
 using FiveMForgeClient.Enums;
 using FiveMForgeClient.Models;
 using static CFX::CitizenFX.Core.Native.API;
@@ -18,6 +18,7 @@ namespace FiveMForgeClient.Controller.Character
     private bool Instantiated;
     private bool Enabled;
     private int currentCharacterIndex;
+    private int newCharacterPedId;
     private int SelectionCameraHandle = -1;
     private readonly Vector3 _spawnLocation = new(-74.95219f, -818.7512f, 326.0000f);
     private const int _slotMarkerRadius = 6;
@@ -29,6 +30,7 @@ namespace FiveMForgeClient.Controller.Character
     public CharacterSelectionController()
     {
       EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnScriptStart);
+      EventHandlers[ClientEvents.CharacterCreationClosed] += new Action<dynamic>(obj => Enabled = true);
     }
 
     private void OnScriptStart(string resourceName)
@@ -43,11 +45,12 @@ namespace FiveMForgeClient.Controller.Character
 
     private async Task HandleKeyboardInput()
     {
+      if (!Enabled) return;
       if (Game.IsControlJustPressed(0, Control.FrontendLeft))
       {
         if (currentCharacterIndex == 0)
         {
-          currentCharacterIndex = slotMarkerCoords.Count() -1;
+          currentCharacterIndex = slotMarkerCoords.Count() - 1;
         }
         else
         {
@@ -68,13 +71,13 @@ namespace FiveMForgeClient.Controller.Character
           currentCharacterIndex++;
         }
 
-        if (currentCharacterIndex > _availableCharacters.Count())
+        if (currentCharacterIndex >= _availableCharacters.Count())
         {
           BeginTextCommandDisplayHelp("STRING");
-          AddTextComponentSubstringPlayerName(LanguageController.Translate("create_character_here"));
+          AddTextComponentSubstringPlayerName(LanguageService.Translate("create_character_here"));
           EndTextCommandDisplayHelp(0, false, true, -1);
-          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, true);
         }
+
         UpdateCharacterCamera();
       }
 
@@ -82,20 +85,37 @@ namespace FiveMForgeClient.Controller.Character
       {
         if (currentCharacterIndex < _availableCharacters.Count())
         {
-          Enabled = false;
           // Remove handler to draw slot marker
           Tick -= DrawCharacterSlotMarker;
           // Remove Keyboard handling
           Tick -= HandleKeyboardInput;
-          
+
           // Remove all spawned characters from roof top
           for (var i = 0; i < _createdCharacters.Count(); i++)
           {
             var removablePedId = _createdCharacters[i];
             DeleteEntity(ref removablePedId);
           }
+
           // Tell SpawnManager to spawn player at last character coords
           TriggerEvent(ClientEvents.SpawnPlayer, _availableCharacters[currentCharacterIndex], SelectionCameraHandle);
+        }
+        else
+        {
+          Enabled = false;
+          // TODO: Replace with model information from character data...
+          var modelHashKey = GetHashKey("mp_m_freemode_01");
+          RequestModel((uint) modelHashKey);
+          while (!HasModelLoaded((uint) modelHashKey))
+          {
+            await Delay(5);
+          }
+
+          newCharacterPedId = CreatePed(2, (uint) modelHashKey, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0,
+            false,true);
+          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, true, newCharacterPedId );
+          PointCamAtCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z);
+          SetCamCoord(SelectionCameraHandle, _spawnLocation.X + 2.0f, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
         }
       }
     }
@@ -103,13 +123,14 @@ namespace FiveMForgeClient.Controller.Character
     private void UpdateCharacterCamera()
     {
       var selectedCharPos = slotMarkerCoords[currentCharacterIndex];
-      var camPosX = (_slotMarkerRadius + 5) * Math.Cos(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
-      var camPosY = (_slotMarkerRadius + 5) * Math.Sin(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
+      var camPosX = (_slotMarkerRadius + 5) *
+                    Math.Cos(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
+      var camPosY = (_slotMarkerRadius + 5) *
+                    Math.Sin(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
 
       SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
         328.17358f);
       PointCamAtCoord(SelectionCameraHandle, selectedCharPos.X, selectedCharPos.Y, _spawnLocation.Z);
-      RenderScriptCams(true, true, 500, true, false);
     }
 
     private async void OnShowCharacterSelection(string characters)
@@ -129,6 +150,7 @@ namespace FiveMForgeClient.Controller.Character
       DisableFirstPersonCamThisFrame();
       ShutdownLoadingScreen();
       DoScreenFadeOut(500);
+
       while (!IsScreenFadedOut())
       {
         await Delay(5);
@@ -145,7 +167,7 @@ namespace FiveMForgeClient.Controller.Character
       _availableCharacters = ParseCharacterList(characterList);
       SpawnCharacters(_availableCharacters);
       SetCamActive(SelectionCameraHandle, true);
-      RenderScriptCams(true, true, 1000, true, false);
+      RenderScriptCams(true, true, 1000, false, false);
       TriggerEvent(ClientEvents.ShowCharacterInformation, true);
       DoScreenFadeIn(500);
       while (!IsScreenFadedIn())
@@ -216,8 +238,9 @@ namespace FiveMForgeClient.Controller.Character
       foreach (Dictionary<string, object> character in characterList)
       {
         var lastPosString = Convert.ToString(character["LastPos"]).Split(':');
-        var lastPosVector = new Vector3(float.Parse(lastPosString[0]), float.Parse(lastPosString[1]), float.Parse(lastPosString[2]));
-        
+        var lastPosVector = new Vector3(float.Parse(lastPosString[0]), float.Parse(lastPosString[1]),
+          float.Parse(lastPosString[2]));
+
         charList.Add(new(
           Convert.ToString(character["Name"]),
           Convert.ToInt32(character["Age"]),
@@ -233,16 +256,16 @@ namespace FiveMForgeClient.Controller.Character
 
     private void HideHudELements()
     {
-      HideHudComponentThisFrame((int)HudElements.Cash);
-      HideHudComponentThisFrame((int)HudElements.MpCash);
-      HideHudComponentThisFrame((int)HudElements.AreaName);
-      HideHudComponentThisFrame((int)HudElements.Reticle);
-      HideHudComponentThisFrame((int)HudElements.RadioStations);
-      HideHudComponentThisFrame((int)HudElements.HelpText);
-      HideHudComponentThisFrame((int)HudElements.HudComponents);
-      HideHudComponentThisFrame((int)HudElements.HudWeapons);
-      HideHudComponentThisFrame((int)HudElements.WantedStars);
-      HideHudComponentThisFrame((int)HudElements.Cash);
+      HideHudComponentThisFrame((int) HudElements.Cash);
+      HideHudComponentThisFrame((int) HudElements.MpCash);
+      HideHudComponentThisFrame((int) HudElements.AreaName);
+      HideHudComponentThisFrame((int) HudElements.Reticle);
+      HideHudComponentThisFrame((int) HudElements.RadioStations);
+      HideHudComponentThisFrame((int) HudElements.HelpText);
+      HideHudComponentThisFrame((int) HudElements.HudComponents);
+      HideHudComponentThisFrame((int) HudElements.HudWeapons);
+      HideHudComponentThisFrame((int) HudElements.WantedStars);
+      HideHudComponentThisFrame((int) HudElements.Cash);
     }
   }
 }

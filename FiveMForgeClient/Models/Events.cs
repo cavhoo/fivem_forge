@@ -13,6 +13,7 @@ namespace FiveMForgeClient.Models
         public const string SavePOIPosition = "FiveMForge:SavePOIPosition";
         public const string LoadCharacters = "FiveMForge:LoadCharacters";
         public const string CharactersLoaded = "FiveMForge:CharactersLoaded";
+        public const string SaveCreatedCharacter = "FiveMForge:SaveCreatedCharacter";
     }
 
     /// <summary>
@@ -26,13 +27,15 @@ namespace FiveMForgeClient.Models
         public const string SpawnAt = "FiveMForge:SpawnAt";
         public const string ScriptStart = "onClientResourceStart";
         public const string SpawnPlayer = "FiveMForge:SpawnPlayer";
+        public const string ZoomOntoFace = "FiveMForge:ZoomOntoFace";
+        public const string ZoomBody = "FiveMForge:ZoomBody";
         
         /// <summary>
         /// UI Events
         /// </summary>
-        public const string OpenCharacterSelection = "FiveMForge:OpenCharacterSelection";
         public const string ShowCharacterInformation = "FiveMForge:ShowCharacterInformation";
         public const string ShowCharacterCreationMenu = "FiveMForge:ShowCharacterCreationMenu";
+        public const string CharacterCreationClosed = "FiveMForge:CharacterCreationClosed";
     }
     
     

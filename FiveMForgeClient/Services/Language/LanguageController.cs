@@ -8,7 +8,7 @@ using FiveMForgeClient.Models.Locales;
 using CFX::CitizenFX.Core;
 using static CFX::CitizenFX.Core.Native.API;
 
-namespace FiveMForgeClient.Controller.Language
+namespace FiveMForgeClient.Services.Language
 {
     public enum Locales
     {
@@ -26,14 +26,14 @@ namespace FiveMForgeClient.Controller.Language
         MX,
         CN
     }
-    public static class LanguageController
+    public static class LanguageService
     {
         private static Dictionary<string, string> _currentLocale;
         private static Dictionary<string, string> _fallback;
         public static void LoadTranslation(int language)
         {
             var currentLang = (Locales) language;
-            _fallback = En.Locale;
+            _fallback = De.Locale;
             switch (currentLang)
             {
                 case Locales.EN:

@@ -8,11 +8,12 @@ using CFX::CitizenFX.Core;
 using CFX::CitizenFX.Core.UI;
 using CFX::System.Drawing;
 using FiveMForgeClient.Controller.Character;
-using FiveMForgeClient.Controller.Language;
+using FiveMForgeClient.Services.Language;
 using FiveMForgeClient.Models;
 using FiveMForgeClient.View.UI.Hud;
 using FiveMForgeClient.View.UI.Menu;
-using NativeUI;
+using LemonUI;
+using LemonUI.Menus;
 
 namespace FiveMForgeClient.View
 {
@@ -34,36 +35,33 @@ namespace FiveMForgeClient.View
   public class UIMain : BaseScript
   {
     private bool _initialized = false;
-    private MenuPool _pool;
-    private Dictionary<MenuIds, UIMenu> _menus;
+    private ObjectPool _pool;
+    private Dictionary<MenuIds, NativeMenu> _menus;
     private Dictionary<HudIds, Base> _hudElements;
 
     public UIMain()
     {
-      _menus = new Dictionary<MenuIds, UIMenu>();
+      _menus = new Dictionary<MenuIds, NativeMenu>();
       EventHandlers[ClientEvents.ScriptStart] += new Action<string>(CreateUi);
-      EventHandlers[ClientEvents.ShowCharacterInformation] += new Action<bool>(ShowCharacterInformation);
-      EventHandlers[ClientEvents.ShowCharacterCreationMenu] += new Action<bool>(ShowCharacterCreationMenu);
+      //EventHandlers[ClientEvents.ShowCharacterInformation] += new Action<bool>(ShowCharacterInformation);
+      EventHandlers[ClientEvents.ShowCharacterCreationMenu] += new Action<bool, int>(ShowCharacterCreationMenu);
     }
 
     private void CreateUi(string resourceName)
     {
       if (_initialized) return;
       _hudElements = new Dictionary<HudIds, Base>();
-      _menus = new Dictionary<MenuIds, UIMenu>();
+      _menus = new Dictionary<MenuIds, NativeMenu>();
       _initialized = true;
-      _hudElements.Add(HudIds.Speedometer, new Speedometer());
-      _hudElements.Add(HudIds.CharacterInformation, new CharacterInformation());
       _menus.Add(MenuIds.CarSpawner, new CarSpawnMenu("Car Spawner", "Spawn a car"));
-      _pool = new MenuPool();
+      _pool = new ObjectPool();
 
+      var characterCreator = new CharacterCreator(LanguageService.Translate("character_creator"),
+        LanguageService.Translate("character_creator_description"));
 
-      var characterCreator = new CharacterCreator(LanguageController.Translate("character_creator"),
-        LanguageController.Translate("character_creator_description"));
-      
       characterCreator.SetMenuPool(ref _pool);
-      characterCreator.Visible = false;
       _menus.Add(MenuIds.CharacterCreator, characterCreator);
+      
       foreach (var value in _menus.Values)
       {
         _pool.Add(value);
@@ -71,7 +69,7 @@ namespace FiveMForgeClient.View
 
       Tick += async () =>
       {
-        _pool.ProcessMenus();
+        _pool.Process();
         foreach (var hudElementsValue in _hudElements.Values)
         {
           hudElementsValue.Draw();
@@ -87,9 +85,11 @@ namespace FiveMForgeClient.View
       _hudElements[HudIds.CharacterInformation].Visible = visible;
     }
 
-    private async void ShowCharacterCreationMenu(bool visible)
+    private async void ShowCharacterCreationMenu(bool visible, int pedId)
     {
+      ((CharacterCreator)_menus[MenuIds.CharacterCreator]).SetPedId(pedId);
       _menus[MenuIds.CharacterCreator].Visible = visible;
+      
     }
   }
 }
