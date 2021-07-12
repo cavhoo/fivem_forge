@@ -1,112 +1,138 @@
 extern alias CFX;
-
 using System;
 using System.Collections.Generic;
 using CFX::CitizenFX.Core;
-using FiveMForgeClient.Controller.Language;
+using FiveMForgeClient.Services.Language;
 
 namespace FiveMForgeClient.Models.Character
 {
-    public static class CharacterComponents
+  public static class CharacterComponents
+  {
+    public static readonly string[] InheritanceMoms =
     {
-        public static readonly CharacterComponent[] Components =
-        {
-            new(LanguageController.Translate("sex"), "sex", 0, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("mom"), "mom", 21, 21, 0.6f, 0.65f),
-            new(LanguageController.Translate("dad"), "dad", 0, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("resemblance"), "face_md_weight", 50, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("skin_tone"), "skin_md_weight", 50, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("nose_1"), "nose_1", 0, -10, 0.6f, 0.65f),
-            new(LanguageController.Translate("nose_2"), "nose_2", 0, -10, 0.6f, 0.65f),
-            new(LanguageController.Translate("nose_3"), "nose_3", 0, -10, 0.6f, 0.65f),
-            new(LanguageController.Translate("nose_4"), "nose_4", 0, -10, 0.6f, 0.65f),
-            new(LanguageController.Translate("nose_5"), "nose_5", 0, -10, 0.6f, 0.65f),
-            new(LanguageController.Translate("nose_6"), "nose_6", 0, -10, 0.6f, 0.65f),
-            new(LanguageController.Translate("cheeks_1"), "cheeks_1", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("cheeks_2"), "cheeks_2", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("cheeks_3"), "cheeks_3", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("lip_fullness"), "lip_thickness", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("jaw_bone_width"), "jaw_1", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("jaw_bone_length"), "jaw_2", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("chin_height"), "chin_1", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("chin_length"), "chin_2", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("chin_width"), "chin_3", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("chin_hole"), "chin_4", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("neck_thickness"), "neck_thickness", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("hair_1"), "hair_1", 0, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("hair_2"), "hair_2", 0, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("hair_color_1"), "hair_color_1", 0, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("hair_color_2"), "hair_color_2", 0, 0, 0.6f, 0.65f),
-            new(LanguageController.Translate("tshirt_1"), "tshirt_1", 0, 0, 0.75f, 0.15f, 8),
-            new(LanguageController.Translate("tshirt_2"), "tshirt_2", 0, 0, 0.75f, 0.15f, "tshirt_1"),
-            new(LanguageController.Translate("torso_1"), "torso_1", 0, 0, 0.75f, 0.15f, 11),
-            new(LanguageController.Translate("torso_2"), "torso_2", 0, 0, 0.75f, 0.15f, "torso_1"),
-            new(LanguageController.Translate("decals_1"), "decals_1", 0, 0, 0.75f, 0.15f, 10),
-            new(LanguageController.Translate("decals_2"), "decals_2", 0, 0, 0.75f, 0.15f, "decals_1"),
-            new(LanguageController.Translate("arms"), "arms", 0, 0, 0.75f, 0.15f),
-            new(LanguageController.Translate("arms_2"), "arms_2", 0, 0, 0.75f, 0.15f),
-            new(LanguageController.Translate("pants_1"), "pants_1", 0, 0, 0.8f, -0.5f, 4),
-            new(LanguageController.Translate("pants_2"), "pants_2", 0, 0, 0.8f, -0.5f, "pants_1"),
-            new(LanguageController.Translate("shoes_1"), "shoes_1", 0, 0, 0.8f, -0.8f, 6),
-            new(LanguageController.Translate("shoes_2"), "shoes_2", 0, 0, 0.8f, -0.8f, "shoes_1"),
-            new(LanguageController.Translate("mask_1"), "mask_1", 0, 0, 0.6f, 0.65f, 1),
-            new(LanguageController.Translate("mask_2"), "mask_2", 0, 0, 0.6f, 0.65f, "mask_1"),
-            new(LanguageController.Translate("bproof_1"), "bproof_1", 0, 0, 0.75f, 0.15f, 9),
-            new(LanguageController.Translate("bproof_2"), "bproof_2", 0, 0, 0.75f, 0.15f, "bproof_1"),
-            new(LanguageController.Translate("chain_1"), "chain_1", 0, 0, 0.6f, 0.65f, 7),
-            new(LanguageController.Translate("chain_2"), "chain_2", 0, 0, 0.6f, 0.65f, "chain_1"),
-            new(LanguageController.Translate("helmet_1"), "helmet_1", -1, -1, 0.6f, 0.65f, 0),
-            new(LanguageController.Translate("helmet_2"), "helmet_2", 0, 0, 0.6f, 0.65f, "helmet_1"),
-            new(LanguageController.Translate("glasses_1"), "glasses_1", 0, 0, 0.6f, 0.65f, 1),
-            new(LanguageController.Translate("glasses_2"), "glasses_2", 0, 0, 0.6f, 0.65f, "glasses_1"),
-            new(LanguageController.Translate("watches_1"), "watches_1", -1, -1, 0.75f, 0.15f, 6),
-            new(LanguageController.Translate("watches_2"), "watches_2", 0, 0, 0.75f, 0.15f, "watches_1"),
-            new(LanguageController.Translate("bracelets_1"), "bracelets_1", -1, -1, 0.75f, 0.15f, 7),
-            new(LanguageController.Translate("bracelets_2"), "bracelets_2", 0, 0, 0.75f, 0.15f, "bracelets_1"),
-            new(LanguageController.Translate("bag"), "bags_1", 0, 0, 0.75f, 0.15f, 5),
-            new(LanguageController.Translate("bag_color"), "bags_2", 0, 0, 0.75f, 0.15f, "bags_1"),
-            new(LanguageController.Translate("eye_color"), "eye_color", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("eye_squint"), "eye_squint", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("eyebrow_size"), "eyebrows_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("eyebrow_type"), "eyebrows_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("eyebrow_color_1"), "eyebrows_3", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("eyebrow_color_2"), "eyebrows_4", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("eyebrow_height"), "eyebrows_5", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("eyebrow_depth"), "eyebrows_6", 0, -10, 0.4f, 0.65f),
-            new(LanguageController.Translate("makeup_type"), "makeup_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("makeup_thickness"), "makeup_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("makeup_color_1"), "makeup_3", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("makeup_color_2"), "makeup_4", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("lipstick_type"), "lipstick_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("lipstick_thickness"), "lipstick_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("lipstick_color_1"), "lipstick_3", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("lipstick_color_2"), "lipstick_4", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("ear_accessories"), "ears_1", -1, -1, 0.4f, 0.65f, 2),
-            new(LanguageController.Translate("ear_accessories_color"), "ears_2", 0, 0, 0.4f, 0.65f, "ears_1"),
-            new(LanguageController.Translate("chest_hair"), "chest_1", 0, 0, 0.75f, 0.15f),
-            new(LanguageController.Translate("chest_hair_1"), "chest_2", 0, 0, 0.75f, 0.15f),
-            new(LanguageController.Translate("chest_color"), "chest_3", 0, 0, 0.75f, 0.15f),
-            new(LanguageController.Translate("bodyb"), "bodyb_1", -1, -1, 0.75f, 0.15f),
-            new(LanguageController.Translate("bodyb_size"), "bodyb_2", 0, 0, 0.75f, 0.15f),
-            new(LanguageController.Translate("bodyb_extra"), "bodyb_3", -1, -1, 0.4f, 0.15f),
-            new(LanguageController.Translate("bodyb_extra_thickness"), "bodyb_4", 0, 0, 0.4f, 0.15f),
-            new(LanguageController.Translate("wrinkles"), "age_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("wrinkle_thickness"), "age_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("blemishes"), "blemishes_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("blemishes_size"), "blemishes_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("blush"), "blush_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("blush_1"), "blush_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("blush_color"), "blush_3", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("complexion"), "complexion_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("complexion_1"), "complexion_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("sun"), "sun_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("sun_1"), "sun_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("freckles"), "moles_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("freckles_1"), "moles_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("beard_type"), "beard_1", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("beard_size"), "beard_2", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("beard_color_1"), "beard_3", 0, 0, 0.4f, 0.65f),
-            new(LanguageController.Translate("beard_color_2"), "beard_4", 0, 0, 0.4f, 0.65f)
-        };
-    }
+      "Hannah", "Aubrey", "Jasmine", "Gisele", "Amelia", "Isabella", "Zoe", "Ava", "Camila", "Violet", "Sophia",
+      "Evelyn", "Nicole", "Ashley", "Gracie", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma"
+    };
+
+    public static readonly string[] InheritanceDads = 
+    {
+      "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Juan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel",
+      "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", " Claude", "Niko"
+    };
+
+    public static readonly string[] MaleHairStyles = 
+    {
+      "Close Shave", "Buzzcut", "Faux Hawk", "Hipster", "Side Parting", "Shorter Cut", "Biker", "Ponytail", "Cornrows",
+      "Slicked", "Short Brushed", "Spikey",
+      "Caesar", "Chopped", "Dreads", "Long Hair", "Shaggy Curls", "Surfer Dude", "Short Side Part",
+      "High Slicked Sides", "Long Slicked", "Hipster Youth", "Mullet", "Nightvision"
+    };
+
+    public static readonly string[] FemaleHairStyles = 
+    {
+      "Close Shave", "Short", "Layered Bob", "Pigtails", "Ponytail", "Braided Mohawk", "Braids", "Bob", "Faux Hawk",
+      "French Twist", "Long Bob", "Loose Tied",
+      "Pixie", "Shaved Bangs", "Top Knot", "Wavy Bob", "Pin Up Girl", "Messy Bun", "Unknown", "Tight Bun",
+      "Twisted Bob", "Big Bangs", "Braided Top Knot", "Mullet", "Nightvision"
+    };
+
+    public static readonly string[] EyebrowStyles = 
+    {
+      "None", "Balanced", "Fashion", "Cleopatra", "Quizzical", "Femme", "Seductive", "Pinched", "Chola", "Triomphe",
+      "Carefree", "Curvaceous", "Rodent",
+      "Double Tram", "Thin", "Penciled", "Mother Plucker", "Straight and Narrow", "Natural", "Fuzzy", "Unkempt",
+      "Caterpillar", "Regular", "Mediterranean", "Groomed", "Bushels",
+      "Feathered", "Prickly", "Monobrow", "Winged", "Triple Tram", "Arched Tram", "Cutouts", "Fade Away", "Solo Tram"
+    };
+
+    public static readonly string[] BeardStyles = 
+    {
+      "Clean Shaven", "Light Stubble", "Balbo", "Circle Beard", "Goatee", "Chin", "Chin Fuzz", "Pencil Chin Strap",
+      "Scruffy", "Musketeer", "Mustache",
+      "Trimmed Beard", "Stubble", "Thin Circle Beard", "Horseshoe", "Pencil and Chops", "Chin Strap Beard",
+      "Balbo and Sideburns", "Mutton Chops", "Scruffy Beard", "Curly",
+      "Curly and Deep Stranger", "Handlebar", "Faustic", "Otto and Patch", "Otto and Full Stranger", "Light Franz",
+      "The Hampstead", "The Ambrose", "Lincoln Curtain"
+    };
+
+    public static readonly string[] SkinImperfections = 
+    {
+      "None", "Measles", "Pimples", "Spots", "Break Out", "Blackheads", "Build Up", "Pustules", "Zits", "Full Acne",
+      "Acne", "Cheek Rash", "Face Rash",
+      "Picker", "Puberty", "Eyesore", "Chin Rash", "Two Face", "T Zone", "Greasy", "Marked", "Acne Scarring",
+      "Full Acne Scarring", "Cold Sores", "Impetigo"
+    };
+
+    public static readonly string[] AgingSigns = 
+    {
+      "None", "Crow's Feet", "First Signs", "Middle Aged", "Worry Lines", "Depression", "Distinguished", "Aged",
+      "Weathered", "Wrinkled", "Sagging", "Tough Life",
+      "Vintage", "Retired", "Junkie", "Geriatric"
+    };
+
+    public static readonly string[] SkinComplexion = 
+    {
+      "None", "Rosy Cheeks", "Stubble Rash", "Hot Flush", "Sunburn", "Bruised", "Alchoholic", "Patchy", "Totem",
+      "Blood Vessels", "Damaged", "Pale", "Ghostly"
+    };
+
+    public static readonly string[] MolesAndFreckles = 
+    {
+      "None", "Cherub", "All Over", "Irregular", "Dot Dash", "Over the Bridge", "Baby Doll", "Pixie", "Sun Kissed",
+      "Beauty Marks", "Line Up", "Modelesque",
+      "Occasional", "Speckled", "Rain Drops", "Double Dip", "One Sided", "Pairs", "Growth"
+    };
+
+    public static readonly string[] SunSkinEffects = 
+    {
+      "None", "Uneven", "Sandpaper", "Patchy", "Rough", "Leathery", "Textured", "Coarse", "Rugged", "Creased",
+      "Cracked", "Gritty"
+    };
+
+    public static readonly string[] EyeColor = 
+    {
+      "Green", "Emerald", "Light Blue", "Ocean Blue", "Light Brown", "Dark Brown", "Hazel", "Dark Gray", "Light Gray",
+      "Pink", "Yellow", "Purple", "Blackout",
+      "Shades of Gray", "Tequila Sunrise", "Atomic", "Warp", "ECola", "Space Ranger", "Ying Yang", "Bullseye", "Lizard",
+      "Dragon", "Extra Terrestrial", "Goat", "Smiley", "Possessed",
+      "Demon", "Infected", "Alien", "Undead", "Zombie"
+    };
+
+    public static readonly string[] MakeUp = 
+    {
+      "None", "Smoky Black", "Bronze", "Soft Gray", "Retro Glam", "Natural Look", "Cat Eyes", "Chola", "Vamp",
+      "Vinewood Glamour", "Bubblegum", "Aqua Dream",
+      "Pin up", "Purple Passion", "Smoky Cat Eye", "Smoldering Ruby", "Pop Princess",
+      "Kiss My Axe", "Panda Pussy", "The Bat", "Skull in Scarlet", "Serpentine", "The Veldt", "Unknown 1", "Unknown 2",
+      "Unknown 3", "Unknown 4", "Tribal Lines", "Tribal Swirls",
+      "Tribal Orange", "Tribal Red", "Trapped in A Box", "Clowning",
+      "Guyliner", "Unknown 5", "Blood Tears", "Heavy Metal", "Sorrow", "Prince of Darkness", "Rocker", "Goth", "Punk",
+      "Devastated"
+    };
+
+    public static readonly string[] LipStick = 
+    {
+      "None", "Color Matte", "Color Gloss", "Lined Matte", "Lined Gloss", "Heavy Lined Matte", "Heavy Lined Gloss",
+      "Lined Nude Matte", "Liner Nude Gloss",
+      "Smudged", "Geisha"
+    };
+
+    public static readonly string[] ChestHair = 
+    {
+      "None", "Color Matte", "Color Gloss", "Lined Matte", "Lined Gloss", "Heavy Lined Matte", "Heavy Lined Gloss",
+      "Lined Nude Matte", "Liner Nude Gloss",
+      "Smudged", "Geisha"
+    };
+
+    public static readonly string[] Blush = 
+    {
+      "None", "Full", "Angled", "Round", "Horizontal", "High", "Sweetheart", "Eighties"
+    };
+
+    public static readonly string[] ClothingCategories = 
+    {
+      "Masks", "Unused (hair)", "Gloves", "Pants", "Bags & Parachutes", "Shoes", "Necklace and Ties", "Under Shirt",
+      "Body Armor", "Decals & Logos", "Shirt & Jackets"
+    };
+  }
 }

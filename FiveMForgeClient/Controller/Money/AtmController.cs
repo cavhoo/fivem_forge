@@ -20,7 +20,7 @@ namespace FiveMForgeClient.Controller
 
         public AtmController()
         {
-            EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
+           EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
         }
 
         private void OnClientResourceStart(string resourceName)

@@ -4,7 +4,7 @@
         <TargetFramework>net452</TargetFramework>
         <AssemblyName>client.net</AssemblyName>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>default</LangVersion>
+        <LangVersion>9</LangVersion>
         <Company>client</Company>
         <Product>client</Product>
     </PropertyGroup>
@@ -15,20 +15,25 @@
         <Aliases>CFX</Aliases>
       </Reference>
       <Reference Include="Microsoft.CSharp" />
-      <Reference Include="NativeUI, Version=1.7.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>../lib/client/NativeUI/NativeUI.dll</HintPath>
-      </Reference>
       <Reference Update="System.Drawing">
         <Pack>false</Pack>
         <IsImplicitlyDefined>true</IsImplicitlyDefined>
         <Aliases>SystemDrawing</Aliases>
       </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LemonUI.FiveM" Version="1.4.0" />
+    </ItemGroup>
 <!--    <Target Name="ILMerge" AfterTargets="Build">-->
 <!--        &lt;!&ndash; the ILMergePath property points to the location of ILMerge.exe console application &ndash;&gt;-->
 <!--        <Exec Command="/home/hendrik/.nuget/packages/ilmerge.fody/1.16.0/lib/net45/ILMerge.dll /out:client.net.dll client.dll NativeUI.dll " />-->
 <!--    </Target> -->
     <Target Name="CopyBinary" AfterTargets="AfterBuild">
-        <Copy SourceFiles="bin/Debug/net452/client.net.dll" DestinationFolder="/home/hendrik/workspace/projects/fivem_server/server-data/resources/[local]/client/" />
+        <Copy SourceFiles="bin\Debug\net452\client.net.dll" DestinationFolder="C:\workspace\projects\txData\CFXDefault_B67124.base\resources\[local]\cityofmindclient" />
     </Target>
 </Project>

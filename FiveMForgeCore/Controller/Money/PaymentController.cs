@@ -1,13 +1,21 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
-using MySqlConnector;
+using FiveMForge.Database.Contexts;
+using FiveMForge.Models;
 using static CitizenFX.Core.Native.API;
 
 namespace FiveMForge.Controller.Money
 {
+    /// <summary>
+    /// Class <c>PaymentController</c>
+    /// Controls the whole payment/transaction system.
+    /// Processing of job payouts, banking transfers and paying at
+    /// shops with your card will be handled here.
+    /// </summary>
     public class PaymentController : BaseClass
     {
         public PaymentController()
@@ -23,89 +31,72 @@ namespace FiveMForge.Controller.Money
         private async Task OnTick()
         {
             DateTime currentUtcTime = DateTime.UtcNow;
-            if (currentUtcTime.Hour == 12 && currentUtcTime.Minute == 0 && currentUtcTime.Second == 0)
+
+            if (currentUtcTime.Minute % 10 == 0)
             {
                 // Payout salary from jobs
-                CreateJobPayments();
+               await CreateJobPayments();
             }
 
             // Process payments in pending table
-            ProcessPendingTransactions();
+            await ProcessPendingTransactions();
         }
 
-        private async void CreateJobPayments()
+        private async Task CreateJobPayments()
         {
-            using (var connector = new DbConnector())
+            using var ctx = new CoreContext();
+            var employedCharacters = ctx.Characters.Where(c => c.Job != null).ToList();
+
+            foreach (var character in employedCharacters)
             {
-                await connector.Connection.OpenAsync();
+                var player = ctx.Players.FirstOrDefault(p => p.AccountUuid == character.AccountUuid);
+                if (player == null) return;
 
-                var activeJobsCommand = new MySqlCommand();
-                activeJobsCommand.Connection = connector.Connection;
-                activeJobsCommand.CommandText = "select characterUuid, jobId from characters where jobId is not null";
-
-                var activeJobsList = await activeJobsCommand.ExecuteReaderAsync();
-                await activeJobsList.ReadAsync();
-                if (!activeJobsList.HasRows) return;
-
-                while (activeJobsList.Read())
-                {
-                    var charUuid = activeJobsList.GetString("characterUuid");
-                    // Load bank account for character
-                    var bankAccountCommand = new MySqlCommand();
-                    bankAccountCommand.Connection = connector.Connection;
-                    bankAccountCommand.CommandText = $"select * from bankAccount where holder = `{charUuid}`";
-                    var bankAccountReader = await bankAccountCommand.ExecuteReaderAsync();
-
-                    await bankAccountReader.ReadAsync();
-                    if (!bankAccountReader.HasRows) return;
-
-
-                    var jobDataCommand = new MySqlCommand();
-                    jobDataCommand.Connection = connector.Connection;
-                    jobDataCommand.CommandText = "select title, salary from jobs";
-                    var jobDataReader = await jobDataCommand.ExecuteReaderAsync();
-                    await jobDataReader.ReadAsync();
-
-                    if (!jobDataReader.HasRows) return;
-
-                    var salary = jobDataReader.GetString("salary");
-                    
-                    var accountNumber = bankAccountReader.GetString("accountNumber");
-                    
-                    var createPendingTransactionCommand = new MySqlCommand();
-                    createPendingTransactionCommand.Connection = connector.Connection;
-                    createPendingTransactionCommand.CommandText =
-                        $"insert into pendingBankTransactions values ('Job', {accountNumber}, 'Salary', {salary})";
-                    await createPendingTransactionCommand.ExecuteNonQueryAsync();
-
-                }
-
+                var bankAccount = ctx.BankAccount.FirstOrDefault(account => account.Holder == character.AccountUuid);
+                if (bankAccount == null) continue;
+                var job = ctx.Jobs.FirstOrDefault(j => j.Uuid == character.JobUuid);
+                if (job == null) continue;
+                var salary = job.Salary;
+                var pendingTransaction = new PendingBankTransaction();
+                pendingTransaction.FromAccountNumber = "";
+                pendingTransaction.ToAccountNumber = bankAccount.AccountNumber;
+                pendingTransaction.Amount = salary;
+                pendingTransaction.Message = $"Job Payment for {job.Title}";
+                ctx.PendingBankTransactions.Add(pendingTransaction);
             }
+
+            await ctx.SaveChangesAsync();
         }
 
-        private async void ProcessPendingTransactions()
+        private async Task ProcessPendingTransactions()
         {
-            using (var connector = new DbConnector())
+            var nextTransaction = Context.PendingBankTransactions.FirstOrDefault();
+
+            // No transactions found.
+            if (nextTransaction == null) return;
+
+            var sourceAccount =
+                Context.BankAccount.FirstOrDefault(b => b.AccountNumber == nextTransaction.FromAccountNumber);
+            if (sourceAccount == null) return;
+
+            var targetAccount = Context.BankAccount.FirstOrDefault(t => t.AccountNumber == nextTransaction.ToAccountNumber);
+            if (targetAccount == null) return;
+
+            if (sourceAccount.Saldo >= nextTransaction.Amount)
             {
-                await connector.Connection.OpenAsync();
-
-                var pendingTransactionsCommand = new MySqlCommand();
-                pendingTransactionsCommand.Connection = connector.Connection;
-                pendingTransactionsCommand.CommandText = "select * from pendingBankTransactions";
-
-                var result = await pendingTransactionsCommand.ExecuteReaderAsync();
-                await result.ReadAsync();
-
-                // Early abort if no transactions are pending
-                if (!result.HasRows) return;
-
-                while (result.Read())
-                {
-                    // book amount to target bank account
-                    // Add transaction to transactions table
-                    // delete row from pending transactions
-                }
+                // Deduct transfer amount from source account.
+                sourceAccount.Saldo -= nextTransaction.Amount;
+                targetAccount.Saldo += nextTransaction.Amount;
+                var bankTransaction = new BankTransaction();
+                bankTransaction.FromAccountNumber = nextTransaction.FromAccountNumber;
+                bankTransaction.ToAccountNumber = nextTransaction.ToAccountNumber;
+                bankTransaction.Message = nextTransaction.Message;
+                bankTransaction.Amount = nextTransaction.Amount;
+                Context.PendingBankTransactions.Remove(nextTransaction);
+                Context.BankTransactions.Add(bankTransaction);
             }
+
+            await Context.SaveChangesAsync();
         }
     }
 }

@@ -1,41 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CitizenFX.Core;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
+using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
-using MySqlConnector;
+using FiveMForge.Utils;
 using Newtonsoft.Json;
+using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Money
 {
+    /// <summary>
+    /// Class <c>AtmController</c>
+    /// Controls the commands available at ATMs, from
+    /// withdrawing money to making deposits. Also send
+    /// the information about each atm location to the
+    /// client.
+    /// </summary>
     public class AtmController : BaseClass
     {
         public AtmController()
         {
-            EventHandlers[ServerEvents.LoadAtmLocations] += new Action<Player, string>(OnAtmLocationsRequested);
+            Debug.WriteLine("Started ATM Controller");
+            EventHandlers[ServerEvents.LoadAtmLocations] += new Action<Player>(OnAtmLocationsRequested);
         }
 
-        private async void OnAtmLocationsRequested([FromSource] Player player, string sessionId)
+        private void OnAtmLocationsRequested([FromSource] Player player)
         {
-            Debug.WriteLine("Handling request to load atm locations...");
-            using var connector = new DbConnector();
-            await connector.Connection.OpenAsync();
-            var loadAtmCommand = new MySqlCommand();
-            loadAtmCommand.CommandText = "select * from atms";
-            loadAtmCommand.Connection = connector.Connection;
-            var reader = await loadAtmCommand.ExecuteReaderAsync();
-            await reader.ReadAsync();
-            if (!reader.HasRows) return;
-            var atmlocations = new List<Vector3>();
-            while (reader.Read())
+            var atmLocations = Context.Atms.Select(a => a.Location);
+            var parsedLocations = new List<Vector3>();
+            foreach (var atmLocation in atmLocations)
             {
-                var row = reader.GetString("location");
-                var rowSplit = row.Split(':');
-                atmlocations.Add(new Vector3(float.Parse(rowSplit[0]), float.Parse(rowSplit[1]), float.Parse(rowSplit[2])));
+                var split = atmLocation.Split(':');
+                //parsedLocations.Add(Converter.PositionStringToVector3(atmLocation));
             }
-            
-            TriggerClientEvent(player, ServerEvents.AtmLocationsLoaded, JsonConvert.SerializeObject(atmlocations));
+
+            TriggerClientEvent(player, ServerEvents.AtmLocationsLoaded, JsonConvert.SerializeObject(parsedLocations.ToArray()));
         }
     }
 }

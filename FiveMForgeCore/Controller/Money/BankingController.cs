@@ -1,111 +1,86 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
+using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
-using MySqlConnector;
 using Newtonsoft.Json;
+using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Money
 {
+    /// <summary>
+    /// Class <c>BankingController</c>
+    /// Controls the interactions when accessing Bank related stuff
+    /// inside the client, from the phone or from a teller.
+    /// Also send the location information about the Banks to the client.
+    /// </summary>
     public class BankingController : BaseClass
     {
         public BankingController()
         {
-            EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player, string>(OnBankLocationsRequested);
+            EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player>(OnBankLocationsRequested);
             EventHandlers[ServerEvents.LoadBankAccount] += new Action<Player>(OnRequestBankAccount);
             EventHandlers[ServerEvents.LoadWallet] += new Action<Player>(OnRequestWallet);
+            Debug.WriteLine("Loaded Banking Controller"); 
+        }
+
+        private void OnBankLocationsRequested([FromSource] Player player)
+        {
+            Debug.WriteLine("Bank Locations Requested");
+            var banks = Context.Banks.Where(b => b.IsActive).ToList();
+            Debug.WriteLine($"Bank Amount: {banks.Count()}");
+            var bankListDto = new List<dynamic>();
+
+            foreach (var bank in banks)
+            {
+                var locSplit = bank.Location.Split(':');
+                var bankInfo = new BankInformation();
+                bankInfo.Name = bank.Name;
+                bankInfo.IsActive = bank.IsActive;
+                bankInfo.SpriteId = 88;
+                bankInfo.IsAdminOnly = bank.IsAdminOnly;
+                bankInfo.X = float.Parse(locSplit[0]);
+                bankInfo.Y = float.Parse(locSplit[1]);
+                bankInfo.Z = float.Parse(locSplit[2]);
+                bankListDto.Add(bankInfo);
+            }
+            player.TriggerEvent(ServerEvents.BankLocationsLoaded, JsonConvert.SerializeObject(bankListDto.ToArray()));
+        }
+
+        private void OnRequestBankAccount([FromSource] Player player)
+        {
+            var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
+            var currentPlayer = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
+
+            if (currentPlayer == null) return;
+
+            var bankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == currentPlayer.AccountUuid);
+            if (bankAccount == null) return;
+            player.TriggerEvent(ServerEvents.BankAccountLoaded, bankAccount.Saldo);
+        }
+
+        private void OnRequestWallet([FromSource] Player player)
+        {
+            // TODO: Refactor this to use the character UUID instead. So we have multiple wallets.
+            var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
+            var currentPlayer = Context.Players.FirstOrDefault(p => p.AccountId == playerIdentifier);
+
+            if (currentPlayer == null) return;
             
-        }
-
-        private async void OnBankLocationsRequested([FromSource] Player player, string sessionId)
-        {
-            Debug.WriteLine("Handling request to load Bank locations...");
-            using var db = new DbConnector();
-            await db.Connection.OpenAsync();
-
-            var bankLocationCommand = new MySqlCommand();
-            bankLocationCommand.CommandText = "select * from banks";
-            bankLocationCommand.Connection = db.Connection;
-            var reader = await bankLocationCommand.ExecuteReaderAsync();
-            await reader.ReadAsync();
-            if (!reader.HasRows) return;
-            var bankList = new List<dynamic>();
-            while (reader.Read())
-            {
-                var name = reader.GetString("name");
-                var isActive = reader.GetBoolean("isActive");
-                var isAdminOnly = reader.GetBoolean("isAdminOnly");
-                var location = reader.GetString("location");
-                var locationVector = location.Split(':');
-
-                var bank = new BankInformation();
-                bank.Name = name;
-                bank.IsActive = isActive;
-                bank.IsAdminOnly = isAdminOnly;
-                bank.X = float.Parse(locationVector[0]);
-                bank.Y = float.Parse(locationVector[1]);
-                bank.Z = float.Parse(locationVector[2]);
-                bankList.Add(bank);
-            }
-            Debug.WriteLine($"Sending banking locations to client, counting: {bankList.Count} banks");
-            player.TriggerEvent(ServerEvents.BankLocationsLoaded, JsonConvert.SerializeObject(bankList));
-        }
-
-        private async void OnRequestBankAccount([FromSource] Player player)
-        {
-            using (var connection = new DbConnector())
-            {
-                var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
-                await connection.Connection.OpenAsync();
-
-                var getPlayerUuidCommand = new MySqlCommand();
-                getPlayerUuidCommand.Connection = connection.Connection;
-                getPlayerUuidCommand.CommandText = $"select uuid from players where account_id={playerIdentifier}";
-                var reader = await getPlayerUuidCommand.ExecuteReaderAsync();
-                if (!reader.HasRows) return;
-                var playerUuid = reader.GetString(0);
-                
-                var getBankAccountCommand = new MySqlCommand();
-                getBankAccountCommand.Connection = connection.Connection;
-                getBankAccountCommand.CommandText = $"select * from bankAccount where holder={playerUuid}";
-                var accountReader = await getBankAccountCommand.ExecuteReaderAsync();
-                if (!accountReader.HasRows) return;
-
-                var saldo = accountReader.GetDecimal("saldo");
-                player.TriggerEvent(ServerEvents.BankAccountLoaded, saldo);
-            }
-        }
-
-        private async void OnRequestWallet([FromSource] Player player)
-        {
-            using (var connection = new DbConnector())
-            {
-                var playerIdentifier = API.GetPlayerIdentifier(player.Handle, 0);
-                await connection.Connection.OpenAsync();
-
-                var getPlayerUuidCommand = new MySqlCommand();
-                getPlayerUuidCommand.CommandText = $"select uuid from players where account_id={playerIdentifier}";
-                getPlayerUuidCommand.Connection = connection.Connection;
-
-                var playerUuidReader = await getPlayerUuidCommand.ExecuteReaderAsync();
-                if (!playerUuidReader.HasRows) return;
-
-                var playerUuid = playerUuidReader.GetString(0);
-
-                var getWalletCommand = new MySqlCommand();
-                getWalletCommand.Connection = connection.Connection;
-                getWalletCommand.CommandText = $"select * from wallets where holder={playerUuid}";
-
-                var walletReader = await getWalletCommand.ExecuteReaderAsync();
-                if (!walletReader.HasRows) return;
-
-                var saldo = walletReader.GetDecimal(0);
-                player.TriggerEvent(ServerEvents.WalletLoaded, saldo);
-            }
+            var activeCharacter =
+                Context.Characters.FirstOrDefault(c => c.AccountUuid == currentPlayer.AccountUuid && c.InUse);
+            
+            if (activeCharacter == null) return;
+            var wallet = Context.Wallets.FirstOrDefault(w => w.Holder == activeCharacter.AccountUuid);
+            
+            if (wallet == null) return;
+            
+            player.TriggerEvent(ServerEvents.WalletLoaded, wallet.Saldo);
         }
     }
 }
