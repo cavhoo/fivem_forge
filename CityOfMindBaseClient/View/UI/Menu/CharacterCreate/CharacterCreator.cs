@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
+using CityOfMindClient.View.UI.Menu.CharacterCreate.Menus;
 using FiveMForgeClient.Enums;
 using FiveMForgeClient.Services.Language;
 using FiveMForgeClient.Models.Character;
@@ -19,11 +20,11 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
   public class CharacterChangedEventArgs
   {
     public int Sex { get; set; }
-    public EyeTemplate Eyes { get; set; }
-    public ChinTemplate Chin { get; set; }
-    public LipTemplate Lips { get; set; }
-    public NoseTemplate Nose { get; set; }
-    
+    public ChinChangedEventArgs ChinData { get; set; }
+    public EyeMenuChangedEventArgs EyeData { get; set; }
+    public NoseChangedEventArgs NoseData { get; set; }
+    public CheekChangedEventArgs CheekData { get; set; }
+    public LipsChangedEventArgs LipData { get; set; }
   }
   
   public class CharacterCreator : NativeMenu
@@ -31,13 +32,12 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
     private Character createdCharacter;
     private int CreatedPedId;
     private ObjectPool Pool;
-    private NativeMenu Inheritance;
-    private NativeMenu Face;
-    private NativeMenu Appearance;
-    private NativeMenu Clothes;
-    private NativeMenu SexMenu;
     private int SelectedSex;
     private bool IsSwitching;
+
+    private NativeSubmenuItem _femalePresets;
+    private NativeSubmenuItem _malePresets;
+    
 
     public CharacterCreator(string title, string subtitle) : base(title, subtitle)
     {
@@ -61,20 +61,22 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       Initialize();
     }
 
+    public void SetPresets()
+    {
+      
+    }
+
     private void Initialize()
     {
       createdCharacter =
         new Character("", 30, "", "", "", new Vector3(100, 100, 100)); // TODO: Replace position with airport location.
+      
+      var faceMenu = new FaceMenu(LanguageService.Translate("menu.character.creator.face.title"), ref Pool);
+      faceMenu.FaceChanged += (sender, args) => { };
+      Pool.Add(faceMenu);
 
-      var sexMenu = new SexMenu(LanguageService.Translate("menu.character.creator.sex.title"));
-      sexMenu.OnSexChanged += async (sender, args) =>
-      {
-        SelectedSex = args.Sex;
-        Debug.WriteLine(args.Sex.ToString());
-        ChangeCharacterSex(SelectedSex);
-      };
-      Pool.Add(sexMenu);
-      AddSubMenu(sexMenu);
+      var presetList = new NativeListItem<string>(LanguageService.Translate("menu.character.creator.presets"));
+      Add(presetList);
 
       var parentsMenu = new ParentsMenu(LanguageService.Translate("menu.character.creator.parents.title"));
       parentsMenu.ParentsChanged += (sender, args) =>
@@ -84,25 +86,20 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
           args.SkinToneFactor, 0, false);
       };
       Pool.Add(parentsMenu);
-      AddSubMenu(parentsMenu).Title = LanguageService.Translate("menu.character.creator.parents.title");
 
-      var faceMenu = new FaceMenu(LanguageService.Translate("menu.character.creator.face.title"));
-      faceMenu.FaceChanged += (sender, args) => { };
-      Pool.Add(faceMenu);
-      AddSubMenu(faceMenu).Title = LanguageService.Translate("menu.character.creator.face.title");
-    }
-
-    private async void ChangeCharacterSex(int sex)
-    {
-      var modelHash = GetHashKey(sex == 0 ? "mp_m_freemode_01" : "mp_f_freemode_01");
-      RequestModel((uint) modelHash);
-
-      while (!HasModelLoaded((uint) modelHash))
+      var customizeMenu = new NativeMenu(LanguageService.Translate("menu.character.creator.customize"));
+      customizeMenu.AddSubMenu(faceMenu);
+      customizeMenu.AddSubMenu(parentsMenu);
+      var customizeSubmenu = AddSubMenu(customizeMenu);
+      
+      var sexMenu = new SexMenu(LanguageService.Translate("menu.character.creator.sex.title"));
+      sexMenu.OnSexChanged += async (sender, args) =>
       {
-        await Task.Delay(15);
-      }
-      SetPlayerModel(CreatedPedId, (uint) modelHash);
-      SetPedDefaultComponentVariation(CreatedPedId);
+        SelectedSex = args.Sex;
+        Debug.WriteLine(args.Sex.ToString());
+      };
+      Pool.Add(sexMenu);
+      AddSubMenu(sexMenu);
     }
   }
 }

@@ -4,8 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using fastJSON;
 using FiveMForgeClient.Models;
+using Newtonsoft.Json;
 using CFX::CitizenFX.Core;
 using static CFX::CitizenFX.Core.Native.API;
 
@@ -42,18 +42,10 @@ namespace FiveMForgeClient.Controller
 
     private void OnBankLocationsLoaded(string banks)
     {
-      var bankInfo = JSON.Parse(banks);
-      if (!(bankInfo is IEnumerable bankArray)) return;
-      foreach (Dictionary<string, object> bank in bankArray)
+      var bankInfo = JsonConvert.DeserializeObject<BankInformation[]>(banks);
+      foreach (var bank in bankInfo)
       {
-        var name = Convert.ToString(bank["Name"]);
-        var spriteID = Convert.ToInt32(bank["SpriteId"]);
-        var x = Convert.ToSingle(bank["X"]);
-        var y = Convert.ToSingle(bank["Y"]);
-        var z = Convert.ToSingle(bank["Z"]);
-        var isActive = Convert.ToBoolean(bank["IsActive"]);
-        var isAdminOnly = Convert.ToBoolean(bank["IsAdminOnly"]);
-        _bankLocations.Add(new(name, spriteID, x, y, z, isActive, isAdminOnly));
+        _bankLocations.Add(new(bank.Name, bank.SpriteId, bank.X, bank.Y, bank.Z, bank.IsActive, bank.IsAdminOnly));
       }
 
       RenderBankBlips();

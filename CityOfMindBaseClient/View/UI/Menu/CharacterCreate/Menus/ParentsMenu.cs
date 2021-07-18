@@ -68,13 +68,13 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       momListItem.ItemChanged += (sender, args) =>
       {
         CurrentMom = momListItem.SelectedIndex;
-        ParentsChanged.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
+        ParentsChanged?.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
       };
       var dadListItem = new NativeListItem<string>(LanguageService.Translate("menu.character.creator.parents.dad"), CharacterComponents.InheritanceDads);
       dadListItem.ItemChanged += (sender, args) =>
       {
         CurrentDad = dadListItem.SelectedIndex;
-        ParentsChanged.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
+        ParentsChanged?.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
       };
 
       var faceResemblance = new NativeSliderItem(LanguageService.Translate("menu.character.creator.parents.blend"));
@@ -83,7 +83,7 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       {
         ResemblanceFactor = (float)faceResemblance.Value / faceResemblance.Maximum;
         Debug.WriteLine($"Resemblence Factor: {ResemblanceFactor}");
-        ParentsChanged.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
+        ParentsChanged?.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
       };
 
       var skinToneResemblance = new NativeSliderItem(LanguageService.Translate("menu.character.creator.parents.skin"));
@@ -92,7 +92,7 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       {
         SkinResemblanceFactor = (float)skinToneResemblance.Value / skinToneResemblance.Maximum;
         Debug.WriteLine($"Skintone factor: {SkinResemblanceFactor}");
-        ParentsChanged.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
+        ParentsChanged?.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
       };
 
       var backButton = new NativeItem(LanguageService.Translate("menu.back"));

@@ -70,6 +70,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Elements\Controls" />
+    <Folder Include="Elements\Image" />
+    <Folder Include="Elements\Layouts" />
+    <Folder Include="Elements\Primitives" />
+    <Folder Include="Elements\Text" />
     <Folder Include="UI\Menu\Components" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
