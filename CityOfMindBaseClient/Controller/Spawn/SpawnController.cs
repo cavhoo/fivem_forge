@@ -1,15 +1,16 @@
 extern alias CFX;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CFX::CitizenFX.Core;
-using fastJSON;
-using FiveMForgeClient.Enums;
-using FiveMForgeClient.Models;
+using CityOfMindClient.Enums;
+using CityOfMindClient.Models;
+using FiveMForgeClient.Utils;
 using static CFX::CitizenFX.Core.Native.API;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using Math = System.Math;
+using Vector3 = CFX::CitizenFX.Core.Vector3;
 
-namespace FiveMForgeClient.Controller
+namespace CityOfMindClient.Controller.Spawn
 {
   public class SpawnController : BaseScript
   {
@@ -102,7 +103,8 @@ namespace FiveMForgeClient.Controller
     private async void SpawnPlayer(dynamic character, int cameraHandle)
     {
       var characterToSpawn = character as IDictionary<string, object>;
-      var lastPos = (Vector3) characterToSpawn["LastPos"];
+      // Parsing X:Y:Z to Vector 3
+      var lastPos = Parser.StringToVector3((string)characterToSpawn?["LastPos"]);
       if (SpawnLock) return;
       SpawnLock = true;
       var playerPed = GetPlayerPed(PlayerId());

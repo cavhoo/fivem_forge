@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using CitizenFX.Core;
 using FiveMForgeClient.Services.Language;
 using LemonUI.Menus;
 
@@ -8,10 +9,10 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
   
   public class EyeMenuChangedEventArgs
   {
-    public int EyeColor { get; private set; }
-    public float EyeBrowHeight { get; private set; }
-    public float EyeBrowBulkiness { get; private set; }
-    public float EyeOpening { get; private set; }
+    public int EyeColor { get; }
+    public float EyeBrowHeight { get; }
+    public float EyeBrowBulkiness { get; }
+    public float EyeOpening { get; }
 
     internal EyeMenuChangedEventArgs(int eyeColor, float eyeBrowHeight, float eyeBrowBulkiness, float eyeOpening)
     {
@@ -58,14 +59,16 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       Add(EyeBrowHeight);
       Add(EyeBulkiness);
       Add(EyeOpening);
+      OnEyeValuesChanged();
     }
 
     private void OnEyeValuesChanged()
     {
+      Debug.WriteLine("Updating eye shape");
       // Convert our range to the actual allowed values of -1.0 to 1.0.
-      var eyeBrowHeightValue = (EyeBrowHeight.Value - EyeBrowHeight.Maximum / 2) / (EyeBrowHeight.Maximum / 2);
-      var eyeBulkinessValue = (EyeBulkiness.Value - EyeBulkiness.Maximum / 2) / (EyeBulkiness.Maximum / 2);
-      var eyeOpeningValue = (EyeOpening.Value - EyeOpening.Maximum / 2) / (EyeOpening.Maximum / 2);
+      var eyeBrowHeightValue = (EyeBrowHeight.Value - EyeBrowHeight.Maximum / 2) / (EyeBrowHeight.Maximum / 2.0f);
+      var eyeBulkinessValue = (EyeBulkiness.Value - EyeBulkiness.Maximum / 2) / (EyeBulkiness.Maximum / 2.0f);
+      var eyeOpeningValue = (EyeOpening.Value - EyeOpening.Maximum / 2) / (EyeOpening.Maximum / 2.0f);
 
       // Fire Event to let parent menu know about changes.
       EyesChanged?.Invoke(this, new EyeMenuChangedEventArgs(EyeColorList.SelectedIndex, eyeBrowHeightValue, eyeBulkinessValue, eyeOpeningValue));

@@ -1,16 +1,16 @@
 extern alias CFX;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using fastJSON;
-using FiveMForgeClient.Models;
-using CFX::CitizenFX.Core;
+using CityOfMindClient.Models;
+using Newtonsoft.Json;
 using static CFX::CitizenFX.Core.Native.API;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using Vector3 = CFX::CitizenFX.Core.Vector3;
 
-namespace FiveMForgeClient.Controller
+namespace CityOfMindClient.Controller.Money
 {
     public class AtmController : BaseScript
     {
@@ -33,7 +33,7 @@ namespace FiveMForgeClient.Controller
 
         private void OnAtmLocationsRetrieved(string atms)
         {
-            var atmObject = JSON.Parse(atms);
+            var atmObject = JsonConvert.DeserializeObject<Vector3[]>(atms);
             if (!(atmObject is IEnumerable atmArray)) return;
             foreach (Dictionary<string, object> atm in atmArray)
             {

@@ -4,14 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CFX::CitizenFX.Core;
-using fastJSON;
+using CityOfMindClient.Models;
+using CityOfMindClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.Services.Language;
-using FiveMForgeClient.Enums;
-using FiveMForgeClient.Models;
+using Newtonsoft.Json;
 using static CFX::CitizenFX.Core.Native.API;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using Control = CFX::CitizenFX.Core.Control;
+using Debug = CFX::CitizenFX.Core.Debug;
+using Game = CFX::CitizenFX.Core.Game;
+using Vector3 = CFX::CitizenFX.Core.Vector3;
 
-namespace FiveMForgeClient.Controller.Character
+namespace CityOfMindClient.Controller.Character
 {
   public class CharacterSelectionController : BaseScript
   {
@@ -31,6 +35,7 @@ namespace FiveMForgeClient.Controller.Character
     {
       EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnScriptStart);
       EventHandlers[ClientEvents.CharacterCreationClosed] += new Action<dynamic>(obj => Enabled = true);
+      EventHandlers[ClientEvents.UpdateCharacterModel] += new Action<string>(OnUpdateCharacterModel);
     }
 
     private void OnScriptStart(string resourceName)
@@ -41,6 +46,66 @@ namespace FiveMForgeClient.Controller.Character
       slotMarkerCoords = CreateSlotMarkerPositions();
       TriggerServerEvent(ServerEvents.LoadCharacters);
       Tick += HandleKeyboardInput;
+    }
+
+    private void OnUpdateCharacterModel(string characterData)
+    {
+      Debug.WriteLine($"Updating character {characterData}");
+      var parsedCharacter = JsonConvert.DeserializeObject<CharacterChangedEventArgs>(characterData);
+      // Update parents data 
+      var parentData = parsedCharacter.ParentData;
+      if (parentData != null)
+      {
+        Debug.WriteLine($"Updating parents  Dad: {parentData.Dad} Mom: {parentData.Mom}");
+      SetPedHeadBlendData(newCharacterPedId, parentData.Mom, parentData.Dad, 0, parentData.Mom, parentData.Dad, 0,
+        parentData.ResemblanceFactor, parentData.SkinToneFactor, 0, false);
+      }
+
+      // Update Facial features
+      var facialData = parsedCharacter.FaceData;
+      if (facialData != null)
+      {
+        Debug.WriteLine($"Updating Nose Length with: {facialData.NoseTipLength} on char: {newCharacterPedId}");
+        SetPedFaceFeature(newCharacterPedId, 1, facialData.NoseWidth);
+        SetPedFaceFeature(newCharacterPedId, 2, facialData.NoseTipHeight);
+        SetPedFaceFeature(newCharacterPedId, 3, facialData.NoseTipLength);
+        SetPedFaceFeature(newCharacterPedId, 4, facialData.NoseBoneBend);
+        SetPedFaceFeature(newCharacterPedId, 5, facialData.NoseTipLowering);
+        SetPedFaceFeature(newCharacterPedId, 6, facialData.NoseBoneOffset);
+        SetPedFaceFeature(newCharacterPedId, 7, facialData.EyeBrowHeight);
+        SetPedFaceFeature(newCharacterPedId, 8, facialData.EyeBrowBulkiness);
+        SetPedFaceFeature(newCharacterPedId, 9, facialData.CheekBoneHeight);
+        SetPedFaceFeature(newCharacterPedId, 10, facialData.CheekBoneWidth);
+        SetPedFaceFeature(newCharacterPedId, 11, facialData.CheekWidth);
+        SetPedFaceFeature(newCharacterPedId, 12, facialData.EyeOpening);
+        SetPedFaceFeature(newCharacterPedId, 13, facialData.LipThickness);
+        SetPedFaceFeature(newCharacterPedId, 14, 0.5f); // Jawbones TODO: Make Menu
+        SetPedFaceFeature(newCharacterPedId, 15, 0.5f); // Jawbones TODO: Make Menu
+        SetPedFaceFeature(newCharacterPedId, 16, facialData.ChinHeight);
+        SetPedFaceFeature(newCharacterPedId, 17, facialData.ChinForward);
+        SetPedFaceFeature(newCharacterPedId, 18, facialData.ChinWidth);
+        SetPedFaceFeature(newCharacterPedId, 19, facialData.ChinGapSize);
+      }
+
+      // Update hair color and hair
+      var hairData = parsedCharacter.HairData;
+      if (hairData != null)
+      {
+        SetPedComponentVariation(newCharacterPedId, 2, hairData.HairShape, 0, 2);
+        SetPedHairColor(newCharacterPedId, hairData.BaseColor, hairData.HighlightColor);
+      }
+
+      // Update Makeup
+      var makeUpData = parsedCharacter.MakeUpData;
+      if (makeUpData != null)
+      {
+        SetPedHeadOverlay(newCharacterPedId, 4, makeUpData.MakeUpVariant, 1.0f);
+        SetPedHeadOverlay(newCharacterPedId, 5, makeUpData.BlushVariant, 1.0f);
+        SetPedHeadOverlay(newCharacterPedId, 8, makeUpData.LipstickVariant, 1.0f);
+        SetPedHeadOverlayColor(newCharacterPedId, 4, 0, makeUpData.MakeUpColor, 0);
+        SetPedHeadOverlayColor(newCharacterPedId, 5, 2, makeUpData.BlushColor, 0);
+        SetPedHeadOverlayColor(newCharacterPedId, 8, 2, makeUpData.LipstickColor, 0);
+      }
     }
 
     private async Task HandleKeyboardInput()
@@ -112,10 +177,10 @@ namespace FiveMForgeClient.Controller.Character
           }
 
           newCharacterPedId = CreatePed(2, (uint) modelHashKey, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0,
-            false,true);
-          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, true, newCharacterPedId );
+            false, true);
+          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, true, newCharacterPedId);
           PointCamAtCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z);
-          SetCamCoord(SelectionCameraHandle, _spawnLocation.X + 2.0f, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
+          SetCamCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
         }
       }
     }
@@ -124,9 +189,11 @@ namespace FiveMForgeClient.Controller.Character
     {
       var selectedCharPos = slotMarkerCoords[currentCharacterIndex];
       var camPosX = (_slotMarkerRadius + 5) *
-                    Math.Cos(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
+                    Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) *
+                                                                   currentCharacterIndex));
       var camPosY = (_slotMarkerRadius + 5) *
-                    Math.Sin(Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) * currentCharacterIndex));
+                    Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) *
+                                                                   currentCharacterIndex));
 
       SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
         328.17358f);
@@ -136,8 +203,8 @@ namespace FiveMForgeClient.Controller.Character
     private async void OnShowCharacterSelection(string characters)
     {
       Enabled = true;
-      var availCharacter = JSON.Parse(characters);
-      if (!(availCharacter is IEnumerable characterList)) return;
+      _availableCharacters =
+        JsonConvert.DeserializeObject<Models.Character.Character[]>(characters).ToList(); //JSON.Parse(characters);
       var playerPed = PlayerPedId();
       SetPlayerControl(playerPed, false, 1 << 2);
       FreezeEntityPosition(playerPed, true);
@@ -164,7 +231,6 @@ namespace FiveMForgeClient.Controller.Character
           GetGameplayCamFov(), false, 1);
       }
 
-      _availableCharacters = ParseCharacterList(characterList);
       SpawnCharacters(_availableCharacters);
       SetCamActive(SelectionCameraHandle, true);
       RenderScriptCams(true, true, 1000, false, false);
@@ -189,16 +255,16 @@ namespace FiveMForgeClient.Controller.Character
       var charAmount = characters.Count();
       for (var i = 0; i < charAmount; i++)
       {
-        var x = _slotMarkerRadius * Math.Cos(Utils.Math.ToRadians((360 / charAmount) * i));
-        var y = _slotMarkerRadius * Math.Sin(Utils.Math.ToRadians((360 / charAmount) * i));
+        var x = _slotMarkerRadius * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * i));
+        var y = _slotMarkerRadius * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * i));
         var pedChar = CreatePed(2, (uint) modelHashKey, _spawnLocation.X - (float) x, _spawnLocation.Y - (float) y,
           328.17358f, 90.0f, false, true);
         _createdCharacters.Add(pedChar);
       }
 
       var firstCharacterPos = GetEntityCoords(_createdCharacters[0], true);
-      var camPosX = (_slotMarkerRadius + 5) * Math.Cos(Utils.Math.ToRadians((360 / charAmount) * 0));
-      var camPosY = (_slotMarkerRadius + 5) * Math.Sin(Utils.Math.ToRadians((360 / charAmount) * 0));
+      var camPosX = (_slotMarkerRadius + 5) * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * 0));
+      var camPosY = (_slotMarkerRadius + 5) * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * 0));
 
       SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
         firstCharacterPos.Z);
@@ -210,8 +276,8 @@ namespace FiveMForgeClient.Controller.Character
       var markerList = new List<Vector3>();
       for (var i = 0; i < _slotMarkerAmount; i++)
       {
-        var x = _slotMarkerRadius * Math.Cos(Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
-        var y = _slotMarkerRadius * Math.Sin(Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
+        var x = _slotMarkerRadius * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
+        var y = _slotMarkerRadius * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
         markerList.Add(new Vector3(_spawnLocation.X - (float) x, _spawnLocation.Y - (float) y,
           _spawnLocation.Z - 1.0f));
       }
@@ -237,17 +303,13 @@ namespace FiveMForgeClient.Controller.Character
       var charList = new List<Models.Character.Character>();
       foreach (Dictionary<string, object> character in characterList)
       {
-        var lastPosString = Convert.ToString(character["LastPos"]).Split(':');
-        var lastPosVector = new Vector3(float.Parse(lastPosString[0]), float.Parse(lastPosString[1]),
-          float.Parse(lastPosString[2]));
-
         charList.Add(new(
           Convert.ToString(character["Name"]),
           Convert.ToInt32(character["Age"]),
           Convert.ToString(character["AccountUuid"]),
           Convert.ToString(character["JobUuid"]),
           Convert.ToString(character["CharacterUuid"]),
-          lastPosVector
+          Convert.ToString(character["LastPos"])
         ));
       }
 

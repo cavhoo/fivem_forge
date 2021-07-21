@@ -1,43 +1,37 @@
 ﻿extern alias CFX;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Runtime.Remoting.Channels;
-using System.Threading.Tasks;
-using CFX::CitizenFX.Core;
+using CityOfMindClient.Models.Character;
 using CityOfMindClient.View.UI.Menu.CharacterCreate.Menus;
-using FiveMForgeClient.Enums;
 using FiveMForgeClient.Services.Language;
-using FiveMForgeClient.Models.Character;
+using FiveMForgeClient.View.UI.Menu.CharacterCreate;
 using LemonUI;
 using LemonUI.Menus;
-using static CFX::CitizenFX.Core.Native.API;
+using Debug = CFX::CitizenFX.Core.Debug;
 
-namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
+namespace CityOfMindClient.View.UI.Menu.CharacterCreate
 {
   public delegate void CharacterChangedEventHandler(object sender, CharacterChangedEventArgs args);
 
   public class CharacterChangedEventArgs
   {
     public int Sex { get; set; }
-    public ChinChangedEventArgs ChinData { get; set; }
-    public EyeMenuChangedEventArgs EyeData { get; set; }
-    public NoseChangedEventArgs NoseData { get; set; }
-    public CheekChangedEventArgs CheekData { get; set; }
-    public LipsChangedEventArgs LipData { get; set; }
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public FaceChangedEventArgs FaceData { get; set; }
+    public ParentsChangedEventArgs ParentData { get; set; }
+    public HairChangedEventArgs HairData { get; set; }
+    public MakeUpChangedEventArgs MakeUpData { get; set; }
+    //public dynamic TattooData { get; set; }
+    //public dynamic BlemishData { get; set; }
+    //public dynamic ClothingData { get; set; }
   }
-  
+
   public class CharacterCreator : NativeMenu
   {
-    private Character createdCharacter;
-    private int CreatedPedId;
+    public event CharacterChangedEventHandler CharacterChanged;
     private ObjectPool Pool;
-    private int SelectedSex;
-    private bool IsSwitching;
 
-    private NativeSubmenuItem _femalePresets;
-    private NativeSubmenuItem _malePresets;
-    
+    private CharacterPreset[] _presets;
+    private CharacterChangedEventArgs CurrentCharacter;
 
     public CharacterCreator(string title, string subtitle) : base(title, subtitle)
     {
@@ -47,7 +41,6 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
     public void SetPedId(int pedId)
     {
       Debug.WriteLine($"Setting ped id to: {pedId}");
-      CreatedPedId = pedId;
     }
 
     public void SetMenuPool(ref ObjectPool pool)
@@ -58,48 +51,80 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       }
 
       Pool = pool;
-      Initialize();
     }
 
-    public void SetPresets()
+    public void SetPresets(CharacterPreset[] presets)
     {
-      
+      _presets = presets;
     }
 
-    private void Initialize()
+    public void Initialize()
     {
-      createdCharacter =
-        new Character("", 30, "", "", "", new Vector3(100, 100, 100)); // TODO: Replace position with airport location.
-      
+      CurrentCharacter = new CharacterChangedEventArgs();
       var faceMenu = new FaceMenu(LanguageService.Translate("menu.character.creator.face.title"), ref Pool);
-      faceMenu.FaceChanged += (sender, args) => { };
+      faceMenu.FaceChanged += (sender, args) =>
+      {
+        CurrentCharacter.FaceData = args;
+        OnCharacterChanged();
+      };
       Pool.Add(faceMenu);
 
-      var presetList = new NativeListItem<string>(LanguageService.Translate("menu.character.creator.presets"));
+      var presetList = new NativeListItem<string>(LanguageService.Translate("menu.character.creator.presets"),
+        new[] {"Preset 1", "Preset 2", "Prseset 3"});
       Add(presetList);
 
       var parentsMenu = new ParentsMenu(LanguageService.Translate("menu.character.creator.parents.title"));
       parentsMenu.ParentsChanged += (sender, args) =>
       {
         Debug.WriteLine($"Changing Parents...{args.Dad} | {args.Mom} | {args.ResemblanceFactor}");
-        SetPedHeadBlendData(CreatedPedId, args.Dad, args.Mom, 0, args.Mom, args.Dad, 0, args.ResemblanceFactor,
-          args.SkinToneFactor, 0, false);
+        CurrentCharacter.ParentData = args;
+        OnCharacterChanged();
       };
       Pool.Add(parentsMenu);
 
+      var makeUpMenu = new MakeUpMenu(LanguageService.Translate("menu.character.creator.makeup"));
+      makeUpMenu.MakeupChanged += (sender, args) => { CurrentCharacter.MakeUpData = args; OnCharacterChanged(); };
+      Pool.Add(makeUpMenu);
+      var clothingMenu = new ClothingMenu(LanguageService.Translate("menu.character.creator.clothing"));
+      Pool.Add(clothingMenu);
+
+      var tattoosMenu = new TattooMenu(LanguageService.Translate("menu.character.creator.tattoo"));
+      Pool.Add(tattoosMenu);
+
+      var blemishesMenu = new BlemishesMenu(LanguageService.Translate("menu.character.creator.blemishes"));
+      Pool.Add(blemishesMenu);
+
+      var hairMenu = new HairMenu(LanguageService.Translate("menu.character.creator.hair"));
+      hairMenu.HairChanged += (sender, args) => { CurrentCharacter.HairData = args; };
+      Pool.Add(hairMenu);
+
       var customizeMenu = new NativeMenu(LanguageService.Translate("menu.character.creator.customize"));
-      customizeMenu.AddSubMenu(faceMenu);
-      customizeMenu.AddSubMenu(parentsMenu);
-      var customizeSubmenu = AddSubMenu(customizeMenu);
-      
+      var subParents = customizeMenu.AddSubMenu(parentsMenu);
+      subParents.Title = LanguageService.Translate("menu.character.creator.parents.title");
+      var subFace = customizeMenu.AddSubMenu(faceMenu);
+      subFace.Title = LanguageService.Translate("menu.character.creator.face.title");
+      var subMakeUp = customizeMenu.AddSubMenu(makeUpMenu);
+      subMakeUp.Title = LanguageService.Translate("menu.character.creator.makeup");
+      var subTattoo = customizeMenu.AddSubMenu(tattoosMenu);
+      subTattoo.Title = LanguageService.Translate("menu.character.creator.tattoo");
+      var subBlemishes = customizeMenu.AddSubMenu(blemishesMenu);
+      subBlemishes.Title = LanguageService.Translate("menu.character.creator.blemishes");
+      var subHair = customizeMenu.AddSubMenu(hairMenu);
+      subHair.Title = LanguageService.Translate("menu.character.creator.hair");
+      Pool.Add(customizeMenu);
+      var subCustomize = AddSubMenu(customizeMenu);
+      subCustomize.Title = LanguageService.Translate("menu.character.creator.customize");
+
       var sexMenu = new SexMenu(LanguageService.Translate("menu.character.creator.sex.title"));
-      sexMenu.OnSexChanged += async (sender, args) =>
-      {
-        SelectedSex = args.Sex;
-        Debug.WriteLine(args.Sex.ToString());
-      };
+      sexMenu.OnSexChanged += async (sender, args) => { Debug.WriteLine(args.Sex.ToString()); };
       Pool.Add(sexMenu);
       AddSubMenu(sexMenu);
+    }
+
+    private void OnCharacterChanged()
+    {
+      CitizenFX.Core.Debug.WriteLine("Character properties changed...");
+      CharacterChanged?.Invoke(this, CurrentCharacter);
     }
   }
 }

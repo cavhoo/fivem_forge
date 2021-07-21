@@ -1,20 +1,15 @@
 extern alias CFX;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using CFX::CitizenFX.Core;
-using CFX::CitizenFX.Core.UI;
-using CFX::System.Drawing;
-using FiveMForgeClient.Controller.Character;
+using CityOfMindClient.Models;
+using CityOfMindClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.Services.Language;
-using FiveMForgeClient.Models;
 using FiveMForgeClient.View.UI.Hud;
-using FiveMForgeClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.View.UI.Menu;
 using LemonUI;
 using LemonUI.Menus;
+using Newtonsoft.Json;
 
 namespace FiveMForgeClient.View
 {
@@ -60,7 +55,14 @@ namespace FiveMForgeClient.View
       var characterCreator = new CharacterCreator(LanguageService.Translate("character_creator"),
         LanguageService.Translate("character_creator_description"));
       characterCreator.SetMenuPool(ref _pool);
+      characterCreator.CharacterChanged += (sender, args) =>
+      {
+        Debug.WriteLine($"Character updated {args.Sex}");
+        TriggerEvent(ClientEvents.UpdateCharacterModel, JsonConvert.SerializeObject(args));
+      };
+      
       _menus.Add(MenuIds.CharacterCreator, characterCreator);
+      characterCreator.Initialize();
       
       foreach (var value in _menus.Values)
       {

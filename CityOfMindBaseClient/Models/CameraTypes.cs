@@ -1,4 +1,4 @@
-﻿namespace FiveMForgeClient.Models
+﻿namespace CityOfMindClient.Models
 {
   public class CameraTypes
   {

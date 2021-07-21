@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace FiveMForgeClient.Models.Locales
+namespace CityOfMindClient.Models.Locales
 {
     public static class FR
     {

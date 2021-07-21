@@ -23,7 +23,7 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
     
     public SexMenu(string title) : base(title)
     {
-      AvailableGenders = new[] {"Male", "Female"};
+      AvailableGenders = new[] {LanguageService.Translate("male"), LanguageService.Translate("female")};
       Initialize();
     }
 

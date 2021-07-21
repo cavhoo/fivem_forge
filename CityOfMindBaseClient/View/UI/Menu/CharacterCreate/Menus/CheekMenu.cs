@@ -7,9 +7,9 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
   
   public class CheekChangedEventArgs 
   {
-    public float CheekBoneWidth { get; private set; }
-    public float CheekBoneHeight { get; private set; }
-    public float CheekWidth { get; private set; }
+    public float CheekBoneWidth { get; }
+    public float CheekBoneHeight { get; }
+    public float CheekWidth { get; }
     
     internal CheekChangedEventArgs(float cheekWidth, float cheekBoneHeight, float cheekBoneWidth)
     {
@@ -50,9 +50,9 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
     private void OnCheekValuesChanged()
     {
-      var cheekWidthValue = (CheekWidth.Value - CheekWidth.Maximum / 2) / (CheekWidth.Maximum / 2);
-      var cheekBoneHeightValue = (CheekBoneHeight.Value - CheekBoneHeight.Maximum / 2) / (CheekBoneHeight.Maximum / 2);
-      var cheekBoneWidthValue = (CheekBoneWidth.Value - CheekBoneWidth.Maximum / 2) / (CheekBoneWidth.Maximum / 2);
+      var cheekWidthValue = (CheekWidth.Value - CheekWidth.Maximum / 2) / (CheekWidth.Maximum / 2.0f);
+      var cheekBoneHeightValue = (CheekBoneHeight.Value - CheekBoneHeight.Maximum / 2) / (CheekBoneHeight.Maximum / 2.0f);
+      var cheekBoneWidthValue = (CheekBoneWidth.Value - CheekBoneWidth.Maximum / 2) / (CheekBoneWidth.Maximum / 2.0f);
       
       CheekChanged?.Invoke(this, new CheekChangedEventArgs(
           cheekWidthValue,

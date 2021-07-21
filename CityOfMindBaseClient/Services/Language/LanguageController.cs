@@ -2,10 +2,8 @@ extern alias CFX;
 
 using System;
 using System.Collections.Generic;
-using FiveMForgeClient.Models;
-using FiveMForgeClient.Models.Locales;
-
 using CFX::CitizenFX.Core;
+using CityOfMindClient.Models.Locales;
 using static CFX::CitizenFX.Core.Native.API;
 
 namespace FiveMForgeClient.Services.Language

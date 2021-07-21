@@ -7,10 +7,10 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
   public class ChinChangedEventArgs
   {
-    public float ChinWidth { get; private set; }
-    public float ChinForward { get; private set; }
-    public float ChinHeight { get; private set; }
-    public float ChinGapSize { get; private set; }
+    public float ChinWidth { get; }
+    public float ChinForward { get; }
+    public float ChinHeight { get; }
+    public float ChinGapSize { get; }
     
     internal ChinChangedEventArgs(float chinWidth, float chinHeight, float chinForward, float chinGapSize)
     {
@@ -49,10 +49,10 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
     private void OnChinChanged()
     {
-      var chinWidthValue = (ChinWidth.Value - ChinWidth.Maximum / 2) / (ChinWidth.Maximum / 2);
-      var chinForwardValue = (ChinForward.Value - ChinForward.Maximum / 2) / (ChinForward.Maximum / 2);
-      var chinHeightValue = (ChinHeight.Value - ChinHeight.Maximum / 2) / (ChinHeight.Maximum / 2);
-      var chinGapValue = (ChinGapSize.Value - ChinGapSize.Maximum / 2) / (ChinGapSize.Maximum / 2);
+      var chinWidthValue = (ChinWidth.Value - ChinWidth.Maximum / 2) / (ChinWidth.Maximum / 2.0f);
+      var chinForwardValue = (ChinForward.Value - ChinForward.Maximum / 2) / (ChinForward.Maximum / 2.0f);
+      var chinHeightValue = (ChinHeight.Value - ChinHeight.Maximum / 2) / (ChinHeight.Maximum / 2.0f);
+      var chinGapValue = (ChinGapSize.Value - ChinGapSize.Maximum / 2) / (ChinGapSize.Maximum / 2.0f);
       
       
       ChinChanged?.Invoke(this, new ChinChangedEventArgs(

@@ -77,5 +77,11 @@
     <Folder Include="Elements\Text" />
     <Folder Include="UI\Menu\Components" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CityOfMindBaseClient\CityOfMindBaseClient.csproj">
+      <Project>{06cc1ef2-276a-46a5-ad5f-55589f6ba734}</Project>
+      <Name>CityOfMindBaseClient</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
  </Project>

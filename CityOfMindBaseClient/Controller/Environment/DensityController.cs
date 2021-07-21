@@ -1,12 +1,11 @@
 extern alias CFX;
 using System;
 using System.Threading.Tasks;
-using FiveMForgeClient.Models;
-
-using CFX::CitizenFX.Core;
+using CityOfMindClient.Models;
 using static CFX::CitizenFX.Core.Native.API;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
 
-namespace FiveMForgeClient.Controller.Environment
+namespace CityOfMindClient.Controller.Environment
 {
 
     public class DensityController : BaseScript

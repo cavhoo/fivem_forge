@@ -1,11 +1,11 @@
 extern alias CFX;
 using System;
 using System.Collections.Generic;
-using CFX::CitizenFX.Core;
-using FiveMForgeClient.Models;
+using CityOfMindClient.Models;
 using static CFX::CitizenFX.Core.Native.API;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
 
-namespace FiveMForgeClient.Tools
+namespace CityOfMindClient.Tools
 {
     public class POISaver : BaseScript
     {

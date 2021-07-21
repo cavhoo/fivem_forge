@@ -1,4 +1,4 @@
-﻿namespace FiveMForgeClient.Enums
+﻿namespace CityOfMindClient.Enums
 {
   public enum HudElements
   {

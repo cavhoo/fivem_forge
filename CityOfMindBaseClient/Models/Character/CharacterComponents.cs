@@ -1,10 +1,6 @@
 extern alias CFX;
-using System;
-using System.Collections.Generic;
-using CFX::CitizenFX.Core;
-using FiveMForgeClient.Services.Language;
 
-namespace FiveMForgeClient.Models.Character
+namespace CityOfMindClient.Models.Character
 {
   public static class CharacterComponents
   {

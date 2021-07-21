@@ -8,7 +8,7 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
   public class LipsChangedEventArgs
   {
-    public float Thickness { get; private set; }
+    public float Thickness { get; }
 
     internal LipsChangedEventArgs(float thickness)
     {
@@ -35,7 +35,7 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
     private void OnLipsChanged()
     {
-      var lipThicknessValue = (LipThickness.Value - LipThickness.Maximum / 2) / (LipThickness.Maximum / 2);
+      var lipThicknessValue = (LipThickness.Value - LipThickness.Maximum / 2) / (LipThickness.Maximum / 2.0f);
       LipsChanged?.Invoke(this, new LipsChangedEventArgs(lipThicknessValue));
     }
   }

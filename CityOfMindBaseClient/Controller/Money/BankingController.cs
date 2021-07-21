@@ -1,15 +1,14 @@
 extern alias CFX;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FiveMForgeClient.Models;
+using CityOfMindClient.Models;
 using Newtonsoft.Json;
-using CFX::CitizenFX.Core;
 using static CFX::CitizenFX.Core.Native.API;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
 
-namespace FiveMForgeClient.Controller
+namespace CityOfMindClient.Controller.Money
 {
   public class BankingController : BaseScript
   {

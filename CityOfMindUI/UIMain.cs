@@ -1,22 +1,17 @@
 extern alias CFX;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using CFX::CitizenFX.Core;
-using CFX::CitizenFX.Core.UI;
-using CFX::System.Drawing;
-using FiveMForgeClient.Controller.Character;
+using CityOfMindClient.Models;
 using FiveMForgeClient.Services.Language;
-using FiveMForgeClient.Models;
 using FiveMForgeClient.View.UI.Hud;
-using FiveMForgeClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.View.UI.Menu;
+using FiveMForgeClient.View.UI.Menu.CharacterCreate;
 using LemonUI;
 using LemonUI.Menus;
+using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using Debug = CFX::CitizenFX.Core.Debug;
 
-namespace FiveMForgeClient.View
+namespace CityOfMindUI
 {
   public enum MenuIds
   {

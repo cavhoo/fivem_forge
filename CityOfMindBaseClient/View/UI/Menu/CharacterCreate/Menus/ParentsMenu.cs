@@ -1,7 +1,7 @@
 ﻿using System;
 using CitizenFX.Core;
 using CitizenFX.Core.NaturalMotion;
-using FiveMForgeClient.Models.Character;
+using CityOfMindClient.Models.Character;
 using FiveMForgeClient.Services.Language;
 using LemonUI.Menus;
 
@@ -21,21 +21,21 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
     /// <summary>
     /// Index of the Mom character that is used to resemble the player.
     /// </summary>
-    public int Mom { get; set; }
+    public int Mom { get; }
     /// <summary>
     /// Index of the Dad character that is used to resemble the player.
     /// </summary>
-    public int Dad { get; set; }
+    public int Dad { get; }
     /// <summary>
     /// Factor that describes how mixed the Mom and Dad are. Range from 0..1
     /// </summary>
-    public float ResemblanceFactor { get; set; }
+    public float ResemblanceFactor { get; }
     /// <summary>
     /// Factor that describes how mixed the skin tone is between Mom and Dad. Range from 0..1
     /// </summary>
-    public float SkinToneFactor { get; set; }
+    public float SkinToneFactor { get; }
 
-    internal ParentsChangedEventArgs(int mom, int dad, float resemblanceFactor, float skinToneFactor)
+    public ParentsChangedEventArgs(int mom, int dad, float resemblanceFactor, float skinToneFactor)
     {
       Mom = mom;
       Dad = dad;
@@ -102,6 +102,8 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       Add(faceResemblance);
       Add(skinToneResemblance);
       Add(backButton);
+      
+      ParentsChanged?.Invoke(this, new ParentsChangedEventArgs(CurrentMom, CurrentDad, ResemblanceFactor, SkinResemblanceFactor));
     }
   }
 }

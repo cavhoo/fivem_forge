@@ -1,4 +1,4 @@
-﻿namespace FiveMForgeClient.Models.Character
+﻿namespace CityOfMindClient.Models.Character
 {
   public class CharacterPreset
   {
