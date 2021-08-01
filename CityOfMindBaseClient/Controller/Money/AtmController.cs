@@ -20,13 +20,6 @@ namespace CityOfMindClient.Controller.Money
 
         public AtmController()
         {
-           EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
-        }
-
-        private void OnClientResourceStart(string resourceName)
-        {
-            if (Instantiated) return;
-            Instantiated = true;
             EventHandlers[ServerEvents.AtmLocationsLoaded] += new Action<string>(OnAtmLocationsRetrieved);
             TriggerServerEvent(ServerEvents.LoadAtmLocations);
         }

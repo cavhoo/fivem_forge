@@ -17,16 +17,9 @@ namespace CityOfMindClient.Controller.Environment
 
         public DensityController()
         {
-            EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
-        }
-        
-        private void OnClientResourceStart(string resourceName)
-        {
-            if (Instantiated) return;
-            Instantiated = true;
             Tick += RunSetDensityTick;
         }
-
+        
         /**
          * Runs every game tick to set the density for the player.
          */

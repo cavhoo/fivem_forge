@@ -10,12 +10,11 @@ namespace FiveMForge.Controller.Base
     /// </summary>
     public class BaseClass : BaseScript
     {
-        protected CoreContext Context { get; }
+        protected CoreContext Context => new();
 
         protected BaseClass()
         {
             // Create a DB Context that's available for all scripts inheriting from here.
-            Context = new CoreContext();
         }
     }
 }

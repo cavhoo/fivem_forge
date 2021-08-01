@@ -31,6 +31,5 @@
     <ItemGroup>
       <CORELIBS Include="bin/Debug/net452/**/*.dll" />
     </ItemGroup>
-    <Copy SourceFiles="@(CORELIBS)" DestinationFolder="/home/hendrik/workspace/projects/fivem_server/server-data/resources/\[local]/core" />
   </Target>
 </Project>

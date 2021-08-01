@@ -19,13 +19,6 @@ namespace CityOfMindClient.Controller.Money
 
     public BankingController()
     {
-      EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
-    }
-
-    private void OnClientResourceStart(string resourceName)
-    {
-      if (Instantiated) return;
-      Instantiated = true;
       EventHandlers[ServerEvents.BankLocationsLoaded] +=
         new Action<string>(OnBankLocationsLoaded);
       EventHandlers["playerSpawned"] += new Action(OnPlayerSpawned);

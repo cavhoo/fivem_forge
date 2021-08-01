@@ -4,9 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CFX::CitizenFX.Core;
 using CityOfMindClient.Models;
+using CityOfMindClient.Models.Character;
 using CityOfMindClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.Services.Language;
+using FiveMForgeClient.View.UI.Menu.CharacterCreate;
 using Newtonsoft.Json;
 using static CFX::CitizenFX.Core.Native.API;
 using BaseScript = CFX::CitizenFX.Core.BaseScript;
@@ -26,86 +29,120 @@ namespace CityOfMindClient.Controller.Character
     private int SelectionCameraHandle = -1;
     private readonly Vector3 _spawnLocation = new(-74.95219f, -818.7512f, 326.0000f);
     private const int _slotMarkerRadius = 6;
-    private const int _slotMarkerAmount = 8;
+    private int _slotMarkerAmount = 8;
     private readonly List<int> _createdCharacters = new();
     private List<Vector3> slotMarkerCoords;
     private List<Models.Character.Character> _availableCharacters;
+    private Models.Character.Character _currentCharacterData;
 
     public CharacterSelectionController()
     {
-      EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnScriptStart);
       EventHandlers[ClientEvents.CharacterCreationClosed] += new Action<dynamic>(obj => Enabled = true);
-      EventHandlers[ClientEvents.UpdateCharacterModel] += new Action<string>(OnUpdateCharacterModel);
+      EventHandlers[ServerEvents.AvailableCharacterSlotsLoaded] += new Action<int>(OnCharacterSlotsLoaded);
+      TriggerServerEvent(ServerEvents.GetAvailableCharacterSlots);
+      
     }
-
-    private void OnScriptStart(string resourceName)
+    private void OnCharacterSlotsLoaded(int availableSlots)
     {
-      if (Instantiated) return;
-      Instantiated = true;
+      _slotMarkerAmount = availableSlots;
       EventHandlers[ServerEvents.CharactersLoaded] += new Action<string>(OnShowCharacterSelection);
       slotMarkerCoords = CreateSlotMarkerPositions();
       TriggerServerEvent(ServerEvents.LoadCharacters);
       Tick += HandleKeyboardInput;
+      _currentCharacterData = new Models.Character.Character("", 99, "", "", new Guid().ToString(),
+        $"{_spawnLocation.X}:{_spawnLocation.Y}:{_spawnLocation.Z}");
     }
 
-    private void OnUpdateCharacterModel(string characterData)
+    private void OnUpdateCharacterModel(Dictionary<string, object> characterData, CallbackDelegate cb)
     {
       Debug.WriteLine($"Updating character {characterData}");
-      var parsedCharacter = JsonConvert.DeserializeObject<CharacterChangedEventArgs>(characterData);
       // Update parents data 
-      var parentData = parsedCharacter.ParentData;
-      if (parentData != null)
+      if (characterData.TryGetValue("mom", out var mom))
       {
-        Debug.WriteLine($"Updating parents  Dad: {parentData.Dad} Mom: {parentData.Mom}");
-      SetPedHeadBlendData(newCharacterPedId, parentData.Mom, parentData.Dad, 0, parentData.Mom, parentData.Dad, 0,
-        parentData.ResemblanceFactor, parentData.SkinToneFactor, 0, false);
+        cb(new
+        {
+          error = "No Parent Data"
+        });
+        return;
       }
 
+      if (characterData.TryGetValue("dad", out var dad))
+      {
+        cb(new
+        {
+          error = "No Parent Data"
+        });
+        return;
+      }
+
+      if (characterData.TryGetValue("faceFactor", out var faceFactor))
+      {
+        cb(new
+        {
+          error = "No Parent Data"
+        });
+        return;
+      }
+
+      if (characterData.TryGetValue("skinFactor", out var skinFactor))
+      {
+        cb(new
+        {
+          error = "No Parent Data"
+        });
+        return;
+      }
+
+
+      SetPedBlendFromParents(newCharacterPedId, (int) dad, (int) mom, (float) faceFactor, (float) skinFactor);
       // Update Facial features
-      var facialData = parsedCharacter.FaceData;
-      if (facialData != null)
-      {
-        Debug.WriteLine($"Updating Nose Length with: {facialData.NoseTipLength} on char: {newCharacterPedId}");
-        SetPedFaceFeature(newCharacterPedId, 1, facialData.NoseWidth);
-        SetPedFaceFeature(newCharacterPedId, 2, facialData.NoseTipHeight);
-        SetPedFaceFeature(newCharacterPedId, 3, facialData.NoseTipLength);
-        SetPedFaceFeature(newCharacterPedId, 4, facialData.NoseBoneBend);
-        SetPedFaceFeature(newCharacterPedId, 5, facialData.NoseTipLowering);
-        SetPedFaceFeature(newCharacterPedId, 6, facialData.NoseBoneOffset);
-        SetPedFaceFeature(newCharacterPedId, 7, facialData.EyeBrowHeight);
-        SetPedFaceFeature(newCharacterPedId, 8, facialData.EyeBrowBulkiness);
-        SetPedFaceFeature(newCharacterPedId, 9, facialData.CheekBoneHeight);
-        SetPedFaceFeature(newCharacterPedId, 10, facialData.CheekBoneWidth);
-        SetPedFaceFeature(newCharacterPedId, 11, facialData.CheekWidth);
-        SetPedFaceFeature(newCharacterPedId, 12, facialData.EyeOpening);
-        SetPedFaceFeature(newCharacterPedId, 13, facialData.LipThickness);
-        SetPedFaceFeature(newCharacterPedId, 14, 0.5f); // Jawbones TODO: Make Menu
-        SetPedFaceFeature(newCharacterPedId, 15, 0.5f); // Jawbones TODO: Make Menu
-        SetPedFaceFeature(newCharacterPedId, 16, facialData.ChinHeight);
-        SetPedFaceFeature(newCharacterPedId, 17, facialData.ChinForward);
-        SetPedFaceFeature(newCharacterPedId, 18, facialData.ChinWidth);
-        SetPedFaceFeature(newCharacterPedId, 19, facialData.ChinGapSize);
-      }
-
-      // Update hair color and hair
-      var hairData = parsedCharacter.HairData;
-      if (hairData != null)
-      {
-        SetPedComponentVariation(newCharacterPedId, 2, hairData.HairShape, 0, 2);
-        SetPedHairColor(newCharacterPedId, hairData.BaseColor, hairData.HighlightColor);
-      }
-
-      // Update Makeup
-      var makeUpData = parsedCharacter.MakeUpData;
-      if (makeUpData != null)
-      {
-        SetPedHeadOverlay(newCharacterPedId, 4, makeUpData.MakeUpVariant, 1.0f);
-        SetPedHeadOverlay(newCharacterPedId, 5, makeUpData.BlushVariant, 1.0f);
-        SetPedHeadOverlay(newCharacterPedId, 8, makeUpData.LipstickVariant, 1.0f);
-        SetPedHeadOverlayColor(newCharacterPedId, 4, 0, makeUpData.MakeUpColor, 0);
-        SetPedHeadOverlayColor(newCharacterPedId, 5, 2, makeUpData.BlushColor, 0);
-        SetPedHeadOverlayColor(newCharacterPedId, 8, 2, makeUpData.LipstickColor, 0);
-      }
+      // var facialData = parsedCharacter.FaceData;
+      // if (facialData != null)
+      // {
+      //   Debug.WriteLine($"Updating Nose Length with: {facialData.NoseTipLength} on char: {newCharacterPedId}");
+      //   SetPedFaceFeature(newCharacterPedId, 1, facialData.NoseWidth);
+      //   SetPedFaceFeature(newCharacterPedId, 2, facialData.NoseTipHeight);
+      //   SetPedFaceFeature(newCharacterPedId, 3, facialData.NoseTipLength);
+      //   SetPedFaceFeature(newCharacterPedId, 4, facialData.NoseBoneBend);
+      //   SetPedFaceFeature(newCharacterPedId, 5, facialData.NoseTipLowering);
+      //   SetPedFaceFeature(newCharacterPedId, 6, facialData.NoseBoneOffset);
+      //   SetPedFaceFeature(newCharacterPedId, 7, facialData.EyeBrowHeight);
+      //   SetPedFaceFeature(newCharacterPedId, 8, facialData.EyeBrowBulkiness);
+      //   SetPedFaceFeature(newCharacterPedId, 9, facialData.CheekBoneHeight);
+      //   SetPedFaceFeature(newCharacterPedId, 10, facialData.CheekBoneWidth);
+      //   SetPedFaceFeature(newCharacterPedId, 11, facialData.CheekWidth);
+      //   SetPedFaceFeature(newCharacterPedId, 12, facialData.EyeOpening);
+      //   SetPedFaceFeature(newCharacterPedId, 13, facialData.LipThickness);
+      //   SetPedFaceFeature(newCharacterPedId, 14, 0.5f); // Jawbones TODO: Make Menu
+      //   SetPedFaceFeature(newCharacterPedId, 15, 0.5f); // Jawbones TODO: Make Menu
+      //   SetPedFaceFeature(newCharacterPedId, 16, facialData.ChinHeight);
+      //   SetPedFaceFeature(newCharacterPedId, 17, facialData.ChinForward);
+      //   SetPedFaceFeature(newCharacterPedId, 18, facialData.ChinWidth);
+      //   SetPedFaceFeature(newCharacterPedId, 19, facialData.ChinGapSize);
+      //   _currentCharacterData.UpdateFaceData(facialData);
+      // }
+      //
+      // // Update hair color and hair
+      // var hairData = parsedCharacter.HairData;
+      // if (hairData != null)
+      // {
+      //   SetPedComponentVariation(newCharacterPedId, 2, hairData.HairShape, 0, 2);
+      //   SetPedHairColor(newCharacterPedId, hairData.BaseColor, hairData.HighlightColor);
+      //   _currentCharacterData.UpdateHairData(hairData);
+      // }
+      //
+      // // Update Makeup
+      // var makeUpData = parsedCharacter.MakeUpData;
+      // if (makeUpData != null)
+      // {
+      //   SetPedHeadOverlay(newCharacterPedId, 4, makeUpData.MakeUpVariant, 1.0f);
+      //   SetPedHeadOverlay(newCharacterPedId, 5, makeUpData.BlushVariant, 1.0f);
+      //   SetPedHeadOverlay(newCharacterPedId, 8, makeUpData.LipstickVariant, 1.0f);
+      //   SetPedHeadOverlayColor(newCharacterPedId, 4, 0, makeUpData.MakeUpColor, 0);
+      //   SetPedHeadOverlayColor(newCharacterPedId, 5, 2, makeUpData.BlushColor, 0);
+      //   SetPedHeadOverlayColor(newCharacterPedId, 8, 2, makeUpData.LipstickColor, 0);
+      //   _currentCharacterData.UpdateMakeUpData(makeUpData);
+      // }
     }
 
     private async Task HandleKeyboardInput()
@@ -178,7 +215,7 @@ namespace CityOfMindClient.Controller.Character
 
           newCharacterPedId = CreatePed(2, (uint) modelHashKey, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0,
             false, true);
-          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, true, newCharacterPedId);
+          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, newCharacterPedId, SelectionCameraHandle);
           PointCamAtCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z);
           SetCamCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
         }
@@ -200,7 +237,7 @@ namespace CityOfMindClient.Controller.Character
       PointCamAtCoord(SelectionCameraHandle, selectedCharPos.X, selectedCharPos.Y, _spawnLocation.Z);
     }
 
-    private async void OnShowCharacterSelection(string characters)
+   private async void OnShowCharacterSelection(string characters)
     {
       Enabled = true;
       _availableCharacters =
@@ -212,7 +249,7 @@ namespace CityOfMindClient.Controller.Character
       SetEntityVisible(playerPed, false, false);
       Tick += DrawCharacterSlotMarker; // Draw markers in a circle based on how many characters an account can have.
       DisplayRadar(false);
-      DisplayHud(false);
+      //DisplayHud(false);
       DisableAllControlActions(0);
       DisableFirstPersonCamThisFrame();
       ShutdownLoadingScreen();
@@ -227,7 +264,7 @@ namespace CityOfMindClient.Controller.Character
       {
         SelectionCameraHandle = CreateCamWithParams(CameraTypes.DEFAULT_SCRIPTED_CAMERA, _spawnLocation.X,
           _spawnLocation.Y,
-          _spawnLocation.Z + 20, 0, 0, 0,
+          328.17358f, 0, 0, 0,
           GetGameplayCamFov(), false, 1);
       }
 

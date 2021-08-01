@@ -20,7 +20,7 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
   public class LipsMenu : NativeMenu
   {
     public event LipsChangedEventHandler LipsChanged;
-    private NativeSliderItem LipThickness;
+    private NativeSliderItem _lipThickness;
 
     public LipsMenu(string title) : base(title)
     {
@@ -29,13 +29,15 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
     private void Initialize()
     {
-      LipThickness =
+      _lipThickness =
         new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.lip.thickness"), 50, 25);
+      _lipThickness.ValueChanged += (sender, args) => OnLipsChanged();
+      Add(_lipThickness);
     }
 
     private void OnLipsChanged()
     {
-      var lipThicknessValue = (LipThickness.Value - LipThickness.Maximum / 2) / (LipThickness.Maximum / 2.0f);
+      var lipThicknessValue = (_lipThickness.Value - _lipThickness.Maximum / 2) / (_lipThickness.Maximum / 2.0f);
       LipsChanged?.Invoke(this, new LipsChangedEventArgs(lipThicknessValue));
     }
   }

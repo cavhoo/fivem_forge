@@ -25,6 +25,8 @@ namespace FiveMForge.Models
         public const string GoToCharacterSelection = "CityOfMind:ShowCharacterSelection";
         public const string LoadCharacters = "CityOfMind:LoadCharacters";
         public const string DisconnectPlayer = "CityOfMind:DisconnectPlayer";
+        public const string LoadAvailableCharacterCount = "CityOfMind:GetAvailableCharacterSlots";
+        public const string AvailableCharacterCountLoaded = "CityOfMind:AvailableCharacterSlotsLoaded";
     }
 
     public static class FiveMEvents

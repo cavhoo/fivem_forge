@@ -46,13 +46,13 @@ namespace FiveMForgeClient.View.UI.Menu.CharacterCreate
       };
       
       // Eye brow height
-      EyeBrowHeight = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.eye.brow.height"), 50, 0);
+      EyeBrowHeight = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.eye.brow.height"), 50, 25);
       
       // Eye brow bulkiness
-      EyeBulkiness = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.eye.brow.bulkiness"), 50, 0);
+      EyeBulkiness = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.eye.brow.bulkiness"), 50, 25);
       
       // Eye opening
-      EyeOpening = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.eye.opening"), 50, 0);
+      EyeOpening = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.eye.opening"), 50, 25);
       
 
       Add(EyeColorList);

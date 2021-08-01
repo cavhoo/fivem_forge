@@ -21,17 +21,9 @@ namespace CityOfMindClient.Controller.Spawn
 
     public SpawnController()
     {
-      EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientResourceStart);
-    }
-
-    private void OnClientResourceStart(string resourceName)
-    {
-      if (Instantiated) return;
-      Instantiated = true;
       EventHandlers[ClientEvents.SpawnPlayer] += new Action<dynamic, int>(SpawnPlayer);
       Tick += SpawnLoop;
     }
-
 
     private async Task SpawnLoop()
     {

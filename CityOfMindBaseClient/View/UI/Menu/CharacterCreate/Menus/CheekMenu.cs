@@ -34,13 +34,13 @@ namespace CityOfMindClient.View.UI.Menu.CharacterCreate.Menus
 
     private void Initialize()
     {
-      CheekWidth = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.cheek.width"), 50, 25);
+      CheekWidth = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.cheek.width"), 10, 5);
       CheekWidth.ValueChanged += (sender, args) => OnCheekValuesChanged();
       CheekBoneHeight = new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.cheek.boneheight"),
         50, 25);
       CheekBoneHeight.ValueChanged += (sender, args) => OnCheekValuesChanged();
       CheekBoneWidth =
-        new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.cheek.bonewidth"), 50, 25);
+        new NativeSliderItem(LanguageService.Translate("menu.character.creator.face.cheek.bonewidth"), 10, 5);
       CheekBoneWidth.ValueChanged += (sender, args) => OnCheekValuesChanged();
       
       Add(CheekWidth);

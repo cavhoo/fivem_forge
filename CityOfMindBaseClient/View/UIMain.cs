@@ -40,7 +40,7 @@ namespace FiveMForgeClient.View
       _menus = new Dictionary<MenuIds, NativeMenu>();
       EventHandlers[ClientEvents.ScriptStart] += new Action<string>(CreateUi);
       //EventHandlers[ClientEvents.ShowCharacterInformation] += new Action<bool>(ShowCharacterInformation);
-      EventHandlers[ClientEvents.ShowCharacterCreationMenu] += new Action<bool, int>(ShowCharacterCreationMenu);
+      //EventHandlers[ClientEvents.ShowCharacterCreationMenu] += new Action<bool, int>(ShowCharacterCreationMenu);
     }
 
     private void CreateUi(string resourceName)
