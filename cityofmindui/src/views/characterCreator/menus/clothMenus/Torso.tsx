@@ -5,7 +5,7 @@ import { runNuiCallback } from "../../../../utils/fetch"
 export const Torso = () => {
 
 	useEffect(() => {
-		var focusTorso = async () => await runNuiCallback("highlightBodyPart", { bodypart: "Torso"});
+		const focusTorso = async () => await runNuiCallback("highlightBodyPart", { bodypart: "Torso"});
 		focusTorso();
 	})
 

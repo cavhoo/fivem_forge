@@ -28,7 +28,7 @@ export const AttributeMenu = ({attributes, onAttributeChanged}: IAttributeMenuPr
 								defaultValue={config.default}
 								max={config.max}
 								min={config.min}
-								onChange={(evt, value) => onAttributeChanged({ id: config.id, value: value as number})}
+								onChange={(evt, value) => onAttributeChanged({ id: config.id, value: (value as number / config.max)})}
 							/>
 						</Grid>
 					</Grid>

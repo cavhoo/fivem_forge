@@ -1,8 +1,11 @@
 import { Button, Container, Grid, Typography } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { useStyles } from "@material-ui/pickers/views/Calendar/Day";
+import { useDebugValue, useEffect, useState } from "react";
 import { runNuiCallback } from "../../../utils/fetch";
+import { Color } from "../../components/colors/ColorPicker";
 import { CheekMenu } from "./faceMenus/CheekMenu";
 import { EyeMenu } from "./faceMenus/EyeMenu";
+import { HairMenu } from "./faceMenus/HairMenu";
 import { LipsMenu } from "./faceMenus/LipsMenu";
 import { NoseMenu } from "./faceMenus/NoseMenu";
 
@@ -16,6 +19,8 @@ export interface IEyeData {
 	browHeight: number;
 	browBulkiness: number;
 	opening: number;
+	eyeBrowStyle: number;
+	eyeBrowColor: number;
 }
 
 export interface INoseData {
@@ -33,43 +38,92 @@ export interface IChinData {
 	height: number;
 	gapSize: number;
 }
-
-export interface IFaceProperties {
-	eyes: IEyeData;
-	nose: INoseData;
-	cheeks: ICheekData;
-	chin: IChinData;
-	lipThickness: number;
-}
-
 enum FaceSubmenu {
 	Main,
 	Nose,
 	Cheeks,
 	Eyes,
 	Lips,
+	Hair,
+}
+export interface IFaceProperties {
+	eyes: IEyeData;
+	nose: INoseData;
+	cheeks: ICheekData;
+	chin: IChinData;
+	lipThickness: number;
+	hairStyle: {
+		style: number,
+		baseColor: number,
+		highlightColor: number
+	}
 }
 
-export const Face = ({cheeks, chin, eyes,nose }: IFaceProperties) => {
-	const [activeSubmenu, setActiveSubmenu] = useState(FaceSubmenu.Main);
+export interface IFaceProps {
+	browColors: Color[];
+	hairColors: Color[];
+	hairStyles: string[];
+	onFaceUpdated: (data: IFaceProperties) => void;
+}
 
-	useEffect(() => {
-		var focusFace = async () => {
-			await runNuiCallback("highlightBodyPart", { bodypart: "Face" })
-		};
-		focusFace();
-	})
+
+
+export const Face = ({cheeks, chin, eyes,nose, onFaceUpdated, browColors, hairStyle, hairColors }: IFaceProperties & IFaceProps) => {
+	const [activeSubmenu, setActiveSubmenu] = useState(FaceSubmenu.Main);
+	const [cheekData, setCheekData] = useState(cheeks);
+	const [noseData, setNoseData] = useState(nose);
+	const [eyeData, setEyeData] = useState(eyes);
+	const [chinData, setChinData] = useState(chin);
+	const [hairData, setHairData] = useState(hairStyle);
+	const [lipThickness, setLipThickness] = useState(0.5);
 
 	const setMenuActive = (menuId: FaceSubmenu) => {
 		setActiveSubmenu(menuId);
 	}
 
-	const onAttributeChanged = ({ id, value }: { id: string, value: number }) => {
-		switch (id) {
-			default:
-				console.log(id, value);
-		}
+	const onNoseDataChanged = ({id, value}: {id:string, value: number}) => {
+		setNoseData({
+			...noseData,
+			[id]: value,
+		});
+		onFaceUpdated({nose: {...noseData, [id]: value}, eyes: eyeData, cheeks: cheekData, chin: chinData, lipThickness, hairStyle: hairData});
 	}
+
+	const onEyeDataChanged = ({id, value}: {id:string, value: number}) => {
+		setEyeData({
+			...eyeData,
+			[id]: value,
+		});
+		onFaceUpdated({nose: noseData, eyes: {...eyeData, [id]: value}, cheeks: cheekData, chin: chinData, lipThickness, hairStyle: hairData});
+	}
+
+	const onCheekDataChanged = ({id, value}: {id: string, value: number}) => {
+		setCheekData({
+			...cheekData,
+			[id]: value,
+		});
+		onFaceUpdated({nose: noseData, eyes: eyeData, cheeks: {...cheekData, [id]: value}, chin: chinData, lipThickness, hairStyle: hairData});
+	}
+
+	const onChinDataChanged = ({id, value}: {id: string, value: number}) => {
+		setChinData({
+			...chinData,
+			[id]:value,
+		});
+		onFaceUpdated({nose: noseData, eyes: eyeData, cheeks: cheekData, chin: {...chinData, [id]: value}, lipThickness, hairStyle: hairData});
+	}
+
+	const onHairStyleChanged = ({id, value}: {id: string, value: number}) => {
+		setHairData({
+			...hairData,
+			[id]: value
+		})
+	}
+
+	const onLipsChanged = (value:number) => {
+		setLipThickness(value);
+	};
+
 
 	return (
 		<Container>
@@ -99,34 +153,46 @@ export const Face = ({cheeks, chin, eyes,nose }: IFaceProperties) => {
 								<Typography>Lips</Typography>
 							</Button>
 						</Grid>
+						<Grid item xs={12}>
+							<Button color="primary" variant="contained" fullWidth onClick={() => setMenuActive(FaceSubmenu.Hair)}>
+								<Typography>Hair</Typography>
+							</Button>
+						</Grid>
 					</Grid>
 				)
 			}
 			{
 				activeSubmenu === FaceSubmenu.Nose && (
 					<>
-						<NoseMenu onNoseChanged={onAttributeChanged} />
+						<NoseMenu noseData={noseData} onNoseChanged={onNoseDataChanged} />
 					</>
 				)
 			}
 			{
 				activeSubmenu === FaceSubmenu.Eyes && (
 					<>
-						<EyeMenu onEyeChanged={onAttributeChanged} />
+						<EyeMenu onEyeChanged={onEyeDataChanged} browColors={browColors} browColor={browColors[0]} />
 					</>
 				)
 			}
 			{
 				activeSubmenu === FaceSubmenu.Lips && (
 					<>
-						<LipsMenu onLipsChanged={onAttributeChanged} />
+						<LipsMenu onLipsChanged={onLipsChanged} />
 					</>
 				)
 			}
 			{
 				activeSubmenu === FaceSubmenu.Cheeks && (
 					<>
-						<CheekMenu onCheekChanged={onAttributeChanged} />
+						<CheekMenu onCheekChanged={onCheekDataChanged} />
+					</>
+				)
+			}
+			{
+				activeSubmenu === FaceSubmenu.Hair && (
+					<>
+						<HairMenu onHairStyleChanged={onHairStyleChanged} attributes={[]} hairColors={hairColors} />
 					</>
 				)
 			}
@@ -137,6 +203,7 @@ export const Face = ({cheeks, chin, eyes,nose }: IFaceProperties) => {
 					</Button>
 				)
 			}
+			
 		</Container>
 	);
 };

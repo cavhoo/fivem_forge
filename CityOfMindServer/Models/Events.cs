@@ -19,7 +19,7 @@ namespace FiveMForge.Models
         public const string Heartbeat = "CityOfMind:Heartbeat";
         public const string Error = "CityOfMind:Error";
         public const string UIError = "CityOfMind:UIError";
-        public const string CharacterCreated = "CityOfMind:CharacterCreated";
+        public const string CreateCharacter = "CityOfMind:CreateCharacter";
         public const string CharacterSaved = "CityOfMind:CharacterSaved";
         public const string CharactersLoaded = "CityOfMind:CharactersLoaded";
         public const string GoToCharacterSelection = "CityOfMind:ShowCharacterSelection";
@@ -27,6 +27,7 @@ namespace FiveMForge.Models
         public const string DisconnectPlayer = "CityOfMind:DisconnectPlayer";
         public const string LoadAvailableCharacterCount = "CityOfMind:GetAvailableCharacterSlots";
         public const string AvailableCharacterCountLoaded = "CityOfMind:AvailableCharacterSlotsLoaded";
+        public const string CreateBankAccountForCharacter = "CityOfMind:CreateBankAccountForCharacter";
     }
 
     public static class FiveMEvents

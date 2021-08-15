@@ -1,3 +1,4 @@
+import { INoseData } from "../Face";
 import { AttributeMenu, IAttributeMenuConfigItem } from "./AttributeMenu";
 
 const NoseMenuConfig: IAttributeMenuConfigItem[] = [
@@ -9,35 +10,35 @@ const NoseMenuConfig: IAttributeMenuConfigItem[] = [
 		default: 5,
 	},
 	{
-		id: 'length',
+		id: 'tipLength',
 		label: "nose.length",
 		max: 10,
 		min: 0,
 		default: 5,
 	},
 	{
-		id: 'height',
+		id: 'tipHeight',
 		label: "nose.height",
 		max: 10,
 		min: 0,
 		default: 5,
 	},
 	{
-		id: 'lowering',
+		id: 'tipLength',
 		label: "nose.lowering",
 		max: 10,
 		min: 0,
 		default: 5,
 	},
 	{
-		id: 'bonebend',
+		id: 'boneBend',
 		label: "nose.bonebend",
 		max: 10,
 		min: 0,
 		default: 5,
 	},
 	{
-		id: 'boneoffset',
+		id: 'boneOffset',
 		label: "nose.boneoffset",
 		max: 10,
 		min: 0,
@@ -47,6 +48,7 @@ const NoseMenuConfig: IAttributeMenuConfigItem[] = [
 ];
 
 export interface INoseMenuProps {
+	noseData: INoseData;
 	onNoseChanged: (noseChanged: { id: string, value: number }) => void;
 
 }

@@ -15,7 +15,7 @@ namespace CityOfMindClient.Controller.Money
     private bool Instantiated { get; set; }
     private const int MinimumDistance = 3;
     private bool _spawned = false;
-    private List<BankInformation> _bankLocations = new List<BankInformation>();
+    private List<Bank> _bankLocations = new List<Bank>();
 
     public BankingController()
     {
@@ -34,7 +34,7 @@ namespace CityOfMindClient.Controller.Money
 
     private void OnBankLocationsLoaded(string banks)
     {
-      var bankInfo = JsonConvert.DeserializeObject<BankInformation[]>(banks);
+      var bankInfo = JsonConvert.DeserializeObject<Bank[]>(banks);
       foreach (var bank in bankInfo)
       {
         _bankLocations.Add(new(bank.Name, bank.SpriteId, bank.X, bank.Y, bank.Z, bank.IsActive, bank.IsAdminOnly));

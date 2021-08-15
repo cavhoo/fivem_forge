@@ -13,7 +13,8 @@ namespace CityOfMindClient.Models
         public const string SavePOIPosition = "CityOfMind:SavePOIPosition";
         public const string LoadCharacters = "CityOfMind:LoadCharacters";
         public const string CharactersLoaded = "CityOfMind:CharactersLoaded";
-        public const string SaveCreatedCharacter = "CityOfMind:SaveCreatedCharacter";
+        public const string CreateCharacter = "CityOfMind:CreateCharacter";
+        public const string CharacterSaved = "CityOfMind:CharacterSaved";
         public const string GetAvailableCharacterSlots = "CityOfMind:GetAvailableCharacterSlots";
         public const string AvailableCharacterSlotsLoaded = "CityOfMind:AvailableCharacterSlotsLoaded";
     }

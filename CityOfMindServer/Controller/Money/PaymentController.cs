@@ -20,7 +20,7 @@ namespace FiveMForge.Controller.Money
     {
         public PaymentController()
         {
-            ProcessJobPayments();
+            //ProcessJobPayments();
         }
 
         private void ProcessJobPayments()

@@ -39,9 +39,15 @@ namespace CityOfMindClient.Controller.Character
     {
       EventHandlers[ClientEvents.CharacterCreationClosed] += new Action<dynamic>(obj => Enabled = true);
       EventHandlers[ServerEvents.AvailableCharacterSlotsLoaded] += new Action<int>(OnCharacterSlotsLoaded);
+      EventHandlers[ServerEvents.CharacterSaved] += new Action<string>(OnCharacterSaved);
       TriggerServerEvent(ServerEvents.GetAvailableCharacterSlots);
-      
     }
+
+    private void OnCharacterSaved(string charUuid)
+    {
+      TriggerServerEvent(ServerEvents.LoadCharacters);
+    }
+
     private void OnCharacterSlotsLoaded(int availableSlots)
     {
       _slotMarkerAmount = availableSlots;
@@ -49,100 +55,6 @@ namespace CityOfMindClient.Controller.Character
       slotMarkerCoords = CreateSlotMarkerPositions();
       TriggerServerEvent(ServerEvents.LoadCharacters);
       Tick += HandleKeyboardInput;
-      _currentCharacterData = new Models.Character.Character("", 99, "", "", new Guid().ToString(),
-        $"{_spawnLocation.X}:{_spawnLocation.Y}:{_spawnLocation.Z}");
-    }
-
-    private void OnUpdateCharacterModel(Dictionary<string, object> characterData, CallbackDelegate cb)
-    {
-      Debug.WriteLine($"Updating character {characterData}");
-      // Update parents data 
-      if (characterData.TryGetValue("mom", out var mom))
-      {
-        cb(new
-        {
-          error = "No Parent Data"
-        });
-        return;
-      }
-
-      if (characterData.TryGetValue("dad", out var dad))
-      {
-        cb(new
-        {
-          error = "No Parent Data"
-        });
-        return;
-      }
-
-      if (characterData.TryGetValue("faceFactor", out var faceFactor))
-      {
-        cb(new
-        {
-          error = "No Parent Data"
-        });
-        return;
-      }
-
-      if (characterData.TryGetValue("skinFactor", out var skinFactor))
-      {
-        cb(new
-        {
-          error = "No Parent Data"
-        });
-        return;
-      }
-
-
-      SetPedBlendFromParents(newCharacterPedId, (int) dad, (int) mom, (float) faceFactor, (float) skinFactor);
-      // Update Facial features
-      // var facialData = parsedCharacter.FaceData;
-      // if (facialData != null)
-      // {
-      //   Debug.WriteLine($"Updating Nose Length with: {facialData.NoseTipLength} on char: {newCharacterPedId}");
-      //   SetPedFaceFeature(newCharacterPedId, 1, facialData.NoseWidth);
-      //   SetPedFaceFeature(newCharacterPedId, 2, facialData.NoseTipHeight);
-      //   SetPedFaceFeature(newCharacterPedId, 3, facialData.NoseTipLength);
-      //   SetPedFaceFeature(newCharacterPedId, 4, facialData.NoseBoneBend);
-      //   SetPedFaceFeature(newCharacterPedId, 5, facialData.NoseTipLowering);
-      //   SetPedFaceFeature(newCharacterPedId, 6, facialData.NoseBoneOffset);
-      //   SetPedFaceFeature(newCharacterPedId, 7, facialData.EyeBrowHeight);
-      //   SetPedFaceFeature(newCharacterPedId, 8, facialData.EyeBrowBulkiness);
-      //   SetPedFaceFeature(newCharacterPedId, 9, facialData.CheekBoneHeight);
-      //   SetPedFaceFeature(newCharacterPedId, 10, facialData.CheekBoneWidth);
-      //   SetPedFaceFeature(newCharacterPedId, 11, facialData.CheekWidth);
-      //   SetPedFaceFeature(newCharacterPedId, 12, facialData.EyeOpening);
-      //   SetPedFaceFeature(newCharacterPedId, 13, facialData.LipThickness);
-      //   SetPedFaceFeature(newCharacterPedId, 14, 0.5f); // Jawbones TODO: Make Menu
-      //   SetPedFaceFeature(newCharacterPedId, 15, 0.5f); // Jawbones TODO: Make Menu
-      //   SetPedFaceFeature(newCharacterPedId, 16, facialData.ChinHeight);
-      //   SetPedFaceFeature(newCharacterPedId, 17, facialData.ChinForward);
-      //   SetPedFaceFeature(newCharacterPedId, 18, facialData.ChinWidth);
-      //   SetPedFaceFeature(newCharacterPedId, 19, facialData.ChinGapSize);
-      //   _currentCharacterData.UpdateFaceData(facialData);
-      // }
-      //
-      // // Update hair color and hair
-      // var hairData = parsedCharacter.HairData;
-      // if (hairData != null)
-      // {
-      //   SetPedComponentVariation(newCharacterPedId, 2, hairData.HairShape, 0, 2);
-      //   SetPedHairColor(newCharacterPedId, hairData.BaseColor, hairData.HighlightColor);
-      //   _currentCharacterData.UpdateHairData(hairData);
-      // }
-      //
-      // // Update Makeup
-      // var makeUpData = parsedCharacter.MakeUpData;
-      // if (makeUpData != null)
-      // {
-      //   SetPedHeadOverlay(newCharacterPedId, 4, makeUpData.MakeUpVariant, 1.0f);
-      //   SetPedHeadOverlay(newCharacterPedId, 5, makeUpData.BlushVariant, 1.0f);
-      //   SetPedHeadOverlay(newCharacterPedId, 8, makeUpData.LipstickVariant, 1.0f);
-      //   SetPedHeadOverlayColor(newCharacterPedId, 4, 0, makeUpData.MakeUpColor, 0);
-      //   SetPedHeadOverlayColor(newCharacterPedId, 5, 2, makeUpData.BlushColor, 0);
-      //   SetPedHeadOverlayColor(newCharacterPedId, 8, 2, makeUpData.LipstickColor, 0);
-      //   _currentCharacterData.UpdateMakeUpData(makeUpData);
-      // }
     }
 
     private async Task HandleKeyboardInput()
@@ -196,28 +108,17 @@ namespace CityOfMindClient.Controller.Character
           for (var i = 0; i < _createdCharacters.Count(); i++)
           {
             var removablePedId = _createdCharacters[i];
-            DeleteEntity(ref removablePedId);
+            //DeleteEntity(ref removablePedId);
           }
 
           // Tell SpawnManager to spawn player at last character coords
-          TriggerEvent(ClientEvents.SpawnPlayer, _availableCharacters[currentCharacterIndex], SelectionCameraHandle);
+          TriggerEvent(ClientEvents.SpawnPlayer,
+            JsonConvert.SerializeObject(_availableCharacters[currentCharacterIndex]), SelectionCameraHandle);
         }
         else
         {
           Enabled = false;
-          // TODO: Replace with model information from character data...
-          var modelHashKey = GetHashKey("mp_m_freemode_01");
-          RequestModel((uint) modelHashKey);
-          while (!HasModelLoaded((uint) modelHashKey))
-          {
-            await Delay(5);
-          }
-
-          newCharacterPedId = CreatePed(2, (uint) modelHashKey, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0,
-            false, true);
-          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, newCharacterPedId, SelectionCameraHandle);
-          PointCamAtCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z);
-          SetCamCoord(SelectionCameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
+          TriggerEvent(ClientEvents.ShowCharacterCreationMenu, SelectionCameraHandle);
         }
       }
     }
@@ -232,12 +133,12 @@ namespace CityOfMindClient.Controller.Character
                     Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / slotMarkerCoords.Count()) *
                                                                    currentCharacterIndex));
 
-      SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
+      SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float)camPosX, _spawnLocation.Y - (float)camPosY,
         328.17358f);
       PointCamAtCoord(SelectionCameraHandle, selectedCharPos.X, selectedCharPos.Y, _spawnLocation.Z);
     }
 
-   private async void OnShowCharacterSelection(string characters)
+    private async void OnShowCharacterSelection(string characters)
     {
       Enabled = true;
       _availableCharacters =
@@ -249,7 +150,7 @@ namespace CityOfMindClient.Controller.Character
       SetEntityVisible(playerPed, false, false);
       Tick += DrawCharacterSlotMarker; // Draw markers in a circle based on how many characters an account can have.
       DisplayRadar(false);
-      //DisplayHud(false);
+      DisplayHud(false);
       DisableAllControlActions(0);
       DisableFirstPersonCamThisFrame();
       ShutdownLoadingScreen();
@@ -279,31 +180,35 @@ namespace CityOfMindClient.Controller.Character
       }
     }
 
-    private async void SpawnCharacters(IEnumerable<Models.Character.Character> characters)
+    private async void SpawnCharacters(List<Models.Character.Character> characters)
     {
-      // TODO: Replace with model information from character data...
-      var modelHashKey = GetHashKey("a_m_y_hipster_01");
-      RequestModel((uint) modelHashKey);
-      while (!HasModelLoaded((uint) modelHashKey))
-      {
-        await Delay(500);
-      }
-
       var charAmount = characters.Count();
       for (var i = 0; i < charAmount; i++)
       {
-        var x = _slotMarkerRadius * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * i));
-        var y = _slotMarkerRadius * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * i));
-        var pedChar = CreatePed(2, (uint) modelHashKey, _spawnLocation.X - (float) x, _spawnLocation.Y - (float) y,
+        var modelHashKey = GetHashKey(characters[i].Gender == "male" ? "mp_m_freemode_01" : "mp_f_freemode_01");
+        RequestModel((uint)modelHashKey);
+        Debug.WriteLine($"{(uint)modelHashKey}");
+        while (!HasModelLoaded((uint)modelHashKey))
+        {
+          await Delay(15);
+        }
+
+        var x = _slotMarkerRadius * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
+        var y = _slotMarkerRadius * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
+        var pedChar = CreatePed(2, (uint)modelHashKey, _spawnLocation.X - (float)x, _spawnLocation.Y - (float)y,
           328.17358f, 90.0f, false, true);
+        Character.UpdateProperties(pedChar, characters[i]);
+        SetModelAsNoLongerNeeded((uint)modelHashKey);
         _createdCharacters.Add(pedChar);
       }
 
-      var firstCharacterPos = GetEntityCoords(_createdCharacters[0], true);
-      var camPosX = (_slotMarkerRadius + 5) * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * 0));
-      var camPosY = (_slotMarkerRadius + 5) * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / charAmount) * 0));
+      var firstCharacterPos = slotMarkerCoords.First();
+      var camPosX = (_slotMarkerRadius + 5) *
+                    Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * 0));
+      var camPosY = (_slotMarkerRadius + 5) *
+                    Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * 0));
 
-      SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float) camPosX, _spawnLocation.Y - (float) camPosY,
+      SetCamCoord(SelectionCameraHandle, _spawnLocation.X - (float)camPosX, _spawnLocation.Y - (float)camPosY,
         firstCharacterPos.Z);
       PointCamAtCoord(SelectionCameraHandle, firstCharacterPos.X, firstCharacterPos.Y, _spawnLocation.Z);
     }
@@ -315,7 +220,7 @@ namespace CityOfMindClient.Controller.Character
       {
         var x = _slotMarkerRadius * Math.Cos(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
         var y = _slotMarkerRadius * Math.Sin(FiveMForgeClient.Utils.Math.ToRadians((360 / _slotMarkerAmount) * i));
-        markerList.Add(new Vector3(_spawnLocation.X - (float) x, _spawnLocation.Y - (float) y,
+        markerList.Add(new Vector3(_spawnLocation.X - (float)x, _spawnLocation.Y - (float)y,
           _spawnLocation.Z - 1.0f));
       }
 
@@ -333,24 +238,6 @@ namespace CityOfMindClient.Controller.Character
           119, 168, 186,
           255, false, false, 2, false, null, null, false);
       }
-    }
-
-    private List<Models.Character.Character> ParseCharacterList(IEnumerable characterList)
-    {
-      var charList = new List<Models.Character.Character>();
-      foreach (Dictionary<string, object> character in characterList)
-      {
-        charList.Add(new(
-          Convert.ToString(character["Name"]),
-          Convert.ToInt32(character["Age"]),
-          Convert.ToString(character["AccountUuid"]),
-          Convert.ToString(character["JobUuid"]),
-          Convert.ToString(character["CharacterUuid"]),
-          Convert.ToString(character["LastPos"])
-        ));
-      }
-
-      return charList;
     }
   }
 }

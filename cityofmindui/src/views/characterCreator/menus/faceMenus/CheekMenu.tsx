@@ -2,21 +2,21 @@ import { AttributeMenu, IAttributeMenuConfigItem } from "./AttributeMenu";
 
 const CheekMenuItems: IAttributeMenuConfigItem[] = [
 	{
-		id: 'cheekwidth',
+		id: 'cheekWidth',
 		default: 5,
 		max: 10,
 		min: 0,
 		label: 'cheek.width'
 	},
 	{
-		id: 'cheekboneheight',
+		id: 'cheekBoneHeight',
 		default: 5,
 		max: 10,
 		min: 0,
 		label: 'cheek.width'
 	},
 	{
-		id: 'cheekbonewidth',
+		id: 'cheekBoneWidth',
 		default: 5,
 		max: 10,
 		min: 0,

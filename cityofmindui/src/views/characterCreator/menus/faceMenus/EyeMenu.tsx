@@ -1,3 +1,5 @@
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@material-ui/core";
+import { Color, ColorPicker } from "../../../components/colors/ColorPicker";
 import { AttributeMenu, IAttributeMenuConfigItem } from "./AttributeMenu";
 
 const EyeMenuItems: IAttributeMenuConfigItem[] = [
@@ -9,30 +11,51 @@ const EyeMenuItems: IAttributeMenuConfigItem[] = [
 		label: 'eye.opening'
 	},
 	{
-		id: 'browheight',
+		id: 'browHeight',
 		default: 5,
 		max: 10,
 		min: 0,
 		label: 'eye.browheight',
 	},
 	{
-		id: 'browthickness',
+		id: 'browBulkiness',
 		default: 5,
 		max: 10,
 		min: 0,
 		label: 'eye.browthickness'
 	},
 	{
-		id: 'eyecolor',
+		id: 'color',
 		default: 5,
 		max: 10,
 		min: 0,
 		label: 'eye.color'
+	},
+	{
+		id: 'eyeBrowStyle',
+		default: 0,
+		max: 33,
+		min: 0,
+		label: 'eye.browStyle'
 	}
 ];
 
 export interface IEyeMenuProps {
-	onEyeChanged: (eyeChanged: {id: string, value: number}) => void;
+	browColor: Color;
+	browColors: Color[];
+	onEyeChanged: (eyeChanged: { id: string, value: number }) => void;
 }
 
-export const EyeMenu = ({onEyeChanged}: IEyeMenuProps) => <AttributeMenu attributes={EyeMenuItems} onAttributeChanged={onEyeChanged} />
+export const EyeMenu = ({ onEyeChanged, browColor, browColors }: IEyeMenuProps) => (
+	<>
+		<AttributeMenu attributes={EyeMenuItems} onAttributeChanged={onEyeChanged} />
+		<Accordion>
+			<AccordionSummary>
+				<Typography>Eyebrow Color</Typography>
+			</AccordionSummary>
+			<AccordionDetails>
+				<ColorPicker selectedColor={browColor} colors={browColors} onColorChanged={(color) => onEyeChanged({ id: 'eyeBrowColor', value: browColors.findIndex((c) => c.value === color.value) })} />
+			</AccordionDetails>
+		</Accordion>
+	</>
+)

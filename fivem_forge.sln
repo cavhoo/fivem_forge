@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityOfMindServer", "CityOfM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityOfMindBaseClient", "CityOfMindBaseClient\CityOfMindBaseClient.csproj", "{06CC1EF2-276A-46A5-AD5F-55589F6BA734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speedometer", "Speedometer\Speedometer.csproj", "{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,17 +44,5 @@ Global
 		{06CC1EF2-276A-46A5-AD5F-55589F6BA734}.Release|x64.Build.0 = Release|Any CPU
 		{06CC1EF2-276A-46A5-AD5F-55589F6BA734}.Release|x86.ActiveCfg = Release|Any CPU
 		{06CC1EF2-276A-46A5-AD5F-55589F6BA734}.Release|x86.Build.0 = Release|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Debug|x64.Build.0 = Debug|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Debug|x86.Build.0 = Debug|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Release|x64.ActiveCfg = Release|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Release|x64.Build.0 = Release|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Release|x86.ActiveCfg = Release|Any CPU
-		{C7A7B190-5E0C-4D30-B77C-E90B39037C7B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

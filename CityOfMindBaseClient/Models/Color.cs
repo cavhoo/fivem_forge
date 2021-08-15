@@ -14,5 +14,10 @@
       Green = g;
       Blue = b;
     }
+
+    public override string ToString()
+    {
+      return $"{Red}:{Green}:{Blue}";
+    }
   }
 }

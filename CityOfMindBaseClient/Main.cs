@@ -20,6 +20,7 @@ namespace CityOfMindClient
 
     public Main()
     {
+      Debug.WriteLine("CityOfMindClient:Booting");
       EventHandlers[ClientEvents.ScriptStart] += new Action<string>(OnClientStart);
     }
 
@@ -31,11 +32,16 @@ namespace CityOfMindClient
       }
       
       Instantiated = true;
-      _characterSelectionController = new CharacterSelectionController();
-      _spawnController = new SpawnController();
-      _atmController = new AtmController();
-      _bankingController = new BankingController();
-      _densityController = new DensityController();
+      // _characterSelectionController = new CharacterSelectionController();
+      // _characterSelectionController.Initialize();
+      // _spawnController = new SpawnController();
+      // _spawnController.Initialize();
+      // _atmController = new AtmController();
+      // _atmController.Iniitalize();
+      // _bankingController = new BankingController();
+      // _bankingController.Initialize();
+      // _densityController = new DensityController();
+      // _densityController.Initialize();Initialize
     }
   }
 }

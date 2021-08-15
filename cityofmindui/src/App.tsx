@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Container } from '@material-ui/core';
-import { CharacterCreator, ICharacter, ICharacterCreatorProps } from './views/characterCreator/CharacterCreator';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { Container } from '@material-ui/core';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import React, { useEffect, useState } from 'react';
+import { CharacterCreator } from './views/characterCreator/CharacterCreator';
 
 export interface IUiMessageData {
   targetUI: string;
@@ -11,8 +11,6 @@ export interface IUiMessageData {
     eventData: any;
   }
 }
-
-
 
 function App () {
   const [uiVisibility, setUiVisibility] = useState({
@@ -28,6 +26,13 @@ function App () {
         switch (targetUI) {
           case "characterCreator":
             setUiVisibility({...uiVisibility, characterCreator: true});
+        }
+      }
+      
+      if (eventType === "close") {
+        switch (targetUI) {
+          case "characterCreator":
+            setUiVisibility({...uiVisibility, characterCreator: false});
         }
       }
     });

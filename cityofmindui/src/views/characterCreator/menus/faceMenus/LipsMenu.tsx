@@ -2,7 +2,7 @@ import { AttributeMenu, IAttributeMenuConfigItem } from "./AttributeMenu";
 
 const LipMenuItems: IAttributeMenuConfigItem[] = [
 	{
-		id: 'lipthickness',
+		id: 'lipThickness',
 		default: 5,
 		max: 10,
 		min: 0,
@@ -11,6 +11,6 @@ const LipMenuItems: IAttributeMenuConfigItem[] = [
 ]
 
 export interface ILipsMenuProps {
-	onLipsChanged: (lipsChanged: {id: string, value: number}) => void;
+	onLipsChanged: (value: number) => void;
 }
-export const LipsMenu = ({onLipsChanged}: ILipsMenuProps) => <AttributeMenu attributes={LipMenuItems} onAttributeChanged={onLipsChanged} />
+export const LipsMenu = ({onLipsChanged}: ILipsMenuProps) => <AttributeMenu attributes={LipMenuItems} onAttributeChanged={({id, value}) => onLipsChanged(value)} />

@@ -1,8 +1,8 @@
 namespace CityOfMindClient.Models
 {
-    public struct BankInformation
+    public struct Bank
         {
-            public BankInformation(string name, int spriteId, float x, float y, float z, bool isActive, bool isAdminOnly)
+            public Bank(string name, int spriteId, float x, float y, float z, bool isActive, bool isAdminOnly)
             {
                 Name = name;
                 SpriteId = spriteId;

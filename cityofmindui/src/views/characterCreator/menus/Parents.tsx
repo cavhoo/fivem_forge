@@ -23,8 +23,8 @@ export const Parents = ({ momNames, dadNames, skinFactor, faceFactor, mom, dad, 
     onParentDataChanged(
       momIndex,
       dadIndex,
-      skinFactorValue,
-      faceFactorValue
+      skinFactorValue / 10,
+      faceFactorValue / 10
     );
   }
 
@@ -73,7 +73,7 @@ export const Parents = ({ momNames, dadNames, skinFactor, faceFactor, mom, dad, 
           <Grid item xs>
             <Slider
               key="faceFactorSlider"
-              defaultValue={faceFactor}
+              defaultValue={faceFactor * 10}
               max={10}
               min={0}
               onChange={(evt, val) => {
@@ -98,7 +98,7 @@ export const Parents = ({ momNames, dadNames, skinFactor, faceFactor, mom, dad, 
           <Grid item xs>
             <Slider
               key="skinFactorSlider"
-              defaultValue={skinFactor}
+              defaultValue={skinFactor * 10}
               max={10}
               min={0}
               onChange={(evt, val) => {

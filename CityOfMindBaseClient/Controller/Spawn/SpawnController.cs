@@ -2,9 +2,11 @@ extern alias CFX;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CFX::CitizenFX.Core;
 using CityOfMindClient.Enums;
 using CityOfMindClient.Models;
 using FiveMForgeClient.Utils;
+using Newtonsoft.Json;
 using static CFX::CitizenFX.Core.Native.API;
 using BaseScript = CFX::CitizenFX.Core.BaseScript;
 using Math = System.Math;
@@ -14,6 +16,7 @@ namespace CityOfMindClient.Controller.Spawn
 {
   public class SpawnController : BaseScript
   {
+    private readonly Vector3 _spawnLocation = new(-74.95219f, -818.7512f, 326.0000f);
     private bool ForceRespawn = true;
     private int TimeOfDeath = -1;
     private bool Instantiated { get; set; }
@@ -21,7 +24,7 @@ namespace CityOfMindClient.Controller.Spawn
 
     public SpawnController()
     {
-      EventHandlers[ClientEvents.SpawnPlayer] += new Action<dynamic, int>(SpawnPlayer);
+      EventHandlers[ClientEvents.SpawnPlayer] += new Action<string, int>(SpawnPlayer);
       Tick += SpawnLoop;
     }
 
@@ -64,7 +67,7 @@ namespace CityOfMindClient.Controller.Spawn
       {
         if (!IsEntityVisible(ped))
         {
-          SetEntityVisible(ped, true, false);
+          SetEntityVisible(ped, true, true);
         }
 
         if (!IsPedInAnyVehicle(ped, false))
@@ -92,57 +95,47 @@ namespace CityOfMindClient.Controller.Spawn
       }
     }
 
-    private async void SpawnPlayer(dynamic character, int cameraHandle)
+    private async void SpawnPlayer(string character, int cameraHandle)
     {
-      var characterToSpawn = character as IDictionary<string, object>;
+      var characterToSpawn = JsonConvert.DeserializeObject<Models.Character.Character>(character);
       // Parsing X:Y:Z to Vector 3
-      var lastPos = Parser.StringToVector3((string)characterToSpawn?["LastPos"]);
+      var lastPos = Parser.StringToVector3(characterToSpawn?.LastPos);
       if (SpawnLock) return;
       SpawnLock = true;
-      var playerPed = GetPlayerPed(PlayerId());
-      StartPlayerSwitch(playerPed, playerPed, 513, 3);
       FreezePlayer(PlayerId(), true);
-      var modelHashKey = GetHashKey("a_m_y_hipster_01");
-      RequestModel((uint) modelHashKey);
-
-      while (!HasModelLoaded((uint) modelHashKey))
-      {
-        RequestModel((uint) modelHashKey);
-        await Delay(5);
+      var modelHashKey =  GetHashKey(characterToSpawn?.Gender == "male" ? "mp_m_freemode_01" : "mp_f_freemode_01");
+      RequestModel((uint)modelHashKey);
+      while (!HasModelLoaded((uint)modelHashKey))
+      { 
+        RequestModel((uint)modelHashKey);
+        await Delay(15);
       }
-
-      SetPlayerModel(PlayerId(), (uint) modelHashKey);
-      SetModelAsNoLongerNeeded((uint) modelHashKey);
-
+      SetPlayerModel(PlayerId(), (uint)modelHashKey);
       var ped = PlayerPedId();
-      RequestCollisionAtCoord(lastPos.X, lastPos.Y, lastPos.Z);
-      SetEntityCoordsNoOffset(ped, lastPos.X, lastPos.Y, lastPos.Z, true, false, false);
-      NetworkResurrectLocalPlayer(lastPos.X, lastPos.Y, lastPos.Z, 0, true, false);
-      ClearPedTasksImmediately(ped);
-      RemoveAllPedWeapons(ped, true);
-      ClearPlayerWantedLevel(PlayerId());
+      Vector3 sourceLocation = new(-74.95219f, -818.7512f, 326.0000f);
+      var switchType = GetIdealPlayerSwitchType(sourceLocation.X, sourceLocation.Y, sourceLocation.Z, lastPos.X,
+        lastPos.Y, lastPos.Z);
+      StartPlayerSwitch(ped, ped, 2050, switchType);
+      SetModelAsNoLongerNeeded((uint)modelHashKey);
+      Character.Character.UpdateProperties(ped, characterToSpawn);
 
+      RequestCollisionAtCoord(_spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 0.5f);
+      SetEntityCoordsNoOffset(ped, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 0.5f, true, false, false);
+      NetworkResurrectLocalPlayer(_spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0, true, false);
+      ClearPedTasksImmediately(ped);
+      ClearPlayerWantedLevel(PlayerId());
 
       var time = GetGameTimer();
       while (!HasCollisionLoadedAroundEntity(ped) && (GetGameTimer() - time) < 5000)
       {
-        await Delay(0);
+        await Delay(5);
       }
-
-      if (IsScreenFadedOut())
-      {
-        DoScreenFadeIn(500);
-        while (!IsScreenFadedIn())
-        {
-          await Delay(5);
-        }
-      }
-
+ 
       SetPlayerControl(ped, true, 1 << 2);
       FreezePlayer(PlayerId(), false);
       DestroyCam(cameraHandle, false);
       RenderScriptCams(false, false, 1, true, true);
-      StopPlayerSwitch();
+      //StopPlayerSwitch();
       DisplayRadar(true);
       DisplayHud(true);
       DisplayCash(true);
@@ -158,60 +151,16 @@ namespace CityOfMindClient.Controller.Spawn
 
     private void ShowHudELements()
     {
-      ShowHudComponentThisFrame((int) HudElements.Cash);
-      ShowHudComponentThisFrame((int) HudElements.MpCash);
-      ShowHudComponentThisFrame((int) HudElements.AreaName);
-      ShowHudComponentThisFrame((int) HudElements.Reticle);
-      ShowHudComponentThisFrame((int) HudElements.RadioStations);
-      ShowHudComponentThisFrame((int) HudElements.HelpText);
-      ShowHudComponentThisFrame((int) HudElements.HudComponents);
-      ShowHudComponentThisFrame((int) HudElements.HudWeapons);
-      ShowHudComponentThisFrame((int) HudElements.WantedStars);
-      ShowHudComponentThisFrame((int) HudElements.Cash);
-    }
-
-    private async void OnShowCharacterCreation(float x, float y, float z)
-    {
-      if (SpawnLock) return;
-      SpawnLock = true;
-
-      DoScreenFadeOut(500);
-      while (!IsScreenFadedOut())
-      {
-        await Delay(5);
-      }
-
-      FreezePlayer(PlayerId(), true);
-      var modelHashKey = GetHashKey("a_m_y_hipster_01");
-      RequestModel((uint) modelHashKey);
-
-      while (!HasModelLoaded((uint) modelHashKey))
-      {
-        RequestModel((uint) modelHashKey);
-        await Delay(5);
-      }
-
-      SetPlayerModel(PlayerId(), (uint) modelHashKey);
-      SetModelAsNoLongerNeeded((uint) modelHashKey);
-
-      var ped = PlayerPedId();
-      RequestCollisionAtCoord(x, y, z);
-      SetEntityCoordsNoOffset(ped, x, y, z, true, false, false);
-      NetworkResurrectLocalPlayer(x, y, z, 0, true, false);
-      ClearPedTasksImmediately(ped);
-      RemoveAllPedWeapons(ped, true);
-      ClearPlayerWantedLevel(PlayerId());
-
-      ShutdownLoadingScreen();
-
-      if (IsScreenFadedOut())
-      {
-        DoScreenFadeIn(500);
-        while (!IsScreenFadedIn())
-        {
-          await Delay(5);
-        }
-      }
+      ShowHudComponentThisFrame((int)HudElements.Cash);
+      ShowHudComponentThisFrame((int)HudElements.MpCash);
+      ShowHudComponentThisFrame((int)HudElements.AreaName);
+      ShowHudComponentThisFrame((int)HudElements.Reticle);
+      ShowHudComponentThisFrame((int)HudElements.RadioStations);
+      ShowHudComponentThisFrame((int)HudElements.HelpText);
+      ShowHudComponentThisFrame((int)HudElements.HudComponents);
+      ShowHudComponentThisFrame((int)HudElements.HudWeapons);
+      ShowHudComponentThisFrame((int)HudElements.WantedStars);
+      ShowHudComponentThisFrame((int)HudElements.Cash);
     }
   }
 }
