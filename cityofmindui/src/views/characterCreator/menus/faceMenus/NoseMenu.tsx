@@ -1,4 +1,4 @@
-import { INoseData } from "../Face";
+import { INoseData } from "../../../../models";
 import { AttributeMenu, IAttributeMenuConfigItem } from "./AttributeMenu";
 
 const NoseMenuConfig: IAttributeMenuConfigItem[] = [

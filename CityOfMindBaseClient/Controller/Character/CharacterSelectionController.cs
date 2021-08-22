@@ -1,15 +1,10 @@
 ﻿extern alias CFX;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CFX::CitizenFX.Core;
 using CityOfMindClient.Models;
-using CityOfMindClient.Models.Character;
-using CityOfMindClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.Services.Language;
-using FiveMForgeClient.View.UI.Menu.CharacterCreate;
 using Newtonsoft.Json;
 using static CFX::CitizenFX.Core.Native.API;
 using BaseScript = CFX::CitizenFX.Core.BaseScript;

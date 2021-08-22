@@ -132,5 +132,19 @@ namespace FiveMForge.Models
     public int ChestHairVariant { get; set; }
     [DefaultValue(0)]
     public int ChestHairColor { get; set; }
+    [DefaultValue(255)]
+    public int Hat { get; set; }
+    [DefaultValue(255)]
+    public int Mask { get; set; }
+    [DefaultValue(255)]
+    public int Glasses { get; set; }
+    [DefaultValue(255)]
+    public int Jacket { get; set; }
+    [DefaultValue(255)]
+    public int Pants { get; set; }
+    [DefaultValue(255)]
+    public int Shoes { get; set; }
+    [DefaultValue(255)]
+    public int Shirt { get; set; }
   }
 }

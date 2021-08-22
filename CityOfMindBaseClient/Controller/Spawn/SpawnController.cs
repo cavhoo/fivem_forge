@@ -117,6 +117,7 @@ namespace CityOfMindClient.Controller.Spawn
         lastPos.Y, lastPos.Z);
       StartPlayerSwitch(ped, ped, 2050, switchType);
       SetModelAsNoLongerNeeded((uint)modelHashKey);
+      //SetPedRandomComponentVariation(ped, true);
       Character.Character.UpdateProperties(ped, characterToSpawn);
 
       RequestCollisionAtCoord(_spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 0.5f);

@@ -2,7 +2,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import { Container } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { useEffect, useState } from 'react';
-import { CharacterCreator } from './views/characterCreator/CharacterCreator';
+import {CharacterCreator, Atm, Needs} from './views';
+import {runNuiCallback} from "./utils/fetch";
 
 export interface IUiMessageData {
   targetUI: string;
@@ -15,6 +16,8 @@ export interface IUiMessageData {
 function App () {
   const [uiVisibility, setUiVisibility] = useState({
     characterCreator: false,
+    atm: false,
+    needs: true,
   });
 
   useEffect(() => {
@@ -36,7 +39,9 @@ function App () {
         }
       }
     });
-  });
+    
+   
+  }, []);
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -44,6 +49,16 @@ function App () {
         {
           uiVisibility.characterCreator && (
             <CharacterCreator />
+          )
+        }
+        {
+          uiVisibility.atm && (
+              <Atm />
+          )
+        }
+        {
+          uiVisibility.needs && (
+              <Needs />
           )
         }
       </Container>

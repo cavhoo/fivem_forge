@@ -1,8 +1,4 @@
 ﻿extern alias CFX;
-using System;
-using CityOfMindClient.View.UI.Menu.CharacterCreate.Menus;
-using FiveMForgeClient.View.UI.Menu.CharacterCreate;
-using Vector2 = CFX::CitizenFX.Core.Vector2;
 using Vector3 = CFX::CitizenFX.Core.Vector3;
 
 namespace CityOfMindClient.Models.Character
@@ -91,7 +87,19 @@ namespace CityOfMindClient.Models.Character
     /// Tattoo Shape Data
     /// </summary>
     public int TattooVariant { get; set; }
+  
     
+    /// <summary>
+    /// CLothing
+    /// </summary>
+    public int Hat { get; set; }
+    public int Mask { get; set; }
+    public int Glasses { get; set; }
+    public int Pants { get; set; }
+    public int Jewellery { get; set; }
+    public int Jacket { get; set; }
+    public int Shoes { get; set; }
+    public int Shirt { get; set; }
     
     public Vector3 GetLastPos()
     {

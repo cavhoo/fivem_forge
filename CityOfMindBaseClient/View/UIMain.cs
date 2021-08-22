@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using CFX::CitizenFX.Core;
 using CityOfMindClient.Models;
-using CityOfMindClient.View.UI.Menu.CharacterCreate;
 using FiveMForgeClient.Services.Language;
 using FiveMForgeClient.View.UI.Hud;
 using FiveMForgeClient.View.UI.Menu;
@@ -51,18 +50,6 @@ namespace FiveMForgeClient.View
       _initialized = true;
       _menus.Add(MenuIds.CarSpawner, new CarSpawnMenu("Car Spawner", "Spawn a car"));
       _pool = new ObjectPool();
-
-      var characterCreator = new CharacterCreator(LanguageService.Translate("character_creator"),
-        LanguageService.Translate("character_creator_description"));
-      characterCreator.SetMenuPool(ref _pool);
-      characterCreator.CharacterChanged += (sender, args) =>
-      {
-        Debug.WriteLine($"Character updated {args.Sex}");
-        TriggerEvent(ClientEvents.UpdateCharacterModel, JsonConvert.SerializeObject(args));
-      };
-      
-      _menus.Add(MenuIds.CharacterCreator, characterCreator);
-      characterCreator.Initialize();
       
       foreach (var value in _menus.Values)
       {
@@ -85,13 +72,6 @@ namespace FiveMForgeClient.View
     {
       Debug.WriteLine("Showing character info");
       _hudElements[HudIds.CharacterInformation].Visible = visible;
-    }
-
-    private async void ShowCharacterCreationMenu(bool visible, int pedId)
-    {
-      ((CharacterCreator)_menus[MenuIds.CharacterCreator]).SetPedId(pedId);
-      _menus[MenuIds.CharacterCreator].Visible = visible;
-      
     }
   }
 }

@@ -34,12 +34,14 @@ export const PersonalData = ({firstname, lastname, nationality, birthdate, gende
 				<Grid item xs={6}>
 					<Typography>Firstname:</Typography>
 					<TextField 
+						value={firstname}
 						onChange={(evt) => onUpdatePersonalData({ firstname: evt.target.value, lastname, nationality, birthdate, gender})}
 					/>
 				</Grid>
 				<Grid item xs={6}>
 					<Typography>Lastname:</Typography>
-					<TextField 
+					<TextField
+						value={lastname}
 						onChange={(evt) => onUpdatePersonalData({lastname: evt.target.value, firstname, nationality, birthdate, gender})}
 					/>
 				</Grid>

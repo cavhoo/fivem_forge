@@ -12,11 +12,11 @@ namespace CityOfMindClient.Controller.Character
 {
   public class CharacterCreationController : BaseScript
   {
-    private readonly Vector3 _spawnLocation = new(-74.95219f, -818.7512f, 326.0000f);
-    private readonly Vector3 _faceCamPosition = new(-74.95219f, -818.2512f, 326.0000f);
-    private readonly Vector3 _torsoCamPosition = new(-74.95219f, -818.2512f, 326.0000f);
-    private readonly Vector3 _legCamPosition = new(-74.95219f, -818.2512f, 326.0000f);
-    private readonly Vector3 _feetCamPosition = new(-74.95219f, -818.2512f, 326.0000f);
+    private readonly Vector3 _spawnLocation = new(-74.95219f, -818.7512f, 325.0000f);
+    private readonly Vector3 _faceCamPosition = new(-74.95219f, -818.2512f, 325.0000f);
+    private readonly Vector3 _torsoCamPosition = new(-74.95219f, -818.2512f, 325.0000f);
+    private readonly Vector3 _legCamPosition = new(-74.95219f, -818.2512f, 325.0000f);
+    private readonly Vector3 _feetCamPosition = new(-74.95219f, -818.2512f, 325.0000f);
 
     private int CharacterCameraHandle;
     private int NewCharacterId;
@@ -41,7 +41,6 @@ namespace CityOfMindClient.Controller.Character
             {
               await Delay(5);
             }
-
             SetPlayerModel(PlayerId(), (uint)modelHash);
             SetModelAsNoLongerNeeded((uint)modelHash);
           }
@@ -112,30 +111,64 @@ namespace CityOfMindClient.Controller.Character
           Character.UpdateProperties(PlayerPedId(), CharacterData);
           cb(new object[] { "ok" });
         });
-      RegisterNuiCallbackType("character/highlightBodyPart");
+      RegisterNuiCallbackType("highlightBodyPart");
       EventHandlers["__cfx_nui:highlightBodyPart"] +=
         new Action<IDictionary<string, object>, CallbackDelegate>(OnHighlightBodyPart);
 
-      RegisterNuiCallbackType("character/getInitialData");
+      RegisterNuiCallbackType("getInitialData");
       EventHandlers["__cfx_nui:getInitialData"] +=
         new Action<IDictionary<string, object>, CallbackDelegate>(OnInitalDataRequested);
 
-      RegisterNuiCallbackType("character/createCharacter");
+      RegisterNuiCallbackType("getClothingForCurrentCharacter");
+      EventHandlers["__cfx_nui:getClothingForCurrentCharacter"] +=
+        new Action<IDictionary<string, object>, CallbackDelegate>(OnRequestCharacterClothing);
+
+      RegisterNuiCallbackType("createCharacter");
       EventHandlers["__cfx_nui:createCharacter"] +=
         new Action<IDictionary<string, object>, CallbackDelegate>(OnCreateCharacter);
+
+      RegisterNuiCallbackType("getCurrentCameraParameters");
+      EventHandlers["__cfx_nui:getCurrentCameraParameters"] +=
+        new Action<string, CallbackDelegate>(OnRequestCameraParameters);
+    }
+
+    private void OnRequestCharacterClothing(IDictionary<string, object> arg1, CallbackDelegate arg2)
+    {
+      arg2(new
+      {
+        masks = GetAvailableClothVariations(1), // Masks
+        gloves = GetAvailableClothVariations(3),
+        pants = GetAvailableClothVariations(4),
+        shoes = GetAvailableClothVariations(6),
+        jewelry = GetAvailableClothVariations(7),
+        underShirts = GetAvailableClothVariations(8),
+        armor = GetAvailableClothVariations(9),
+        shirts = GetAvailableClothVariations(11),
+        hats = GetAvailableAccessoryVariations(0),
+        glasses = GetAvailableAccessoryVariations(1),
+        jewellery = GetAvailableAccessoryVariations(2)
+      });
+    }
+
+    private void OnRequestCameraParameters(string arg1, CallbackDelegate arg2)
+    {
+      arg2(new
+      {
+        pos = GetCamCoord(CharacterCameraHandle),
+      });
     }
 
     protected void OnCharacterCreated(string charUuid)
     {
       SendNuiMessage(JsonConvert.SerializeObject(new
-           {
-             targetUI = "characterCreator",
-             payload = new
-             {
-               eventType = "close",
-             },
-           }));
-      
+      {
+        targetUI = "characterCreator",
+        payload = new
+        {
+          eventType = "close",
+        },
+      }));
+
       SetEntityVisible(GetPlayerPed(PlayerId()), false, true);
       SetNuiFocus(false, false);
     }
@@ -153,19 +186,25 @@ namespace CityOfMindClient.Controller.Character
       switch (bodypartToHighlight)
       {
         case "Head":
-          SetCamCoord(CharacterCameraHandle, _faceCamPosition.X, _faceCamPosition.Y, _faceCamPosition.Z);
+          SetCamCoord(CharacterCameraHandle, _faceCamPosition.X, _faceCamPosition.Y + 0.2f, _faceCamPosition.Z + 2.0f);
+          PointCamAtCoord(CharacterCameraHandle, _faceCamPosition.X, _faceCamPosition.Y, _faceCamPosition.Z + 2.0f);
           break;
         case "Torso":
-          SetCamCoord(CharacterCameraHandle, _torsoCamPosition.X, _torsoCamPosition.Y, _torsoCamPosition.Z);
+          SetCamCoord(CharacterCameraHandle, _torsoCamPosition.X, _torsoCamPosition.Y + 0.2f,
+            _torsoCamPosition.Z + 1.0f);
+          PointCamAtCoord(CharacterCameraHandle, _torsoCamPosition.X, _torsoCamPosition.Y, _torsoCamPosition.Z + 1.0f);
           break;
         case "Legs":
-          SetCamCoord(CharacterCameraHandle, _legCamPosition.X, _legCamPosition.Y, _legCamPosition.Z);
+          SetCamCoord(CharacterCameraHandle, _legCamPosition.X, _legCamPosition.Y + 0.2f, _legCamPosition.Z + 0.5f);
+          PointCamAtCoord(CharacterCameraHandle, _legCamPosition.X, _legCamPosition.Y, _legCamPosition.Z + 0.5f);
           break;
         case "Feet":
-          SetCamCoord(CharacterCameraHandle, _feetCamPosition.X, _feetCamPosition.Y, _feetCamPosition.Z);
+          SetCamCoord(CharacterCameraHandle, _feetCamPosition.X, _feetCamPosition.Y + 0.2f, _feetCamPosition.Z);
+          PointCamAtCoord(CharacterCameraHandle, _feetCamPosition.X, _feetCamPosition.Y, _feetCamPosition.Z);
           break;
         default: // Zoom back out
-          SetCamCoord(CharacterCameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z);
+          SetCamCoord(CharacterCameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
+          PointCamAtCoord(CharacterCameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 2.0f);
           break;
       }
 
@@ -175,8 +214,8 @@ namespace CityOfMindClient.Controller.Character
     protected async void OnShowCharacterCreation(int cameraHandle)
     {
       CharacterCameraHandle = cameraHandle;
-      PointCamAtCoord(cameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z);
-      SetCamCoord(cameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z);
+      PointCamAtCoord(cameraHandle, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 2.0f);
+      SetCamCoord(cameraHandle, _spawnLocation.X, _spawnLocation.Y + 2.0f, _spawnLocation.Z + 2.0f);
       SendNuiMessage(JsonConvert.SerializeObject(new
       {
         targetUI = "characterCreator",
@@ -194,9 +233,8 @@ namespace CityOfMindClient.Controller.Character
       }
 
       NewCharacterId = PlayerId();
-      //NewCharacterId = CreatePed(0, (uint) modelHashKey, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0, false,
-      //false);
       SetPlayerModel(NewCharacterId, (uint)modelHashKey);
+      //SetPedRandomComponentVariation(NewCharacterId, true);
       SetEntityVisible(PlayerPedId(), true, true);
       SetEntityCoords(PlayerPedId(), _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, true, true, false, false);
       SetNuiFocus(true, true);
@@ -224,6 +262,20 @@ namespace CityOfMindClient.Controller.Character
             tattooVariantsMale = GetTattoIndeces(3), // 3 = MPMale
             tattooVariantsFemale = GetTattoIndeces(4), // 4 = MPFemale
             lipStickColors = GetAvailableMakeUpColors().ToArray(),
+            clothes = new
+            {
+              masks = GetAvailableClothVariations(1), // Masks
+              gloves = GetAvailableClothVariations(3),
+              pants = GetAvailableClothVariations(4),
+              shoes = GetAvailableClothVariations(6),
+              jewelry = GetAvailableClothVariations(7),
+              underShirts = GetAvailableClothVariations(8),
+              armor = GetAvailableClothVariations(9),
+              shirts = GetAvailableClothVariations(11),
+              hats = GetAvailableAccessoryVariations(0),
+              glasses = GetAvailableAccessoryVariations(1),
+              jewellery = GetAvailableAccessoryVariations(2)
+            }
           }
         }
       }));
@@ -265,6 +317,16 @@ namespace CityOfMindClient.Controller.Character
       }
 
       return colors;
+    }
+
+    protected int GetAvailableClothVariations(int clothingType)
+    {
+      return GetNumberOfPedDrawableVariations(GetPlayerPed(PlayerId()), clothingType);
+    }
+
+    protected int GetAvailableAccessoryVariations(int accessoryType)
+    {
+      return GetNumberOfPedPropDrawableVariations(GetPlayerPed(PlayerId()), accessoryType);
     }
   }
 }

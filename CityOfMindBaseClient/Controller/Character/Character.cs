@@ -47,6 +47,7 @@ namespace CityOfMindClient.Controller.Character
       SetPedHeadOverlayColor(pedId, 4, 0, characterData.MakeUpColor, 0);
 
       // Update Hairstyle
+      Debug.WriteLine($"Chaing Hairstyle {characterData.HairShape}");
       SetPedComponentVariation(pedId, 2, characterData.HairShape, 0, 2);
       SetPedHairColor(pedId, characterData.HairColor, characterData.HairHighlightColor);
 

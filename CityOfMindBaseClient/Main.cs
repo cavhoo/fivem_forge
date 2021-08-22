@@ -12,12 +12,7 @@ namespace CityOfMindClient
   public class Main: BaseScript
   {
     public bool Instantiated { get; set; }
-    private CharacterSelectionController _characterSelectionController;
-    private SpawnController _spawnController;
-    private AtmController _atmController;
-    private BankingController _bankingController;
-    private DensityController _densityController;
-
+    
     public Main()
     {
       Debug.WriteLine("CityOfMindClient:Booting");
@@ -32,16 +27,6 @@ namespace CityOfMindClient
       }
       
       Instantiated = true;
-      // _characterSelectionController = new CharacterSelectionController();
-      // _characterSelectionController.Initialize();
-      // _spawnController = new SpawnController();
-      // _spawnController.Initialize();
-      // _atmController = new AtmController();
-      // _atmController.Iniitalize();
-      // _bankingController = new BankingController();
-      // _bankingController.Initialize();
-      // _densityController = new DensityController();
-      // _densityController.Initialize();Initialize
     }
   }
 }

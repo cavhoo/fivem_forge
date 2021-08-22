@@ -1,22 +1,17 @@
+import {IClothes} from "./IClothes";
+import {IRawColor} from "./Colors";
+
 export interface ICharacterCreatorInitialData {
 	moms: string[];
 	dads: string[];
 	gender: string;
-	makeUpColors: { Index: number, Red: number, Green: number, Blue: number }[];
-	hairColors: { Index: number, Red: number, Green: number, Blue: number}[];
+	makeUpColors: IRawColor[];
+	hairColors: IRawColor[];
 	makeUpVariants: string[];
 	tattooColors: string[];
 	tattooVariants: number;
 	beardStyles: string[];
 	femaleHairStyles: string[];
 	maleHairStyles: string[];
-	clothes: {
-		torso: string[],
-		hats: string[],
-		shoes: string[],
-		pants: string[],
-		glasses: string[],
-		masks: string[],
-		bags: string[],
-	}
+	clothes: IClothes;
 }
