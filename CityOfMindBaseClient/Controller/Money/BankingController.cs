@@ -21,7 +21,8 @@ namespace CityOfMindClient.Controller.Money
     {
       EventHandlers[ServerEvents.BankLocationsLoaded] +=
         new Action<string>(OnBankLocationsLoaded);
-      EventHandlers["playerSpawned"] += new Action(OnPlayerSpawned);
+
+      EventHandlers[ClientEvents.PlayerSpawned] += new Action(OnPlayerSpawned);
     }
 
     private void OnPlayerSpawned()
@@ -99,6 +100,7 @@ namespace CityOfMindClient.Controller.Money
       await Delay(250);
       if (IsNearBank())
       {
+
         // Display Information that near bank.
         DisplayHelpTextThisFrame($"You are close to a bank. Maybe you want to withdraw/deposit.", true);
       }

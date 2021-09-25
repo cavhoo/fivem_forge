@@ -28,6 +28,15 @@ namespace FiveMForge.Models
         public const string LoadAvailableCharacterCount = "CityOfMind:GetAvailableCharacterSlots";
         public const string AvailableCharacterCountLoaded = "CityOfMind:AvailableCharacterSlotsLoaded";
         public const string CreateBankAccountForCharacter = "CityOfMind:CreateBankAccountForCharacter";
+        public const string MoneyWithdrawn = "CityOfMind:MoneyWithdrawn";
+        public const string MoneyWithdrawNotEnoughBalance = "CityOfMind:MoneyWithdrawNotEnoughBalance";
+        public const string MoneyWithdrawIncorrectPin = "CityOfMind:MoneyWithdrawIncorrectPin";
+    }
+
+    public static class ClientEvents
+    {
+        public const string WithDrawMoney = "CityOfMind:WithdrawMoney";
+        public const string DepositMoney = "CityOfMind:DepositMoney";
     }
 
     public static class FiveMEvents

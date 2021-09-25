@@ -29,6 +29,10 @@ function App () {
         switch (targetUI) {
           case "characterCreator":
             setUiVisibility({...uiVisibility, characterCreator: true});
+            break;
+          case "atmMachine":
+            setUiVisibility({...uiVisibility, atm: true});
+            break;
         }
       }
       
@@ -36,6 +40,10 @@ function App () {
         switch (targetUI) {
           case "characterCreator":
             setUiVisibility({...uiVisibility, characterCreator: false});
+            break;
+          case "atmMachine":
+            setUiVisibility({...uiVisibility, atm: false});
+            break;
         }
       }
     });

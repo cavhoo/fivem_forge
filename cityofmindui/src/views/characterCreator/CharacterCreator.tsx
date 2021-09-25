@@ -109,27 +109,28 @@ export const CharacterCreator = () => {
         const loadData = async () => await runNuiCallback("getInitialData", {ui: "CharacterCreator"});
         loadData().then(async (resp: Response) => resp.json()).then((responseData) => {
             const data = JSON.parse(responseData);
+            console.log(data.payload);
             setInitialData({
                 ...data.payload.eventData,
             });
         });
-        const clothingData = async () => await runNuiCallback("getClothingForCurrentCharacter", {gender: character.gender});
-        clothingData().then(async (resp: Response) => resp.json().then(async (responseData) => {
-            setInitialData({
-                ...initialData,
-                clothes: {
-                    jackets: responseData.shirts,
-                    shoes: responseData.shoes,
-                    masks: responseData.masks,
-                    hats: responseData.hats,
-                    pants: responseData.pants,
-                    glasses: responseData.glasses,
-                    shirts: responseData.underShirts,
-                    jewellery: responseData.jewellery
-                }
-            });
-            await runNuiCallback("updateCharacter", character);
-        }));
+        //const clothingData = async () => await runNuiCallback("getClothingForCurrentCharacter", {gender: character.gender});
+        // clothingData().then(async (resp: Response) => resp.json().then(async (responseData) => {
+        //     setInitialData({
+        //         ...initialData,
+        //         clothes: {
+        //             jackets: responseData.shirts,
+        //             shoes: responseData.shoes,
+        //             masks: responseData.masks,
+        //             hats: responseData.hats,
+        //             pants: responseData.pants,
+        //             glasses: responseData.glasses,
+        //             shirts: responseData.underShirts,
+        //             jewellery: responseData.jewellery
+        //         }
+        //     });
+        //     await runNuiCallback("updateCharacter", character);
+        // }));
     }, [])
 
     useEffect(() => {
@@ -209,7 +210,7 @@ export const CharacterCreator = () => {
         if (initialData === undefined) {
             return (<Typography>No Data Available</Typography>)
         }
-
+        console.log(initialData.moms);
         switch (activeStep) {
             case MenuItems.Parents:
                 return (<Parents

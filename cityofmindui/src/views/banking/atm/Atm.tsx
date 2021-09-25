@@ -24,6 +24,7 @@ const useStyles = makeStyles({
         justifyContent: "center",
         position: "relative",
         userSelect: "none",
+        backdropFilter: "blur(5px)",
     },
     bankName: {
         fontWeight: "bold",
@@ -49,10 +50,10 @@ const useStyles = makeStyles({
 })
 
 export interface IAccountInformation {
-    AccountOwner: string;
-    AccountNumber: string;
-    Balance: number;
-    WithdrawableAmount: number[];
+    accountOwner: string;
+    accountNumber: string;
+    saldo: number;
+    withdrawableAmount: number[];
 }
 
 
@@ -62,30 +63,34 @@ export const Atm = () => {
     const classes = useStyles();
     
     useEffect(() => {
-        runNuiCallback("atm/getAccount", {}).then( async (resp) => {
+        runNuiCallback("atmMachine", {getAccount: true}).then( async (resp) => {
             const json = await resp.json();
             setAccount(json);
         });
     }, []);
     
-    const handleMenuSelect = (menu: number) => {
-        setActiveMenu(menu);
+    const handleMenuSelect = async (menu: number) => {
+        if (menu === AtmMenu.Main) {
+            await runNuiCallback("atmMachine", { close: true});
+        } else {
+            setActiveMenu(menu);
+        }
     }
     
-    const handleWithDrawMoney = (amount: number) => {
-        console.log(amount);   
+    const handleWithDrawMoney = async (amount: number) => {
+        await runNuiCallback("atmMachine", { withdraw: amount})
     }
     
-    const handleDepositMoney = (amount: number) => {
-        console.log(amount);
+    const handleDepositMoney = async (amount: number) => {
+        await runNuiCallback("atmMachine", { deposit: amount})
     }
     
-    const handleTransferMoney = (accountOwner: string, accountNumber:string, message:string, amount: number) => {
-        console.log(accountOwner, accountNumber, message, amount);
+    const handleTransferMoney = async (accountOwner: string, accountNumber:string, message:string, amount: number) => {
+        await runNuiCallback("atmMachine", { transfer: { accountNumber, accountOwner, message, amount }});
     }
     
-    const handleSearchAccountOwner = (accountOwner: string) => {
-        console.log(accountOwner);
+    const handleSearchAccountOwner = async (accountOwner: string) => {
+        await runNuiCallback("atmMachine", { search: accountOwner});
     }
     
 
@@ -94,11 +99,11 @@ export const Atm = () => {
             case AtmMenu.Main:
                 return <MainMenu onFunctionSelect={handleMenuSelect} />
             case AtmMenu.Balance:
-                return <BalanceMenu balance={account.Balance} currency={"Euro"} onBack={() => handleMenuSelect(AtmMenu.Main)} />
+                return <BalanceMenu balance={account.saldo} currency={"Euro"} onBack={() => handleMenuSelect(AtmMenu.Main)} />
             case AtmMenu.Withdraw:
-                return <WithdrawMenu currentBalance={account.Balance} currency={"Euro"} onWithdrawAmount={handleWithDrawMoney} goBack={() => handleMenuSelect(AtmMenu.Main)} />
+                return <WithdrawMenu currentBalance={account.saldo} currency={"Euro"} onWithdrawAmount={handleWithDrawMoney} goBack={() => handleMenuSelect(AtmMenu.Main)} />
             case AtmMenu.Transfer:
-                return <TransferMenu currentBalance={account.Balance} onTransferConfirmed={handleTransferMoney} onTypeAccountOwner={handleSearchAccountOwner} onBack={() => handleMenuSelect(AtmMenu.Main)}/>
+                return <TransferMenu currentBalance={account.saldo} onTransferConfirmed={handleTransferMoney} onTypeAccountOwner={handleSearchAccountOwner} onBack={() => handleMenuSelect(AtmMenu.Main)}/>
             case AtmMenu.Deposit:
                 return <DepositMenu onBack={() => handleMenuSelect(AtmMenu.Main)} currency={"Euro"} onDeposit={handleDepositMoney}/>
             default:

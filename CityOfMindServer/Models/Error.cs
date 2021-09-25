@@ -10,6 +10,9 @@ namespace FiveMForge.Models
         public static string NetworkError = "NetworkError";
         public static string CharacterError = "CharacterError";
         public static string GenericError = "GenericError";
+        public static string AtmError = "AtmError";
+        public static string BankError = "BankError";
+        public static string WalletError = "WalletError";
     }
     
     /// <summary>

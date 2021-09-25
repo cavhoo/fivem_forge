@@ -80,16 +80,16 @@ namespace FiveMForge.Controller.Character
       newCharacter.BeardVariant = Convert.ToInt32(data["BeardShape"]);
       newCharacter.BeardColor = Convert.ToInt32(data["BeardColor"]);
 
-      var clothingData = (IDictionary<string, object>)data["clothes"];
-
-      newCharacter.Hat = Convert.ToInt32(clothingData["Hat"]);
-      newCharacter.Shoes = Convert.ToInt32(clothingData["Shoes"]);
-      newCharacter.Jacket = Convert.ToInt32(clothingData["Jacket"]);
-      newCharacter.Shirt = Convert.ToInt32(clothingData["Shirt"]);
-      newCharacter.Glasses = Convert.ToInt32(clothingData["Glasses"]);
-      newCharacter.Mask = Convert.ToInt32(clothingData["Mask"]);
-      newCharacter.Pants = Convert.ToInt32(clothingData["Pants"]);
-      
+      // var clothingData = (IDictionary<string, object>)data["clothes"];
+      //
+      // newCharacter.Hat = Convert.ToInt32(clothingData["Hat"]);
+      // newCharacter.Shoes = Convert.ToInt32(clothingData["Shoes"]);
+      // newCharacter.Jacket = Convert.ToInt32(clothingData["Jacket"]);
+      // newCharacter.Shirt = Convert.ToInt32(clothingData["Shirt"]);
+      // newCharacter.Glasses = Convert.ToInt32(clothingData["Glasses"]);
+      // newCharacter.Mask = Convert.ToInt32(clothingData["Mask"]);
+      // newCharacter.Pants = Convert.ToInt32(clothingData["Pants"]);
+      //
       
       newCharacter.AccountUuid = playerAccount.AccountUuid;
       newCharacter.CharacterUuid = Guid.NewGuid().ToString();

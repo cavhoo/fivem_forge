@@ -1,4 +1,4 @@
-export const runNuiCallback = <T>(api:string, payload:T) => fetch(`http://localhost/cityofmindclient/${api}`, {
+export const runNuiCallback = <T>(api:string, payload:T) => fetch(`https://cityofmindclient/${api}`, {
 	method: 'POST',
 	headers: {
 	  'Content-Type': 'application/json; charset=UTF-8',

@@ -114,18 +114,18 @@ namespace CityOfMindClient.Controller.Spawn
       var ped = PlayerPedId();
       Vector3 sourceLocation = new(-74.95219f, -818.7512f, 326.0000f);
       var switchType = GetIdealPlayerSwitchType(sourceLocation.X, sourceLocation.Y, sourceLocation.Z, lastPos.X,
-        lastPos.Y, lastPos.Z);
+        lastPos.Y, lastPos.Z + 0.5f);
       StartPlayerSwitch(ped, ped, 2050, switchType);
       SetModelAsNoLongerNeeded((uint)modelHashKey);
       //SetPedRandomComponentVariation(ped, true);
       Character.Character.UpdateProperties(ped, characterToSpawn);
 
-      RequestCollisionAtCoord(_spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 0.5f);
-      SetEntityCoordsNoOffset(ped, _spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z + 0.5f, true, false, false);
-      NetworkResurrectLocalPlayer(_spawnLocation.X, _spawnLocation.Y, _spawnLocation.Z, 0, true, false);
+      RequestCollisionAtCoord(lastPos.X, lastPos.Y, lastPos.Z + 0.5f);
+      SetEntityCoordsNoOffset(ped, lastPos.X, lastPos.Y, lastPos.Z + 0.5f, true, false, false);
+      NetworkResurrectLocalPlayer(lastPos.X, lastPos.Y, lastPos.Z, 0, true, false);
       ClearPedTasksImmediately(ped);
       ClearPlayerWantedLevel(PlayerId());
-
+      TriggerEvent(ClientEvents.PlayerSpawned);
       var time = GetGameTimer();
       while (!HasCollisionLoadedAroundEntity(ped) && (GetGameTimer() - time) < 5000)
       {

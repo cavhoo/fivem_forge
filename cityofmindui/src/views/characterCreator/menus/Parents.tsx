@@ -18,7 +18,7 @@ export const Parents = ({ momNames, dadNames, skinFactor, faceFactor, mom, dad, 
   const [dadIndex, setDadIndex] = useState(dad);
   const [skinFactorValue, setSkinFactor] = useState(skinFactor);
   const [faceFactorValue, setFaceFactor] = useState(faceFactor);
-
+    console.log(momNames, dadNames);
   const onParentDataUpdated = () => {
     onParentDataChanged(
       momIndex,

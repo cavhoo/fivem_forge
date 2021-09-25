@@ -17,6 +17,9 @@ namespace CityOfMindClient.Models
         public const string CharacterSaved = "CityOfMind:CharacterSaved";
         public const string GetAvailableCharacterSlots = "CityOfMind:GetAvailableCharacterSlots";
         public const string AvailableCharacterSlotsLoaded = "CityOfMind:AvailableCharacterSlotsLoaded";
+        public const string LoadBankAccount = "CityOfMind:LoadBankAccount";
+        public const string BankAccountLoaded = "CityOfMind:BankAccountLoaded";
+        public const string WithdrawMoney = "CityOfMind:WithdrawMoney";
     }
 
     /// <summary>
@@ -28,6 +31,7 @@ namespace CityOfMindClient.Models
         /// General Client Side Events
         /// </summary>
         public const string SpawnAt = "CityOfMind:SpawnAt";
+        public const string PlayerSpawned = "CityOfMind:PlayerSpawned";
         public const string ScriptStart = "onClientResourceStart";
         public const string SpawnPlayer = "CityOfMind:SpawnPlayer";
         public const string ZoomOntoFace = "CityOfMind:ZoomOntoFace";
