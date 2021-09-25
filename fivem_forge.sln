@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiveMForgeCore", "FiveMForgeCore\FiveMForgeCore.csproj", "{8FB194A7-9A81-49A4-A14F-115EFDF89306}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityOfMindServer", "CityOfMindServer\CityOfMindServer.csproj", "{8FB194A7-9A81-49A4-A14F-115EFDF89306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiveMForgeClient", "FiveMForgeClient\FiveMForgeClient.csproj", "{06CC1EF2-276A-46A5-AD5F-55589F6BA734}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityOfMindBaseClient", "CityOfMindBaseClient\CityOfMindBaseClient.csproj", "{06CC1EF2-276A-46A5-AD5F-55589F6BA734}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
