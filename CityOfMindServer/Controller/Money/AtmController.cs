@@ -6,7 +6,6 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
-using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
 using FiveMForge.Models.Errors;
 using FiveMForge.Utils;
@@ -26,7 +25,7 @@ namespace FiveMForge.Controller.Money
     {
         public AtmController()
         {
-            EventHandlers[ServerEvents.LoadAtmLocations] += new Action<Player>(OnAtmLocationsRequested);
+            EventHandlers[ClientEvents.LoadAtmLocations] += new Action<Player>(OnAtmLocationsRequested);
             EventHandlers[ClientEvents.WithDrawMoney] += new Action<Player, string, int>(OnWithdrawMoney);
             EventHandlers[ClientEvents.DepositMoney] += new Action<Player, string, int>(OnDepositMoney);
         }

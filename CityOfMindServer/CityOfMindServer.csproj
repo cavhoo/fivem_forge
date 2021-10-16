@@ -27,6 +27,10 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CityOfMindDatabase\CityOfMindDatabase.csproj" />
+    <ProjectReference Include="..\CityOfMindPluginBase\CityOfMindPluginBase.csproj" />
+  </ItemGroup>
   <Target Name="CopyCoreDll" AfterTargets="AfterBuild">
     <ItemGroup>
       <CORELIBS Include="bin/Debug/net452/**/*.dll" />

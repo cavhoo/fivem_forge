@@ -12,7 +12,7 @@ namespace FiveMForge.Controller.Account
   {
     public AccountController()
     {
-      EventHandlers[ServerEvents.LoadAvailableCharacterCount] += new Action<Player>(OnLoadAvailableCharacterCount);
+      EventHandlers[ClientEvents.LoadAvailableCharacterCount] += new Action<Player>(OnLoadAvailableCharacterCount);
     }
 
     private void OnLoadAvailableCharacterCount([FromSource] Player player)

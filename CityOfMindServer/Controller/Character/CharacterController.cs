@@ -18,8 +18,8 @@ namespace FiveMForge.Controller.Character
 
     public CharacterController()
     {
-      EventHandlers[ServerEvents.CreateCharacter] += new Action<Player, string>(OnCreateCharacter);
-      EventHandlers[ServerEvents.LoadCharacters] += new Action<Player>(OnLoadCharacters);
+      EventHandlers[ClientEvents.CreateCharacter] += new Action<Player, string>(OnCreateCharacter);
+      EventHandlers[ClientEvents.LoadCharacters] += new Action<Player>(OnLoadCharacters);
     }
 
     /// <summary>

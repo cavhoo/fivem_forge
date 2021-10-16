@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using CitizenFX.Core;
-using FiveMForge.Database.Contexts;
+using CityOfMindDatabase.Contexts;
+using FiveMForge.Database;
 using FiveMForge.Models;
 
 namespace FiveMForge.Controller.Base
@@ -22,7 +23,7 @@ namespace FiveMForge.Controller.Base
             Debug.WriteLine("FiveM Forge Starting...verifying database...");
             Debug.WriteLine("Checking if all tables exist, if not then we create them :)");
             //DbInit.CreateTables();
-            using (var ctx = new CoreContext())
+            using (var ctx = new CoreContext(CityOfMindDatabase.Config.ConfigController.GetInstance().ConnectionString))
             {
                 var atms = ctx.Atms.ToList();
                 if (atms.Count == 0)

@@ -8,7 +8,6 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
 using FiveMForge.Database;
-using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
 using Newtonsoft.Json;
 using Player = CitizenFX.Core.Player;
@@ -27,8 +26,8 @@ namespace FiveMForge.Controller.Money
 
     public BankingController()
     {
-      EventHandlers[ServerEvents.LoadBankLocations] += new Action<Player>(OnBankLocationsRequested);
-      EventHandlers[ServerEvents.LoadBankAccount] += new Action<Player>(OnRequestBankAccount);
+      EventHandlers[ClientEvents.LoadBankLocations] += new Action<Player>(OnBankLocationsRequested);
+      EventHandlers[ClientEvents.LoadBankAccount] += new Action<Player>(OnRequestBankAccount);
       EventHandlers[ServerEvents.LoadWallet] += new Action<Player>(OnRequestWallet);
       Debug.WriteLine("Loaded Banking Controller");
     }

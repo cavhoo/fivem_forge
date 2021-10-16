@@ -1,16 +1,11 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Net.NetworkInformation;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
-using FiveMForge.Database;
-using FiveMForge.Database.Contexts;
 using FiveMForge.Models;
 using FiveMForge.Models.Enums;
-using FiveMForge.Utils;
-using Remotion.Linq.Parsing.ExpressionVisitors.Transformation.PredefinedTransformations;
 using Player = CitizenFX.Core.Player;
 
 namespace FiveMForge.Controller.Session
@@ -25,7 +20,7 @@ namespace FiveMForge.Controller.Session
     {
         public SessionController()
         {
-            EventHandlers[ServerEvents.GetSessionId] += new Action<Player>(GetSessionId);
+            EventHandlers[ClientEvents.GetSessionId] += new Action<Player>(GetSessionId);
             EventHandlers[FiveMEvents.PlayerConnecting] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
             EventHandlers[ServerEvents.Heartbeat] += new Action<Player>(OnHeartbeat);
             EventHandlers[FiveMEvents.PlayerDisconnecting] += new Action<Player>(ClearSessionId);
@@ -65,7 +60,7 @@ namespace FiveMForge.Controller.Session
             newPlayer.AccountUuid = Guid.NewGuid().ToString();
             newPlayer.AccountId = playerIdentifier;
             newPlayer.LastLogin = DateTime.Now.ToUniversalTime().ToString(CultureInfo.CurrentCulture);
-            newPlayer.Tier = PlayerTier.COMMON;
+            newPlayer.Tier = FiveMForge.Models.Enums.PlayerTier.COMMON;
             Context.Players.Add(newPlayer);
             
             
