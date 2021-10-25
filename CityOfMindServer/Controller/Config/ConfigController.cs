@@ -2,7 +2,7 @@ using CitizenFX.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace CityOfMindDatabase.Config
+namespace FiveMForge.Controller.Config
 {
     
     public class ConfigController

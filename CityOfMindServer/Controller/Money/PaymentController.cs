@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using FiveMForge.Controller.Base;
-using FiveMForge.Database;
 using CityOfMindDatabase;
 using FiveMForge.Models;
 using static CitizenFX.Core.Native.API;

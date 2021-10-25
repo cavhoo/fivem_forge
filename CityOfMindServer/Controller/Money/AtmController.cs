@@ -5,7 +5,6 @@ using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
-using FiveMForge.Database;
 using FiveMForge.Models;
 using FiveMForge.Models.Errors;
 using FiveMForge.Utils;

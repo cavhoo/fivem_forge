@@ -1,10 +1,7 @@
-using System;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Migrations.Sql;
 using Npgsql;
 
-namespace FiveMForge.Database
+namespace FiveMForge.Context
 {
     public class DatabaseConfiguration : DbConfiguration
     {

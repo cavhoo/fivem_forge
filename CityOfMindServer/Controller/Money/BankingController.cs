@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
-using FiveMForge.Database;
 using FiveMForge.Models;
 using Newtonsoft.Json;
 using Player = CitizenFX.Core.Player;

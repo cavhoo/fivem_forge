@@ -14,14 +14,21 @@ namespace CityOfMindJobs
     protected JobContext Context;
     protected IPluginApi Api;
 
-    public async void Start(string connectionString, IPluginApi pluginApi)
+    public CityOfMindJobs(string connectionString)
+    {
+      Context = new JobContext(connectionString);
+    }
+    public async void Start(IPluginApi pluginApi)
     {
       Debug.WriteLine("Starting plugin Jobs");
-      Context = new JobContext(connectionString);
+      if (Context.Jobs == null)
+      {
+        Debug.WriteLine("No job table exists");
+      }
+
       Api = pluginApi;
       CreateUnemployedJob();
-      CreateCarMechanicJob();
-      await Context.SaveChangesAsync();
+      //CreateCarMechanicJob();
 
       Api.RegisterEvent("CityOfMind:CreatePayments", CreatePayments);
       Api.RegisterEvent("CityOfMind:AssignJobToCharacter", AssingJobToCharacter);
@@ -54,6 +61,7 @@ namespace CityOfMindJobs
 
     protected void CreateUnemployedJob()
     {
+      if (Context == null || Context.Jobs == null) return;
       var unemployedJob = new Job();
       unemployedJob.Title = "job.unemployed";
       unemployedJob.AvailableRanks = new List<JobRank>();

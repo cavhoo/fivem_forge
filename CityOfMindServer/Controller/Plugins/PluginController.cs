@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using CitizenFX.Core;
-using CityOfMindDatabase.Config;
 using CityOfMindPluginBase;
+using FiveMForge.Config;
 using FiveMForge.Controller.Base;
 using FiveMForge.Models;
 
@@ -21,7 +21,7 @@ namespace FiveMForge.Controller.Plugins
 
       foreach (var plugin in loadedPlugins)
       {
-        plugin.Start(ConfigController.GetInstance().ConnectionString, new PluginApi(EventHandlers, TriggerEvent, TriggerClientEvent));
+        plugin.Start(new PluginApi(EventHandlers, TriggerEvent, TriggerClientEvent));
       }
     }
   }

@@ -1,4 +1,4 @@
-using System.Data.Entity.Migrations;
+﻿using System.Data.Entity.Migrations;
 
 namespace CityOfMindJobs.Context
 {
@@ -8,13 +8,8 @@ namespace CityOfMindJobs.Context
         {
             AutomaticMigrationsEnabled = true;
             // TODO: Remove this for production to prevent screwing up the database.
-            AutomaticMigrationDataLossAllowed = true;
+            AutomaticMigrationDataLossAllowed = false;
             ContextKey = "JobContext";
-        }
-
-        protected override void Seed(JobContext context)
-        {
-            base.Seed(context);
         }
     }
 }

@@ -1,7 +1,6 @@
-using System.Runtime.Remoting.Contexts;
 using CitizenFX.Core;
-using CityOfMindDatabase.Contexts;
-using FiveMForge.Database;
+using FiveMForge.Context;
+using FiveMForge.Controller.Config;
 
 namespace FiveMForge.Controller.Base
 {
@@ -12,6 +11,6 @@ namespace FiveMForge.Controller.Base
     public class BaseClass : BaseScript
     {
         protected CoreContext Context;
-        protected BaseClass() => Context = new CoreContext(CityOfMindDatabase.Config.ConfigController.GetInstance().ConnectionString);
+        protected BaseClass() => Context = new CoreContext();
     }
 }

@@ -1,6 +1,6 @@
 using System.Data.Entity.Migrations;
 
-namespace FiveMForge.Database
+namespace FiveMForge.Context
 {
     internal sealed class Configuration: DbMigrationsConfiguration<CoreContext>
     {

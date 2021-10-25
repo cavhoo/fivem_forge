@@ -1,4 +1,4 @@
-namespace CityOfMindDatabase.Config
+namespace FiveMForge.Controller.Config
 {
     public class Config
     {

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace CityOfMindDatabase.Config
+namespace FiveMForge.Controller.Config
 {
     public class Loader
     {

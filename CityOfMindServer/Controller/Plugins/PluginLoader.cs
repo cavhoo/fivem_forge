@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using CitizenFX.Core;
 using CityOfMindPluginBase;
+using FiveMForge.Config;
 
 namespace FiveMForge.Controller.Plugins
 {
@@ -27,17 +28,20 @@ namespace FiveMForge.Controller.Plugins
       FileInfo[] plugins = directory.GetFiles(searchPattern);
       foreach (var plugin in plugins)
       {
+        Debug.WriteLine($"Loading plugin: {plugin.FullName}");
         Assembly.LoadFile(plugin.FullName);
       }
 
       var pluginType = typeof(IPlugin);
-
+      Debug.WriteLine("Filtering for plugins...");
       var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
         .Where(p => pluginType.IsAssignableFrom(p) && p.IsClass).ToArray();
-
+      Debug.WriteLine("Loading plugins...");
       foreach (var type in types)
       {
-        loadedPlugins.Add((IPlugin)Activator.CreateInstance(type));
+        Debug.WriteLine($"Instantiating Pluging {type}");
+        Debug.WriteLine(Config.ConfigController.GetInstance().ConnectionString);
+        //loadedPlugins.Add((IPlugin)Activator.CreateInstance(type, new {ConfigController.GetInstance().ConnectionString}));
       }
       return loadedPlugins;
     }

@@ -4,7 +4,6 @@ using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FiveMForge.Controller.Base;
-using FiveMForge.Database;
 using FiveMForge.Models;
 using Player = CitizenFX.Core.Player;
 

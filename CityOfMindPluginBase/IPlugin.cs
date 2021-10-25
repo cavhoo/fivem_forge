@@ -4,6 +4,6 @@ namespace CityOfMindPluginBase
 {
   public interface IPlugin
   {
-    void Start(string connectionString, IPluginApi api);
+    void Start(IPluginApi api);
   }
 }

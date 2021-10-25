@@ -1,12 +1,13 @@
 ﻿using System.Data.Entity;
 using System.Linq;
-using CityOfMindDatabase.Contexts;
 using CityOfMindUtils.Utils;
+using FiveMForge.Config;
 using FiveMForge.Models;
+using ConfigController = FiveMForge.Controller.Config.ConfigController;
 
-namespace FiveMForge.Database
+namespace FiveMForge.Context
 {
-  public class CoreContext : Context
+  public class CoreContext : CityOfMindDatabase.Contexts.Context
   {
     public DbSet<BankAccount> BankAccount { get; set; }
     public DbSet<PendingBankTransaction> PendingBankTransactions { get; set; }
@@ -30,7 +31,7 @@ namespace FiveMForge.Database
       ) != null;
     }
 
-    public CoreContext(string connectionString) : base(connectionString)
+    public CoreContext() : base(ConfigController.GetInstance().ConnectionString)
     {
       System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<CoreContext, Configuration>());
     }

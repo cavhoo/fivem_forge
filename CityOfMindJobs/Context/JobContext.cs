@@ -1,17 +1,15 @@
 ﻿
 using System;
 using System.Data.Entity;
+using CitizenFX.Core;
 
 namespace CityOfMindJobs.Context
 {
   public class JobContext : CityOfMindDatabase.Contexts.Context
   {
-    public JobContext(): base("JobContext")
-    {
-      System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<JobContext, Configuration>());
-    }
    public JobContext(string connectionString) : base(connectionString)
     {
+      Debug.WriteLine("Plugin Contructor");
       System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<JobContext, Configuration>());
     }
 
