@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{78B4B05D-96D1-46F3-8BE4-2ACE7A9D7226}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>Common</RootNamespace>
+        <AssemblyName>Common</AssemblyName>
+        <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+          <HintPath>..\..\..\..\Users\Hendrik\.nuget\packages\newtonsoft.json\13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System.ComponentModel.DataAnnotations, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+          <HintPath>..\..\..\..\Users\Hendrik\.nuget\packages\microsoft.netframework.referenceassemblies.net452\1.0.2\build\.NETFramework\v4.5.2\System.ComponentModel.DataAnnotations.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Models\Character\Character.cs" />
+        <Compile Include="Models\Character\CharacterComponents.cs" />
+        <Compile Include="Models\Character\CharacterJob.cs" />
+        <Compile Include="Models\Enums\PlayerTier.cs" />
+        <Compile Include="Models\Errors\AccountErrors.cs" />
+        <Compile Include="Models\Errors\AtmErrors.cs" />
+        <Compile Include="Models\Errors\BankErrors.cs" />
+        <Compile Include="Models\Errors\CharacterErrors.cs" />
+        <Compile Include="Models\Errors\Error.cs" />
+        <Compile Include="Models\Errors\WalletErrors.cs" />
+        <Compile Include="Models\Events.cs" />
+        <Compile Include="Models\Factions\Faction.cs" />
+        <Compile Include="Models\Jobs\Job.cs" />
+        <Compile Include="Models\Jobs\JobRank.cs" />
+        <Compile Include="Models\Jobs\JobsConfig.cs" />
+        <Compile Include="Models\Money\Atm.cs" />
+        <Compile Include="Models\Money\AtmLocations.cs" />
+        <Compile Include="Models\Money\Bank.cs" />
+        <Compile Include="Models\Money\BankAccount.cs" />
+        <Compile Include="Models\Money\BankLocations.cs" />
+        <Compile Include="Models\Money\BankTransaction.cs" />
+        <Compile Include="Models\Money\Money.cs" />
+        <Compile Include="Models\Money\PendingBankTransaction.cs" />
+        <Compile Include="Models\Money\TransactionStatus.cs" />
+        <Compile Include="Models\Money\Wallet.cs" />
+        <Compile Include="Models\Player\Player.cs" />
+        <Compile Include="Models\Player\Tiers.cs" />
+        <Compile Include="Models\Player\TiersTemplates.cs" />
+        <Compile Include="Models\Poi.cs" />
+        <Compile Include="Models\Session.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="App.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="EntityFramework" Version="6.4.4" />
+      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net452" Version="1.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>
