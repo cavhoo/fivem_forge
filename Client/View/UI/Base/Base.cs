@@ -1,7 +1,6 @@
-﻿extern alias CFX;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using PointF = CFX::System.Drawing.PointF;
 
 namespace Client.View.UI.Base
 {

@@ -1,7 +1,6 @@
-﻿extern alias CFX;
-using System;
+﻿using System;
 using Client.Models;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using BaseScript = CitizenFX.Core.BaseScript;
 
 namespace Client.Controller.State
 {

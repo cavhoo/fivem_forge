@@ -1,12 +1,11 @@
-extern alias CFX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Client.Models;
 using Newtonsoft.Json;
-using static CFX::CitizenFX.Core.Native.API;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using static CitizenFX.Core.Native.API;
+using BaseScript = CitizenFX.Core.BaseScript;
 
 namespace Client.Controller.Money
 {

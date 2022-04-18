@@ -1,5 +1,3 @@
-extern alias CFX;
-
 namespace Client.Models.Character
 {
   public static class CharacterComponents

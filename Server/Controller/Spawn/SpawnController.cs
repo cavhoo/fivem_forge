@@ -21,8 +21,8 @@ namespace Server.Controller.Spawn
         public SpawnController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
                                      Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc)
         {
-            EventHandlers["FiveMForge:GetLastSpawnPosition"] += new Action<Player, string>(OnGetLastPlayerPosition);
-            EventHandlers["FiveMForge:SaveLastPosition"] += new Action<Player, string>((Player player, string characterUuid) => Debug.WriteLine("Saving char position"));
+            EventHandlers["CityOfMind:GetLastSpawnPosition"] += new Action<Player, string>(OnGetLastPlayerPosition);
+            EventHandlers["CityOfMind:SaveLastPosition"] += new Action<Player, string>((Player player, string characterUuid) => Debug.WriteLine("Saving char position"));
             Debug.WriteLine("Started SpawnController");
         }
 
@@ -48,7 +48,7 @@ namespace Server.Controller.Spawn
             }
             var posArray = character?.LastPos.Split(':');
             Debug.WriteLine($"Sending last spawn to client: ${posArray[0]} ${posArray[1]} ${posArray[2]}");
-            player.TriggerEvent("FiveMForge:SpawnAt", float.Parse(posArray[0]), float.Parse(posArray[1]), float.Parse(posArray[2]));
+            player.TriggerEvent("CityOfMind:SpawnPlayer", float.Parse(posArray[0]), float.Parse(posArray[1]), float.Parse(posArray[2]));
         }
     }
 }

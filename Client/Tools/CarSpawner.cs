@@ -1,12 +1,11 @@
-extern alias CFX;
 using System;
 using System.Collections.Generic;
 using Client.Models;
-using static CFX::CitizenFX.Core.Native.API;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
-using Game = CFX::CitizenFX.Core.Game;
-using VehicleSeat = CFX::CitizenFX.Core.VehicleSeat;
-using World = CFX::CitizenFX.Core.World;
+using static CitizenFX.Core.Native.API;
+using BaseScript = CitizenFX.Core.BaseScript;
+using Game = CitizenFX.Core.Game;
+using VehicleSeat = CitizenFX.Core.VehicleSeat;
+using World = CitizenFX.Core.World;
 
 namespace Client.Tools
 {

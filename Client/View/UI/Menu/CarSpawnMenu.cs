@@ -1,4 +1,3 @@
-extern alias CFX;
 using LemonUI.Menus;
 
 namespace Client.View.UI.Menu

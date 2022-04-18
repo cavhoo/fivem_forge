@@ -1,13 +1,11 @@
-extern alias CFX;
 using System;
 using System.Collections.Generic;
+using CitizenFX.Core;
 using Client.Models;
 using Client.View.UI.Base;
 using Client.View.UI.Menu;
 using LemonUI;
 using LemonUI.Menus;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
-using Debug = CFX::CitizenFX.Core.Debug;
 
 namespace Client.View
 {

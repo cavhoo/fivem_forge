@@ -22,7 +22,7 @@ namespace Server.Controller.Session
                                        Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc)
         {
             EventHandlers[ClientEvents.GetSessionId] += new Action<Player>(GetSessionId);
-            EventHandlers[FiveMEvents.PlayerConnecting] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
+            //EventHandlers[FiveMEvents.PlayerConnecting] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
             EventHandlers[ServerEvents.Heartbeat] += new Action<Player>(OnHeartbeat);
             EventHandlers[FiveMEvents.PlayerDisconnecting] += new Action<Player>(ClearSessionId);
             Debug.WriteLine("Started SessionController");
@@ -50,7 +50,8 @@ namespace Server.Controller.Session
             {
                 currentPlayer.LastLogin = DateTime.Now.ToUniversalTime().ToString(CultureInfo.CurrentCulture);
                 await Context.SaveChangesAsync();
-                player.TriggerEvent(ServerEvents.GoToCharacterSelection);
+                //Debug.WriteLine("Spawning player");
+                //player.TriggerEvent("CityOfMind:SpawnPlayer");
                 return;
             }
 
@@ -74,7 +75,7 @@ namespace Server.Controller.Session
             Context.Characters.Add(newCharacter);
             
             
-            player.TriggerEvent(ServerEvents.GoToCharacterSelection);
+            //player.TriggerEvent("CityOfMind:SpawnPlayer");
             await Context.SaveChangesAsync();
         }
 

@@ -1,7 +1,6 @@
-extern alias CFX;
 using System.Threading.Tasks;
-using static CFX::CitizenFX.Core.Native.API;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
+using static CitizenFX.Core.Native.API;
+using BaseScript = CitizenFX.Core.BaseScript;
 
 namespace Client.Controller.Environment
 {

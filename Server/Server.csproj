@@ -8,9 +8,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin/Debug</OutputPath>
+    <OutputPath>..\bin\Debug\server</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CitizenFX.Core.Server" Version="1.0.5483" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="EntityFramework6.Npgsql" Version="6.4.3" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net452" Version="1.0.2">
@@ -22,9 +23,6 @@
     <PackageReference Include="YamlDotNet" Version="11.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\lib\server\CitizenFX.Core.Server.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,7 @@
-extern alias CFX;
 using System;
 using System.Collections.Generic;
 using Client.Models.Locales;
-using static CFX::CitizenFX.Core.Native.API;
+using static CitizenFX.Core.Native.API;
 
 namespace Client.Services.Language
 {

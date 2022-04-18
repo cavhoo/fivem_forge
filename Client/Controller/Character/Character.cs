@@ -1,7 +1,6 @@
-﻿extern alias CFX;
-using static CFX::CitizenFX.Core.Native.API;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
-using Debug = CFX::CitizenFX.Core.Debug;
+﻿using BaseScript = CitizenFX.Core.BaseScript;
+using Debug = CitizenFX.Core.Debug;
+using static CitizenFX.Core.Native.API;
 
 namespace Client.Controller.Character
 {

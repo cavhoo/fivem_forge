@@ -39,8 +39,8 @@ namespace Server.Context
 
     public CoreContext() : base(ConfigController.GetInstance().Config.ConnectionString)
     {
-      System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CoreContext>());
-      // System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<CoreContext, Configuration>());
+      // System.Data.Entity.Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CoreContext>());
+      System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<CoreContext, Configuration>());
     }
   }
 }

@@ -27,6 +27,7 @@ namespace Server.Models
     public static class ServerClientEvents
     {
         public const string RandomCharacterDataCreated = "CityOfMind:RandomCharacterDataCreated";
+        public const string SpawnRandomCharacter = "CityOfMind:SpawnRandomCharacter";
     }
 
     public static class ClientEvents

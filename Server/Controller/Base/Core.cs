@@ -9,7 +9,7 @@ using Server.Controller.Money;
 using Server.Controller.Session;
 using Server.Controller.Spawn;
 using Server.Models;
-using Player = CitizenFX.Core.Player;
+using static CitizenFX.Core.Native.API;
 
 namespace Server.Controller.Base
 {
@@ -87,6 +87,10 @@ namespace Server.Controller.Base
         private void InitializeServer()
         {
             Debug.WriteLine("Firing Up City of Mind Server standby...");
+
+            SetGameType("City of Mind");
+            SetMapName("San Andreas");
+            
             SessionController = new SessionController(EventHandlers, TriggerEvent, TriggerClientEvent);
             AtmController = new AtmController(EventHandlers, TriggerEvent, TriggerClientEvent);
             CharacterController = new CharacterController(EventHandlers, TriggerClientEvent, TriggerClientEvent);

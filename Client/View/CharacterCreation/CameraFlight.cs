@@ -1,5 +1,5 @@
-﻿extern alias CFX;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
+﻿
+using CitizenFX.Core;
 
 namespace Client.View.CharacterCreation
 {

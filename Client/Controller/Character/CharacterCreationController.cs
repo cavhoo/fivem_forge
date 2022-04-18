@@ -1,14 +1,13 @@
-﻿extern alias CFX;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Client.Models;
 using Client.Models.Character;
 using Newtonsoft.Json;
-using static CFX::CitizenFX.Core.Native.API;
-using BaseScript = CFX::CitizenFX.Core.BaseScript;
-using CallbackDelegate = CFX::CitizenFX.Core.CallbackDelegate;
-using Debug = CFX::CitizenFX.Core.Debug;
-using Vector3 = CFX::CitizenFX.Core.Vector3;
+using static CitizenFX.Core.Native.API;
+using BaseScript = CitizenFX.Core.BaseScript;
+using CallbackDelegate = CitizenFX.Core.CallbackDelegate;
+using Debug = CitizenFX.Core.Debug;
+using Vector3 = CitizenFX.Core.Vector3;
 
 namespace Client.Controller.Character
 {

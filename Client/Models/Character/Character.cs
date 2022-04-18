@@ -1,5 +1,4 @@
-﻿extern alias CFX;
-using Vector3 = CFX::CitizenFX.Core.Vector3;
+﻿using Vector3 = CitizenFX.Core.Vector3;
 
 namespace Client.Models.Character
 {
