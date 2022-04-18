@@ -20,6 +20,7 @@ namespace Client.Models
         public const string LoadBankAccount = "CityOfMind:LoadBankAccount";
         public const string BankAccountLoaded = "CityOfMind:BankAccountLoaded";
         public const string WithdrawMoney = "CityOfMind:WithdrawMoney";
+        public const string ShowNotification = "CityOfMind:ShowNotification";
     }
 
     /// <summary>

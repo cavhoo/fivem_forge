@@ -131,7 +131,7 @@ namespace Client.Controller.Spawn
       NetworkResurrectLocalPlayer(lastPos.X, lastPos.Y, lastPos.Z, 0, true, false);
       ClearPedTasksImmediately(ped);
       ClearPlayerWantedLevel(PlayerId());
-      //TriggerEvent(ClientEvents.PlayerSpawned);
+      TriggerEvent(ClientEvents.PlayerSpawned);
       var time = GetGameTimer();
       while (!HasCollisionLoadedAroundEntity(ped) && (GetGameTimer() - time) < 5000)
       {

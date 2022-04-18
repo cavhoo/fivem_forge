@@ -21,26 +21,20 @@ namespace Server.Controller.Money
         public PaymentController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
                                                                     Action<Player, string, object[]> clientEventTriggerFunc): base(handlers, eventTriggerFunc, clientEventTriggerFunc)
         {
-            //ProcessJobPayments();
             Debug.WriteLine("Started PaymentController");
         }
-
-        private void ProcessJobPayments()
-        {
-        }
-
-
-        private async Task OnTick()
+        
+        public async Task OnTick()
         {
             DateTime currentUtcTime = DateTime.UtcNow;
             if (currentUtcTime.Minute % 10 == 0)
             {
                 // Payout salary from jobs
-                TriggerEvent(ServerEvents.CreatePayments);
+                CreateJobPayments();
             }
 
             // Process payments in pending table
-            await ProcessPendingTransactions();
+            ProcessPendingTransactions();
         }
 
         private async Task ProcessPendingTransactions()
@@ -72,6 +66,53 @@ namespace Server.Controller.Money
             }
 
             await Context.SaveChangesAsync();
+        }
+
+        private void CreateJobPayments()
+        {
+            // Get all online characters
+            var characters = Context.Characters.Where(c => c.InUse == true).ToList();
+
+            foreach (var character in characters)
+            {
+                var activeJob = Context.JobRanks.FirstOrDefault(jr => jr.Uuid == character.JobUuid);
+                if (activeJob == null)
+                {
+                    Debug.WriteLine("No active job. Skipping");
+                    continue;
+                }
+                var company = Context.Jobs.FirstOrDefault(j => j.Uuid == activeJob.JobId);
+
+                if (company == null)
+                {
+                    Debug.WriteLine("No active company. Skipping.");
+                    continue;
+                }
+                
+                var bankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == character.CharacterUuid);
+                if (bankAccount == null)
+                {
+                    Debug.WriteLine("No bankaccount found.");
+                    continue;
+                }
+                var jobPaymentTransaction = new PendingBankTransaction()
+                {
+                    Amount = activeJob.Salary,
+                    Message = "Gehalt",
+                    ToAccountNumber = bankAccount.AccountNumber,
+                    FromAccountNumber = company.Title,
+                    Status = TransactionStatus.PENDING
+                };
+
+                Context.PendingBankTransactions.Add(jobPaymentTransaction);
+            }
+
+            Context.SaveChanges();
+        }
+
+        private void CreateFactionPayments()
+        {
+
         }
     }
 }

@@ -9,8 +9,6 @@ namespace Server.Models
        [Key]
        public string AccountNumber { get; set; }
        public int Saldo { get; set; }
-       public Character.Character Character { get; set; }
-       [ForeignKey("Character")]
        public string Holder { get; set; }
     }
 }

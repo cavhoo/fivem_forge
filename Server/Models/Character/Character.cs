@@ -22,7 +22,7 @@ namespace Server.Models.Character
     public Player Owner { get; set; }
     [ForeignKey("Owner")] public string AccountUuid { get; set; }
 
-    public Job Job { get; set; }
+    public JobRank Job { get; set; }
     [ForeignKey("Job")] public string JobUuid { get; set; }
     [DefaultValue(0)]
     public int Mom { get; set; }

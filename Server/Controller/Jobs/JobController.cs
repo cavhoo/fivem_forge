@@ -73,7 +73,9 @@ namespace Server.Controller.Jobs
             Title = parsedConfigJob.Title,
             Uuid = Guid.NewGuid().ToString(),
           };
-
+  
+          CreateBankAccount(newJob.Uuid);
+          
           Context.Jobs.Add(newJob);
           foreach (var rank in parsedConfigJob.Grades)
           {
@@ -86,7 +88,6 @@ namespace Server.Controller.Jobs
             };
             Context.JobRanks.Add(newRank);
           }
-          
         }
 
         Context.SaveChanges();
@@ -96,7 +97,7 @@ namespace Server.Controller.Jobs
         Debug.WriteLine("Updating existing jobs with values from Config...");
         foreach (var parsedConfigJob in parsedConfig.Jobs)
         {
-          var job = Context.Jobs.First(j => j.Title == parsedConfigJob.Title);
+          var job = Context.Jobs.FirstOrDefault(j => j.Title == parsedConfigJob.Title);
 
           if (job != null)
           {
@@ -137,16 +138,16 @@ namespace Server.Controller.Jobs
             };
 
             Context.Jobs.Add(newJob);
-            Context.SaveChanges();
 
-            var jobUuid = Context.Jobs.First(j => j.Title == parsedConfigJob.Title).Uuid;
-
+            CreateBankAccount(newJob.Uuid);
+            
+            
             foreach (var jobGrade in parsedConfigJob.Grades)
             {
               var newGrade = new JobRank()
               {
                 Uuid = Guid.NewGuid().ToString(),
-                JobId = jobUuid,
+                JobId = newJob.Uuid,
                 Title = jobGrade.Title,
                 Salary = jobGrade.Salary
               };
@@ -159,6 +160,27 @@ namespace Server.Controller.Jobs
           }
         }
       }
+    }
+
+    private void CreateBankAccount(string jobUuid)
+    {
+      // Create Bankaccount for Job
+      var rand = new Random();
+
+      var firstTriple = rand.Next(1000);
+      var secondTriple = rand.Next(1000);
+      var thirdTriple = rand.Next(1000);
+      var accountNumber = $"{firstTriple}{secondTriple}{thirdTriple}";
+
+      var companyBankAccount = new BankAccount()
+      {
+        Holder = jobUuid,
+        AccountNumber = accountNumber,
+        Saldo = ConfigController.GetInstance().Config.InitialBankAmountBalance
+      };
+
+      Context.BankAccount.Add(companyBankAccount);
+      Context.SaveChanges();
     }
   }
 }

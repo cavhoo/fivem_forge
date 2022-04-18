@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using CitizenFX.Core;
 using CityOfMindDatabase.Contexts;
 using Server.Controller.Config;
@@ -29,7 +30,9 @@ namespace Server.Controller.Base
         private JobController JobController;
         public Core()
         {
-            this.InitializeDatabase();
+            InitializeDatabase();
+            InitializeServer();
+            InitializeTick();
         }
 
         private void InitializeDatabase()
@@ -81,7 +84,6 @@ namespace Server.Controller.Base
                 ctx.SaveChanges();
             }
             
-            InitializeServer();
         }
 
         private void InitializeServer()
@@ -100,5 +102,16 @@ namespace Server.Controller.Base
             JobController = new JobController(EventHandlers, TriggerEvent, TriggerClientEvent);
             Debug.WriteLine("Server initialized...");
         }
+
+        private void InitializeTick()
+        {
+            Tick += OnServerTick;
+        }
+
+        private async Task OnServerTick()
+        {
+            PaymentController.OnTick();
+        }
+        
     }
 }
