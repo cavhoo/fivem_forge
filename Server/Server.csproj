@@ -26,6 +26,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
   </ItemGroup>
   <Target Name="CopyCoreDll" AfterTargets="AfterBuild">

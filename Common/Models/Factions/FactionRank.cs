@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Models.Factions
+namespace Common.Models.Factions
 {
   public class FactionRank
   {

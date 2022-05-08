@@ -10,7 +10,7 @@ namespace Server.Controller.Config
     public class ConfigController
     {
         private static ConfigController _instance = null;
-        public Config Config { get; set; }
+        public Models.Config Config { get; set; }
         private ConfigController()
         {
             Debug.WriteLine("Loading config file...");
@@ -23,7 +23,7 @@ namespace Server.Controller.Config
             
             var deserializer = new DeserializerBuilder().Build();
 
-            Config = deserializer.Deserialize<Config>(ymlString);
+            Config = deserializer.Deserialize<Models.Config>(ymlString);
         }
 
         public static ConfigController GetInstance()

@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Models.Factions;
+using FactionRank = Server.Models.Factions.FactionRank;
 
 namespace Server.Models.Character
 {

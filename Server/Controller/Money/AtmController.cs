@@ -23,7 +23,7 @@ namespace Server.Controller.Money
     public class AtmController : BaseClass
     {
         public AtmController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                                   Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                                   Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventTriggerAllFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventTriggerAllFunc)
         {
             EventHandlers[ClientEvents.LoadAtmLocations] += new Action<Player>(OnAtmLocationsRequested);
             EventHandlers[ClientEvents.WithDrawMoney] += new Action<Player, string, int>(OnWithdrawMoney);

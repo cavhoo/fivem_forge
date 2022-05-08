@@ -8,6 +8,7 @@ namespace Server.Models
         public int Amount { get; set; }
         public string Message { get; set; }
         public TransactionStatus Status { get; set; }
+        public string TimeStamp { get; set; }
         
         [InverseProperty("AccountNumber")]
         public string FromAccountNumber { get; set; }

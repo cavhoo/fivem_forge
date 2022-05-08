@@ -11,7 +11,7 @@ namespace Server.Controller.Account
   public class AccountController : BaseClass
   {
     public AccountController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                                   Action<Player, string, object[]> clientEventTriggerFunc): base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                                   Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventAll): base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventAll)
     {
       EventHandlers[ClientEvents.LoadAvailableCharacterCount] += new Action<Player>(OnLoadAvailableCharacterCount);
     }

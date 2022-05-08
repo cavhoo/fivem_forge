@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace Common.Models
 {
     public static class ServerEvents
@@ -24,7 +26,48 @@ namespace Common.Models
         public const string MoneyWithdrawIncorrectPin = "CityOfMind:MoneyWithdrawIncorrectPin";
     }
 
-    public static class ServerClientEvents
+    public static class ModuleEvents
+    {
+        public const string RegisterModule = "CityOfMind:RegisterModule";
+    }
+
+    public static class JobEvents
+    {
+        public const string RegisterJob = "CityOfMind:RegisterJob";
+        public const string JobRegistered = "CityOfMind:JobRegistered";
+        public const string JobAlreadyExists = "CityOfMind:JobAlreadyExists";
+        public const string SetEmployeeRank = "CityOfMind:SetEmployeeRank";
+        public const string HireEmployee = "CityOfMind:HireEmployee";
+        public const string EmployeeHired = "CityOfMind:EmployeeHired";
+        public const string FireEmployee = "CityOfMind:FireEmployee";
+        public const string EmployeeFired = "CityOfMind:EmployeeFired";
+        public const string RenameRank = "CityOfMind:RenameJobRank";
+        public const string RankRenamed = "CityOfMind:RankRenamed";
+        public const string CreateRank = "CityOfMind:CreateJobRank";
+        public const string RemoveRank = "CityOfMind:RemoveJobRank";
+        public const string RankAlreadyExists = "CityOfMind:RankAlreadyExists";
+        public const string RankDoesNotExist = "CityOfMind:RankDoesNotExist";
+        public const string RankInUse = "CityOfMind:RankInUse";
+        public const string RankCreated = "CityOfMind:RankCreated";
+        public const string EditRankPermission = "CityOfMind:EditRankPemission";
+        public const string GetEmployees = "CityOfMind:GetEmployees";
+    }
+
+    public static class FactionEvents
+    {
+        public const string RegisterFaction = "CityOfMind:RegisterFaction";
+        public const string RenameFaction = "CityOfMind:RenameFaction";
+        public const string CreateFactionBankaccount = "CityOfMind:CreateFactionBankAccount";
+        public const string SetMemberFactionRank = "CityOfMind:SetMemberFactionRank";
+        public const string AddMemberToFaction = "CityOfMind:AddMemberToFaction";
+        public const string RemoveMemberFromFaction = "CityOfMind:RemoveMemberFromFaction";
+        public const string CreateFactionRank = "CityOfMind:CreateFactionRank";
+        public const string RemoveFactionRank = "CityOfMind:RemoveFactionRank";
+        public const string RenameFactionRank = "CityOfMind:RenameFactionRank";
+        public const string EditFactionRankPermissions = "CityOfMind:EditFactionRankPermissions";
+    }
+
+public static class ServerClientEvents
     {
         public const string RandomCharacterDataCreated = "CityOfMind:RandomCharacterDataCreated";
     }

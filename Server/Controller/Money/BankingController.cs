@@ -24,7 +24,7 @@ namespace Server.Controller.Money
     private int[] WithdrawableAmounts = new[] { 500, 1000, 2500, 5000, 10000, 50000, 100000 };
 
     public BankingController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                                   Action<Player, string, object[]> clientEventTriggerFunc): base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                                   Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventTriggerAllFunc): base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventTriggerAllFunc)
     {
       EventHandlers[ClientEvents.LoadBankLocations] += new Action<Player>(OnBankLocationsRequested);
       EventHandlers[ClientEvents.LoadBankAccount] += new Action<Player>(OnRequestBankAccount);

@@ -1,4 +1,4 @@
-namespace Server.Controller.Config
+namespace Server.Models
 {
     public class Config
     {

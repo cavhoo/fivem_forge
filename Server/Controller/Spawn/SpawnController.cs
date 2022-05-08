@@ -19,7 +19,7 @@ namespace Server.Controller.Spawn
         /// If a character dies we will respawn him at the closest hospital.
         /// </summary>
         public SpawnController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                                     Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                                     Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventTriggerAllFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventTriggerAllFunc)
         {
             EventHandlers["CityOfMind:GetLastSpawnPosition"] += new Action<Player, string>(OnGetLastPlayerPosition);
             EventHandlers["CityOfMind:SaveLastPosition"] += new Action<Player, string>((Player player, string characterUuid) => Debug.WriteLine("Saving char position"));

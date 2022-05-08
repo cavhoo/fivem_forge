@@ -11,7 +11,10 @@ using Server.Controller.Config;
 using Server.Models;
 using Server.Models.Character;
 using Server.Models.Errors;
+using ClientEvents = Common.Models.ClientEvents;
 using Player = CitizenFX.Core.Player;
+using ServerClientEvents = Common.Models.ServerClientEvents;
+using ServerEvents = Common.Models.ServerEvents;
 
 namespace Server.Controller.Character
 {
@@ -20,8 +23,8 @@ namespace Server.Controller.Character
     private Vector3 _airportSpawnLocation = new(-1046.6901f, -2770.3647f, 4.62854f);
 
     public CharacterController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-      Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc,
-      clientEventTriggerFunc)
+      Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventAllTriggerFunc) : base(handlers, eventTriggerFunc,
+      clientEventTriggerFunc, clientEventAllTriggerFunc)
     {
       EventHandlers[ClientEvents.GetRandomCharacterData] += new Action<Player>(OnGetRandomCharacterData);
       EventHandlers[ClientEvents.CreateCharacter] += new Action<Player, string>(OnCreateCharacter);

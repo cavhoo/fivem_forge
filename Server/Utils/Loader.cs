@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using CitizenFX.Core;
 
@@ -15,7 +16,7 @@ namespace Server.Utils
             catch (IOException ex)
             {
                 Debug.WriteLine(ex.Message);
-                return null;
+                throw new Exception(ex.Message);
             }
         }
     }

@@ -19,7 +19,7 @@ namespace Server.Controller.Session
     public class SessionController : BaseClass
     {
         public SessionController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                                       Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                                       Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventTriggerAllFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventTriggerAllFunc)
         {
             EventHandlers[ClientEvents.GetSessionId] += new Action<Player>(GetSessionId);
             //EventHandlers[FiveMEvents.PlayerConnecting] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);

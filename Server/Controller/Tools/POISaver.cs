@@ -11,7 +11,7 @@ namespace Server.Controller.Tools
   public class PoiSaver : BaseClass
   {
     public PoiSaver(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                          Action<Player, string, object[]> clientEventTriggerFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                          Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventTriggerAllFunc) : base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventTriggerAllFunc)
     {
       EventHandlers[ServerEvents.SavePoiPosition] += new Action<Player, string>(OnSavePOIPosition);
     }

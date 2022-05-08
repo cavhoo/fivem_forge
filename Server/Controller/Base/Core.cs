@@ -93,13 +93,13 @@ namespace Server.Controller.Base
             SetGameType("City of Mind");
             SetMapName("San Andreas");
             
-            SessionController = new SessionController(EventHandlers, TriggerEvent, TriggerClientEvent);
-            AtmController = new AtmController(EventHandlers, TriggerEvent, TriggerClientEvent);
-            CharacterController = new CharacterController(EventHandlers, TriggerClientEvent, TriggerClientEvent);
-            BankingController = new BankingController(EventHandlers, TriggerEvent, TriggerClientEvent);
-            PaymentController = new PaymentController(EventHandlers, TriggerEvent, TriggerClientEvent);
-            SpawnController = new SpawnController(EventHandlers, TriggerEvent, TriggerClientEvent);
-            JobController = new JobController(EventHandlers, TriggerEvent, TriggerClientEvent);
+            SessionController = new SessionController(EventHandlers, TriggerEvent, TriggerClientEvent, TriggerClientEvent);
+            AtmController = new AtmController(EventHandlers, TriggerEvent, TriggerClientEvent, TriggerClientEvent);
+            CharacterController = new CharacterController(EventHandlers, TriggerClientEvent, TriggerClientEvent, TriggerClientEvent);
+            BankingController = new BankingController(EventHandlers, TriggerEvent, TriggerClientEvent, TriggerClientEvent);
+            PaymentController = new PaymentController(EventHandlers, TriggerEvent, TriggerClientEvent, TriggerClientEvent);
+            SpawnController = new SpawnController(EventHandlers, TriggerEvent, TriggerClientEvent,TriggerClientEvent);
+            JobController = new JobController(EventHandlers, TriggerEvent, TriggerClientEvent, TriggerClientEvent);
             Debug.WriteLine("Server initialized...");
         }
 

@@ -18,8 +18,9 @@ namespace Server.Controller.Money
     /// </summary>
     public class PaymentController : BaseClass
     {
+        private bool CreatingPayments = false;
         public PaymentController(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-                                                                    Action<Player, string, object[]> clientEventTriggerFunc): base(handlers, eventTriggerFunc, clientEventTriggerFunc)
+                                                                    Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventTriggerAllFunc): base(handlers, eventTriggerFunc, clientEventTriggerFunc, clientEventTriggerAllFunc)
         {
             Debug.WriteLine("Started PaymentController");
         }
@@ -27,10 +28,11 @@ namespace Server.Controller.Money
         public async Task OnTick()
         {
             DateTime currentUtcTime = DateTime.UtcNow;
-            if (currentUtcTime.Minute % 10 == 0)
+            if (currentUtcTime.Minute % 10 == 0 && CreatingPayments == false)
             {
                 // Payout salary from jobs
                 CreateJobPayments();
+                CreatingPayments = true;
             }
 
             // Process payments in pending table
@@ -53,6 +55,7 @@ namespace Server.Controller.Money
 
             if (sourceAccount.Saldo >= nextTransaction.Amount)
             {
+                Debug.WriteLine($"Processing Transaction from Account: {sourceAccount.AccountNumber} to Account: {targetAccount.AccountNumber}");
                 // Deduct transfer amount from source account.
                 sourceAccount.Saldo -= nextTransaction.Amount;
                 targetAccount.Saldo += nextTransaction.Amount;
@@ -61,6 +64,11 @@ namespace Server.Controller.Money
                 bankTransaction.ToAccountNumber = nextTransaction.ToAccountNumber;
                 bankTransaction.Message = nextTransaction.Message;
                 bankTransaction.Amount = nextTransaction.Amount;
+
+                // Add a timestamp when the transaction happened
+                var utcNow = DateTime.UtcNow;
+                bankTransaction.TimeStamp = $"{utcNow.ToShortDateString()} {utcNow.ToLongTimeString()}";
+               
                 Context.PendingBankTransactions.Remove(nextTransaction);
                 Context.BankTransactions.Add(bankTransaction);
             }
@@ -88,19 +96,32 @@ namespace Server.Controller.Money
                     Debug.WriteLine("No active company. Skipping.");
                     continue;
                 }
+
+                // Company bankaccount
+                var companyBankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == company.Uuid);
+
                 
+                // Refill the Arbeitslos account to serve all payments.
+                if (company.Title == "Arbeitslos")
+                {
+                    companyBankAccount.Saldo = 500000;
+                }
+                
+                // Character bankaccount
                 var bankAccount = Context.BankAccount.FirstOrDefault(b => b.Holder == character.CharacterUuid);
                 if (bankAccount == null)
                 {
                     Debug.WriteLine("No bankaccount found.");
                     continue;
                 }
+                
+                // Create pending transaction
                 var jobPaymentTransaction = new PendingBankTransaction()
                 {
                     Amount = activeJob.Salary,
                     Message = "Gehalt",
                     ToAccountNumber = bankAccount.AccountNumber,
-                    FromAccountNumber = company.Title,
+                    FromAccountNumber = companyBankAccount.AccountNumber,
                     Status = TransactionStatus.PENDING
                 };
 
@@ -108,6 +129,7 @@ namespace Server.Controller.Money
             }
 
             Context.SaveChanges();
+            CreatingPayments = false;
         }
 
         private void CreateFactionPayments()

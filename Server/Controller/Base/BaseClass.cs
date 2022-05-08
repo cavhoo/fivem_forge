@@ -15,14 +15,16 @@ namespace Server.Controller.Base
     protected EventHandlerDictionary EventHandlers;
     protected Action<string, object[]> TriggerEventFunc;
     protected Action<Player, string, object[]> TriggerClientEventFunc;
+    protected Action<string, object[]> TriggerClientEventAllFunc;
     protected BaseClass() => Context = new CoreContext();
 
     public BaseClass(EventHandlerDictionary handlers, Action<string, object[]> eventTriggerFunc,
-      Action<Player, string, object[]> clientEventTriggerFunc)
+      Action<Player, string, object[]> clientEventTriggerFunc, Action<string, object[]> clientEventAllFunc)
     {
       EventHandlers = handlers;
       TriggerEventFunc = eventTriggerFunc;
       TriggerClientEventFunc = clientEventTriggerFunc;
+      TriggerClientEventAllFunc = clientEventAllFunc;
       Context = new CoreContext();
     }
 
@@ -43,6 +45,11 @@ namespace Server.Controller.Base
     protected void TriggerEvent(string eventName, params object[] args)
     {
       TriggerEventFunc(eventName, args);
+    }
+
+    protected void TriggerClientEvent(string eventName, params object[] args)
+    {
+      TriggerClientEventAllFunc(eventName, args);
     }
 
     /// <summary>
