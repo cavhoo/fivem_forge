@@ -1,16 +1,11 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using CityOfMindUtils.Utils;
-// using Common.Models;
-// using Common.Models.Character;
-// using Common.Models.Factions;
-// using Common.Models.Jobs;
-// using Common.Models.Money;
-// using Common.Models.Player;
 using Server.Models;
 using Server.Controller.Config;
 using Server.Models.Character;
 using Server.Models.Factions;
+using Server.Models.Permissions;
 using ConfigController = Server.Controller.Config.ConfigController;
 
 namespace Server.Context
@@ -33,7 +28,7 @@ namespace Server.Context
     public DbSet<JobRank> JobRanks { get; set; }
     public DbSet<Faction> Factions { get; set; }
     public DbSet<FactionRank> FactionRanks { get; set; }
-    public DbSet<FactionRankPermissions> FactionRankPermissions { get; set; }
+    public DbSet<RankPermissions> RankPermissions { get; set; }
 
     public bool PoiExists(Poi point)
     {

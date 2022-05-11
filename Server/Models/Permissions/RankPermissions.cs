@@ -1,6 +1,6 @@
-﻿namespace Server.Models.Factions
+﻿namespace Server.Models.Permissions
 {
-  public class FactionRankPermissions
+  public class RankPermissions
   {
     
     public string RankId { get; set; }
