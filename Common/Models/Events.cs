@@ -82,6 +82,7 @@ namespace Common.Models
 
     public static class FactionEvents
     {
+        public const string Error = "CityOfMind:FactionError";
         public const string RegisterFaction = "CityOfMind:RegisterFaction";
         public const string FactionRegistered = "CityOfMind:FactionRegistered";
         
@@ -98,7 +99,8 @@ namespace Common.Models
         public const string FactionRankCreated = "CityOfMind:FactionRankCreated";
         public const string FactionRankRemove = "CityOfMind:FactionRankRemove";
         public const string FactionRankRemoved = "CityOfMind:FactionRankRemoved";
-        public const string RenameFactionRank = "CityOfMind:RenameFactionRank";
+        public const string FactionRankRename = "CityOfMind:FactionRankRename";
+        public const string FactionRankRenamed = "CityOfMind:FactionRankRenamed";
         public const string EditFactionRankPermissions = "CityOfMind:EditFactionRankPermissions";
     }
 

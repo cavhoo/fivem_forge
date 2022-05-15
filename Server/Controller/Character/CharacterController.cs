@@ -105,8 +105,8 @@ namespace Server.Controller.Character
 
       if (playerAccount == null)
       {
-        player.TriggerEvent(ServerEvents.Error, AccountErrors.NotFound.ToString());
-        return;
+          Error.NewClientError(player, ErrorTypes.CharacterError, (int)ErrorCodes.NotFound);
+          return;
       }
 
       var data = JsonConvert.DeserializeObject<IDictionary<string, object>>(characterData);

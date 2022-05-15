@@ -31,7 +31,7 @@ namespace Server.Controller.Jobs
 
       if (jobExists != null)
       {
-        TriggerEvent(JobEvents.JobAlreadyExists, jobTitle);
+          Error.NewServerError(ErrorTypes.JobError, (int)ErrorCodes.NotFound);
         return;
       }
 
@@ -79,7 +79,7 @@ namespace Server.Controller.Jobs
       if (rank == null)
       {
         // We should never end up here!
-        player.TriggerEvent(JobEvents.RankDoesNotExist);
+        Error.NewClientError(player, ErrorTypes.JobError, (int)ErrorCodes.NotFound);
         return;
       }
 
@@ -97,7 +97,7 @@ namespace Server.Controller.Jobs
       if (rankToRemove == null)
       {
         // We should not end up here.
-        player.TriggerEvent(JobEvents.RankDoesNotExist);
+        Error.NewClientError(player, ErrorTypes.JobError, (int)ErrorCodes.NotFound);
       }
       else
       {

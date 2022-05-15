@@ -36,7 +36,7 @@ namespace Server.Controller.Money
             }
 
             // Process payments in pending table
-            ProcessPendingTransactions();
+            await ProcessPendingTransactions();
         }
 
         private async Task ProcessPendingTransactions()
